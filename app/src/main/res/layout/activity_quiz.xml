@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".activities.QuizActivity">
+    
+    <FrameLayout
+        android:id="@+id/flQuizTop"
+        android:layout_weight=".6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_bg_sky_gradient">
+
+        <yaremchuken.quizknight.draw.DrawView
+            android:id="@+id/gameView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvQuizQuestion"
+            android:layout_width="match_parent"
+            android:minHeight="130dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_bubble_question_background"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:padding="10sp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#e6d9d2"
+            tools:text="Я заканчиваю работу в четыре, поэтому мне нравится моё расписание."
+            />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_weight=".4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_bg_answer_board_gradient"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvQuizAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_bubble_answer_background"
+            android:layout_above="@+id/btnCheck"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:padding="15sp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:gravity="top"
+            android:textColor="#752800"
+            tools:text="I finish work at four, so I like my __________."
+            />
+
+        <Button
+            android:id="@+id/btnCheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_button_check_answer_background"
+            android:layout_alignParentBottom="true"
+            android:text="ПРОВЕРИТЬ"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
