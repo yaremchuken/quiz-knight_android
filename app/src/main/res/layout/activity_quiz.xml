@@ -46,8 +46,8 @@
         android:background="@drawable/ic_bg_answer_board_gradient"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvQuizAnswer"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAnswerField"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/ic_bubble_answer_background"
@@ -55,13 +55,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_margin="10dp"
-            android:padding="15sp"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:gravity="top"
-            android:textColor="#752800"
-            tools:text="I finish work at four, so I like my __________."
-            />
+            android:padding="15sp"/>
 
         <Button
             android:id="@+id/btnCheck"
@@ -72,7 +66,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/ic_button_check_answer_background"
             android:layout_alignParentBottom="true"
-            android:text="ПРОВЕРИТЬ"/>
+            android:text="@string/check_btn_title"/>
 
     </RelativeLayout>
 

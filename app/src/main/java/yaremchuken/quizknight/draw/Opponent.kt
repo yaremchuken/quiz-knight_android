@@ -15,7 +15,7 @@ class Opponent(context: Context, sceneDims: Point): Animated() {
 
     fun resetPos() {
         targetPos = sceneDims.x - 50F - dimensions.x
-        xPos = DrawView.WORLD_SPEED * 50 + targetPos
+        xPos = DrawView.WORLD_SPEED * 30 + targetPos
     }
 
     fun updatePos() {
