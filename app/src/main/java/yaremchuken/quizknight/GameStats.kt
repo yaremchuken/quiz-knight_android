@@ -1,7 +1,8 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.model.QuizTask
-import yaremchuken.quizknight.model.QuizType
+import yaremchuken.quizknight.model.QuizTaskChooseOption
+import yaremchuken.quizknight.model.QuizTaskTranslateWord
 
 class GameStats private constructor(){
 
@@ -33,17 +34,20 @@ class GameStats private constructor(){
 
     private var quizIdx = -1
     private val quizes = listOf<QuizTask>(
-        QuizTask(
-            QuizType.WORD_TRANSLATION_INPUT,
-            "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
-            "I finish work at four, so I like my <answer> more.",
-            arrayOf("schedule")
+        QuizTaskChooseOption(
+            "If you go on ........ me like this, i will never be able to finish writing my report.",
+            "disturbing",
+            arrayOf("disturbing", "afflicting", "concerning", "affecting")
         ),
-        QuizTask(
-            QuizType.WORD_TRANSLATION_INPUT,
+        QuizTaskTranslateWord(
+            "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
+            arrayOf("schedule"),
+            "I finish work at four, so I like my <answer> more."
+        ),
+        QuizTaskTranslateWord(
             "Мой босс любит приходить на работу утром.",
-            "My boss <answer> to come to work in the morning.",
-            arrayOf("likes", "loves")
+            arrayOf("likes", "loves"),
+            "My boss <answer> to come to work in the morning."
         )
     )
 

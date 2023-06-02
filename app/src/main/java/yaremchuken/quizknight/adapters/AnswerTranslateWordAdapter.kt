@@ -5,21 +5,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import yaremchuken.quizknight.databinding.ItemAnswerFieldBinding
+import yaremchuken.quizknight.databinding.ItemAnswerFieldTexteeditBinding
 
-class AnswerPartAdapter(
+class AnswerTranslateWordAdapter(
     private val items: List<String>
-): RecyclerView.Adapter<AnswerPartAdapter.ViewHolder>() {
+): RecyclerView.Adapter<AnswerTranslateWordAdapter.ViewHolder>() {
 
     var playerInput: String = ""
 
-    class ViewHolder(binding: ItemAnswerFieldBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemAnswerFieldTexteeditBinding): RecyclerView.ViewHolder(binding.root) {
         val word = binding.tvWord
         val input = binding.tvInput
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val holder = ViewHolder(ItemAnswerFieldBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val holder = ViewHolder(ItemAnswerFieldTexteeditBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         holder.input.addTextChangedListener {
             playerInput = it.toString()
         }

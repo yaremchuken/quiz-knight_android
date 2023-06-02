@@ -1,3 +1,3 @@
 package yaremchuken.quizknight.model
 
-data class QuizTask(val type: QuizType, val question: String, val placeholder: String, val answers: Array<String>)
+abstract class QuizTask(val type: QuizType, val question: String, val verifications: Array<String>)

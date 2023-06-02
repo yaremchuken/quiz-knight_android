@@ -31,7 +31,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:padding="10sp"
-            android:textSize="22sp"
+            android:textSize="@dimen/font_size"
             android:textStyle="bold"
             android:textColor="#e6d9d2"
             tools:text="Я заканчиваю работу в четыре, поэтому мне нравится моё расписание."
@@ -47,7 +47,7 @@
         android:orientation="horizontal">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAnswerField"
+            android:id="@+id/rvAnswerBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/ic_bubble_answer_background"
@@ -55,7 +55,76 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_margin="10dp"
-            android:padding="15sp"/>
+            android:padding="15sp"
+            android:visibility="invisible"/>
+
+        <RadioGroup
+            android:id="@+id/rgOptionsGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_bubble_answer_background"
+            android:layout_above="@+id/btnCheck"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:padding="15sp">
+
+            <RadioButton
+                android:id="@+id/rbOptionA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_answer_board_option_selector"
+                android:button="@null"
+                android:checked="false"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                tools:text="A. This"/>
+
+            <RadioButton
+                android:id="@+id/rbOptionB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_answer_board_option_selector"
+                android:button="@null"
+                android:checked="false"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                tools:text="B. That"/>
+
+            <RadioButton
+                android:id="@+id/rbOptionC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_answer_board_option_selector"
+                android:button="@null"
+                android:checked="false"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                tools:text="C. Do"/>
+
+            <RadioButton
+                android:id="@+id/rbOptionD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_answer_board_option_selector"
+                android:button="@null"
+                android:checked="false"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                tools:text="D. Donet"/>
+
+        </RadioGroup>
 
         <Button
             android:id="@+id/btnCheck"

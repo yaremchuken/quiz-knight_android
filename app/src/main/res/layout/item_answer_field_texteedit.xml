@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        android:textSize="22sp"
+        android:textSize="@dimen/font_size"
         android:textStyle="bold"
         android:textColor="#752800"
         android:textAlignment="center"/>
@@ -21,11 +21,11 @@
         android:layout_width="wrap_content"
         android:minWidth="52dp"
         android:layout_height="38dp"
-        android:textSize="22sp"
+        android:textSize="@dimen/font_size"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:inputType="text"
         android:textAlignment="center"
-        android:background="@drawable/ic_answer_field_border"/>
+        android:background="@drawable/ic_answer_field_textedit_border"/>
 
 </LinearLayout>
