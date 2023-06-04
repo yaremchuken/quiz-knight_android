@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import yaremchuken.quizknight.databinding.ItemAnswerFieldTexteeditBinding
+import yaremchuken.quizknight.databinding.ItemAnswerFieldWordOrEditableBinding
 
 class AnswerTranslateWordAdapter(
     private val items: List<String>
@@ -13,13 +13,14 @@ class AnswerTranslateWordAdapter(
 
     var playerInput: String = ""
 
-    class ViewHolder(binding: ItemAnswerFieldTexteeditBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemAnswerFieldWordOrEditableBinding): RecyclerView.ViewHolder(binding.root) {
         val word = binding.tvWord
         val input = binding.tvInput
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val holder = ViewHolder(ItemAnswerFieldTexteeditBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val holder = ViewHolder(
+            ItemAnswerFieldWordOrEditableBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         holder.input.addTextChangedListener {
             playerInput = it.toString()
         }

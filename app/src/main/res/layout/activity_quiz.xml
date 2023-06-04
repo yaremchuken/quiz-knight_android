@@ -46,85 +46,126 @@
         android:background="@drawable/ic_bg_answer_board_gradient"
         android:orientation="horizontal">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAnswerBoard"
+        <LinearLayout
+            android:id="@+id/llQuizBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_bubble_answer_background"
+            android:orientation="horizontal"
             android:layout_above="@+id/btnCheck"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="10dp"
-            android:padding="15sp"
-            android:visibility="invisible"/>
-
-        <RadioGroup
-            android:id="@+id/rgOptionsGroup"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:background="@drawable/ic_bubble_answer_background"
-            android:layout_above="@+id/btnCheck"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="10dp"
-            android:padding="15sp">
+            android:layout_margin="10dp">
 
-            <RadioButton
-                android:id="@+id/rbOptionA"
+            <LinearLayout
+                android:id="@+id/llAssembleString"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/drawable_answer_board_option_selector"
-                android:button="@null"
-                android:checked="false"
-                android:padding="10dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size"
-                android:textStyle="bold"
-                tools:text="A. This"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/rbOptionB"
+                <RelativeLayout
+                    android:layout_weight=".5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:background="@drawable/ic_answer_field_lined_background">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAssembleStringAnswer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="15sp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_weight=".5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAssembleStringOptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="15sp"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvQuizAnswerItems"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/drawable_answer_board_option_selector"
-                android:button="@null"
-                android:checked="false"
-                android:padding="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size"
-                android:textStyle="bold"
-                tools:text="B. That"/>
+                android:layout_height="match_parent"
+                android:padding="15sp"
+                android:visibility="gone"/>
 
-            <RadioButton
-                android:id="@+id/rbOptionC"
+            <RadioGroup
+                android:id="@+id/rgOptionsGroup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/drawable_answer_board_option_selector"
-                android:button="@null"
-                android:checked="false"
-                android:padding="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size"
-                android:textStyle="bold"
-                tools:text="C. Do"/>
+                android:layout_height="match_parent"
+                android:padding="15sp"
+                android:visibility="gone">
 
-            <RadioButton
-                android:id="@+id/rbOptionD"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/drawable_answer_board_option_selector"
-                android:button="@null"
-                android:checked="false"
-                android:padding="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size"
-                android:textStyle="bold"
-                tools:text="D. Donet"/>
+                <RadioButton
+                    android:id="@+id/rbOptionA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="false"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    tools:text="A. This"/>
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/rbOptionB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="false"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    tools:text="B. That"/>
+
+                <RadioButton
+                    android:id="@+id/rbOptionC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="false"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    tools:text="C. Do"/>
+
+                <RadioButton
+                    android:id="@+id/rbOptionD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="false"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    tools:text="D. Donet"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnCheck"
