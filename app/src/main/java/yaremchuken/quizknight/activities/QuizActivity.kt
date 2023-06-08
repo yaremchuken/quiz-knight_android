@@ -2,6 +2,8 @@ package yaremchuken.quizknight.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.RadioButton
@@ -24,11 +26,14 @@ import yaremchuken.quizknight.model.QuizTaskAssembleString
 import yaremchuken.quizknight.model.QuizTaskChooseOption
 import yaremchuken.quizknight.model.QuizTaskTranslateWord
 import yaremchuken.quizknight.model.QuizType
+import java.util.Locale
 
-class QuizActivity : AppCompatActivity() {
+class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var binding: ActivityQuizBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
+
+    private lateinit var tts: TextToSpeech
 
     private var quizTask: QuizTask? = null
 
@@ -45,6 +50,13 @@ class QuizActivity : AppCompatActivity() {
         updateHealthBar()
         updateGold()
 
+        tts = TextToSpeech(this, this)
+        binding.ibQuizListenBtn.setOnClickListener {
+            if (quizTask != null) {
+                speakOut(quizTask!!.question)
+            }
+        }
+
         binding.btnCheck.setOnClickListener {
             checkAnswer()
         }
@@ -53,13 +65,26 @@ class QuizActivity : AppCompatActivity() {
         GameStateMachine.getInstance().init(this)
     }
 
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val lang = tts.setLanguage(Locale.US)
+            if (lang == TextToSpeech.LANG_MISSING_DATA || lang == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "Language is not supported!")
+            }
+        } else {
+            Log.e("TTS", "Initialization failed!")
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     fun startQuiz() {
         quizTask = QuizProvider.getInstance().nextQuiz()
         if (quizTask != null) {
             binding.tvQuizQuestion.text = quizTask?.question
 
-            binding.tvQuizQuestion.visibility = View.VISIBLE
+            if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE) {
+                binding.tvQuizQuestion.visibility = View.VISIBLE
+            }
             binding.llQuizBoard.visibility = View.VISIBLE
             binding.btnCheck.visibility = View.VISIBLE
 
@@ -100,6 +125,13 @@ class QuizActivity : AppCompatActivity() {
                     binding.rbOptionD.text = "D. ${quiz.options[3]}"
                 }
 
+                QuizType.WRITE_LISTENED_PHRASE -> {
+                    binding.ibQuizListenBtn.visibility = View.VISIBLE
+                    binding.tilBoardInput.visibility = View.VISIBLE
+
+                    speakOut(quizTask!!.question)
+                }
+
                 else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
             }
 
@@ -117,10 +149,14 @@ class QuizActivity : AppCompatActivity() {
 
     private fun hideBoard() {
         binding.tvQuizQuestion.visibility = View.INVISIBLE
+        binding.ibQuizListenBtn.visibility = View.INVISIBLE
+
         binding.llQuizBoard.visibility = View.INVISIBLE
         binding.rvQuizAnswerItems.visibility = View.GONE
         binding.rgOptionsGroup.visibility = View.GONE
         binding.llAssembleString.visibility = View.GONE
+        binding.tilBoardInput.visibility = View.GONE
+
         binding.btnCheck.visibility = View.INVISIBLE
     }
 
@@ -159,29 +195,24 @@ class QuizActivity : AppCompatActivity() {
     private fun checkAnswer() {
         if (quizTask == null) return
 
-        val isCorrect = when (quizTask?.type) {
-            QuizType.WORD_TRANSLATION_INPUT ->
-                QuizTaskChecker.checkAnswer(
-                    quizTask!!,
-                    (binding.rvQuizAnswerItems.adapter as AnswerTranslateWordAdapter).playerInput
-                )
-
-            QuizType.CHOOSE_CORRECT_OPTION ->
-                QuizTaskChecker.checkAnswer(
-                    quizTask!!,
-                    findViewById<RadioButton>(binding.rgOptionsGroup.checkedRadioButtonId).text.toString()
-                )
-            QuizType.ASSEMBLE_TRANSLATION_STRING ->
-                QuizTaskChecker.checkAnswer(
-                    quizTask!!,
-                    (binding.rvAssembleStringAnswer.adapter as AssembleTranslationStringAdapter)
-                        .items.joinToString(" ")
-                )
+        val answer = when (quizTask?.type) {
+            QuizType.WORD_TRANSLATION_INPUT -> {
+                (binding.rvQuizAnswerItems.adapter as AnswerTranslateWordAdapter).playerInput
+            }
+            QuizType.CHOOSE_CORRECT_OPTION -> {
+                findViewById<RadioButton>(binding.rgOptionsGroup.checkedRadioButtonId).text.toString()
+            }
+            QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+                (binding.rvAssembleStringAnswer.adapter as AssembleTranslationStringAdapter).items.joinToString(" ")
+            }
+            QuizType.WRITE_LISTENED_PHRASE -> {
+                binding.etBoardInput.text.toString()
+            }
 
             else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
         }
 
-        if (isCorrect) {
+        if (QuizTaskChecker.checkAnswer(quizTask!!, answer)) {
             endQuiz()
         } else {
             GameStats.getInstance().adjustHealth(-1)
@@ -200,5 +231,9 @@ class QuizActivity : AppCompatActivity() {
 
     private fun updateGold() {
         gameStatsBarBinding.tvGold.text = GameStats.getInstance().gold.toString()
+    }
+
+    private fun speakOut(text: String) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 }

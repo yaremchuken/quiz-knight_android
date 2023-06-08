@@ -4,6 +4,7 @@ import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizTaskAssembleString
 import yaremchuken.quizknight.model.QuizTaskChooseOption
 import yaremchuken.quizknight.model.QuizTaskTranslateWord
+import yaremchuken.quizknight.model.QuizTaskWriteListenedPhrase
 
 class QuizProvider private constructor() {
     companion object {
@@ -21,6 +22,10 @@ class QuizProvider private constructor() {
 
     private var quizIdx = -1
     private val quizes = listOf<QuizTask>(
+        QuizTaskWriteListenedPhrase(
+            "Let's go play in the yard",
+            arrayOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard",)
+        ),
         QuizTaskAssembleString(
             "Ты смотрела тот фильм вчера?",
             "did you watch that movie yesterday"
