@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.activities.QuizActivity
 import yaremchuken.quizknight.databinding.ItemAnswerFieldWordBorderedBinding
 
-class AssembleTranslationStringAdapter(
+class QuizAnswerAssembleStringAdapter(
     private val activity: QuizActivity,
     val items: ArrayList<String>,
     private val source: String
-): RecyclerView.Adapter<AssembleTranslationStringAdapter.ViewHolder>() {
+): RecyclerView.Adapter<QuizAnswerAssembleStringAdapter.ViewHolder>() {
 
     class ViewHolder(binding: ItemAnswerFieldWordBorderedBinding): RecyclerView.ViewHolder(binding.root) {
         val word = binding.tvWord

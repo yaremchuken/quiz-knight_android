@@ -7,9 +7,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.databinding.ItemAnswerFieldWordOrEditableBinding
 
-class AnswerTranslateWordAdapter(
+class QuizAnswerWordOrEditableAdapter(
     private val items: List<String>
-): RecyclerView.Adapter<AnswerTranslateWordAdapter.ViewHolder>() {
+): RecyclerView.Adapter<QuizAnswerWordOrEditableAdapter.ViewHolder>() {
 
     var playerInput: String = ""
 

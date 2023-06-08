@@ -16,14 +16,15 @@ import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.QuizProvider
 import yaremchuken.quizknight.QuizTaskChecker
 import yaremchuken.quizknight.StateMachineType
-import yaremchuken.quizknight.adapters.AnswerTranslateWordAdapter
-import yaremchuken.quizknight.adapters.AssembleTranslationStringAdapter
+import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
+import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
 import yaremchuken.quizknight.adapters.HealthBarAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizTaskAssembleString
 import yaremchuken.quizknight.model.QuizTaskChooseOption
+import yaremchuken.quizknight.model.QuizTaskInputListenedWord
 import yaremchuken.quizknight.model.QuizTaskTranslateWord
 import yaremchuken.quizknight.model.QuizType
 import java.util.Locale
@@ -82,9 +83,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (quizTask != null) {
             binding.tvQuizQuestion.text = quizTask?.question
 
-            if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE) {
+            if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE &&
+                quizTask?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
+            {
                 binding.tvQuizQuestion.visibility = View.VISIBLE
             }
+
             binding.llQuizBoard.visibility = View.VISIBLE
             binding.btnCheck.visibility = View.VISIBLE
 
@@ -93,7 +97,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvQuizAnswerItems.visibility = View.VISIBLE
                     binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
                     binding.rvQuizAnswerItems.adapter =
-                        AnswerTranslateWordAdapter(
+                        QuizAnswerWordOrEditableAdapter(
                             (quizTask as QuizTaskTranslateWord).placeholder.split(" "))
                 }
 
@@ -105,9 +109,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     val split = ArrayList((quizTask as QuizTaskAssembleString).verifications[0].split(" "))
                     randomize(split)
                     binding.rvAssembleStringOptions.adapter =
-                        AssembleTranslationStringAdapter(this, split, "options")
+                        QuizAnswerAssembleStringAdapter(this, split, "options")
                     binding.rvAssembleStringAnswer.adapter =
-                        AssembleTranslationStringAdapter(this, ArrayList(), "answer")
+                        QuizAnswerAssembleStringAdapter(this, ArrayList(), "answer")
                 }
 
                 QuizType.CHOOSE_CORRECT_OPTION -> {
@@ -128,6 +132,17 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 QuizType.WRITE_LISTENED_PHRASE -> {
                     binding.ibQuizListenBtn.visibility = View.VISIBLE
                     binding.tilBoardInput.visibility = View.VISIBLE
+
+                    speakOut(quizTask!!.question)
+                }
+
+                QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
+                    binding.ibQuizListenBtn.visibility = View.VISIBLE
+                    binding.rvQuizAnswerItems.visibility = View.VISIBLE
+                    binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
+                    binding.rvQuizAnswerItems.adapter =
+                        QuizAnswerWordOrEditableAdapter(
+                            (quizTask as QuizTaskInputListenedWord).placeholder.split(" "))
 
                     speakOut(quizTask!!.question)
                 }
@@ -172,7 +187,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     fun adapterExchangeListener(
-        from: AssembleTranslationStringAdapter,
+        from: QuizAnswerAssembleStringAdapter,
         position: Int,
         direction: String
     ) {
@@ -180,9 +195,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
                 val changed = from.items.removeAt(position)
                 if (direction == "options") {
-                    (binding.rvAssembleStringAnswer.adapter as AssembleTranslationStringAdapter).items.add(changed)
+                    (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter).items.add(changed)
                 } else {
-                    (binding.rvAssembleStringOptions.adapter as AssembleTranslationStringAdapter).items.add(changed)
+                    (binding.rvAssembleStringOptions.adapter as QuizAnswerAssembleStringAdapter).items.add(changed)
                 }
                 binding.rvAssembleStringOptions.adapter?.notifyDataSetChanged()
                 binding.rvAssembleStringAnswer.adapter?.notifyDataSetChanged()
@@ -197,16 +212,19 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         val answer = when (quizTask?.type) {
             QuizType.WORD_TRANSLATION_INPUT -> {
-                (binding.rvQuizAnswerItems.adapter as AnswerTranslateWordAdapter).playerInput
+                (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
             QuizType.CHOOSE_CORRECT_OPTION -> {
                 findViewById<RadioButton>(binding.rgOptionsGroup.checkedRadioButtonId).text.toString()
             }
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
-                (binding.rvAssembleStringAnswer.adapter as AssembleTranslationStringAdapter).items.joinToString(" ")
+                (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter).items.joinToString(" ")
             }
             QuizType.WRITE_LISTENED_PHRASE -> {
                 binding.etBoardInput.text.toString()
+            }
+            QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
+                (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
 
             else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")

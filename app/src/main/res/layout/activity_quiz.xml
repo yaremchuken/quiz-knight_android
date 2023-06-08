@@ -117,8 +117,7 @@
                 android:id="@+id/rvQuizAnswerItems"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15sp"
-                android:visibility="gone" />
+                android:padding="15sp"/>
 
             <RadioGroup
                 android:id="@+id/rgOptionsGroup"
@@ -187,7 +186,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilBoardInput"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etBoardInput"
