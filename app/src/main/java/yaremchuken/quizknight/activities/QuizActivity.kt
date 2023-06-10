@@ -16,9 +16,9 @@ import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.QuizProvider
 import yaremchuken.quizknight.QuizTaskChecker
 import yaremchuken.quizknight.StateMachineType
-import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
-import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
 import yaremchuken.quizknight.adapters.HealthBarAdapter
+import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
+import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.QuizTask
@@ -90,14 +90,16 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             binding.llQuizBoard.visibility = View.VISIBLE
+
             binding.btnCheck.visibility = View.VISIBLE
+            controlCheckBtnStatus(false)
 
             when (quizTask?.type) {
                 QuizType.WORD_TRANSLATION_INPUT -> {
                     binding.rvQuizAnswerItems.visibility = View.VISIBLE
                     binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
                     binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(
+                        QuizAnswerWordOrEditableAdapter(this,
                             (quizTask as QuizTaskTranslateWord).placeholder.split(" "))
                 }
 
@@ -141,7 +143,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvQuizAnswerItems.visibility = View.VISIBLE
                     binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
                     binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(
+                        QuizAnswerWordOrEditableAdapter(this,
                             (quizTask as QuizTaskInputListenedWord).placeholder.split(" "))
 
                     speakOut(quizTask!!.question)
@@ -253,5 +255,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun speakOut(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+    }
+
+    fun controlCheckBtnStatus(enabled: Boolean) {
+        binding.btnCheck.isEnabled = enabled
+        binding.btnCheck.alpha = if (enabled) 1F else .2F
     }
 }

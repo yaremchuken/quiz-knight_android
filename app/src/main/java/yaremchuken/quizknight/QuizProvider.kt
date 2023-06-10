@@ -23,6 +23,16 @@ class QuizProvider private constructor() {
 
     private var quizIdx = -1
     private val quizes = listOf<QuizTask>(
+        QuizTaskTranslateWord(
+            "Мой босс любит приходить на работу утром.",
+            arrayOf("likes", "loves"),
+            "My boss <answer> to come to work in the morning."
+        ),
+        QuizTaskTranslateWord(
+            "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
+            arrayOf("schedule"),
+            "I finish work at four, so I like my <answer> more."
+        ),
         QuizTaskInputListenedWord(
           "I clean this machine every day",
             "machine",
@@ -40,16 +50,6 @@ class QuizProvider private constructor() {
             "If you go on ........ me like this, i will never be able to finish writing my report.",
             "disturbing",
             arrayOf("disturbing", "afflicting", "concerning", "affecting")
-        ),
-        QuizTaskTranslateWord(
-            "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
-            arrayOf("schedule"),
-            "I finish work at four, so I like my <answer> more."
-        ),
-        QuizTaskTranslateWord(
-            "Мой босс любит приходить на работу утром.",
-            arrayOf("likes", "loves"),
-            "My boss <answer> to come to work in the morning."
         )
     )
 

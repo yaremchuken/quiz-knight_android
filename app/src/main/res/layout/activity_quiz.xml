@@ -40,8 +40,9 @@
 
         <ImageButton
             android:id="@+id/ibQuizListenBtn"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="130dp"
+            android:layout_gravity="top|center"
             android:background="@drawable/ic_bubble_question_background"
             android:layout_marginTop="42dp"
             android:layout_marginEnd="10dp"
@@ -71,7 +72,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:background="@drawable/ic_bubble_answer_background"
             android:orientation="horizontal">
 
@@ -207,13 +207,20 @@
         <Button
             android:id="@+id/btnCheck"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/ic_button_check_answer_background"
-            android:layout_alignParentBottom="true"
-            android:text="@string/check_btn_title"/>
+            android:backgroundTint="#FF5722"
+            android:backgroundTintMode="add"
+            android:paddingBottom="8dp"
+            android:text="@string/check_btn_title"
+            android:textSize="@dimen/font_size"
+            app:cornerRadius="10dp"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="1dp" />
 
     </RelativeLayout>
 
