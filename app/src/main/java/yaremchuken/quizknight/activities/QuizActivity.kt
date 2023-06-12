@@ -2,13 +2,16 @@ package yaremchuken.quizknight.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.SystemClock
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
 import yaremchuken.quizknight.GameStateMachine
@@ -62,6 +65,14 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             checkAnswer()
         }
 
+        binding.etBoardInput.addTextChangedListener {
+            controlCheckBtnStatus(!it.isNullOrBlank())
+        }
+        binding.rgOptionsGroup.setOnCheckedChangeListener { group, checkedId ->
+            controlCheckBtnStatus(true)
+            Log.i("TAG", "onCreate: $checkedId")
+        }
+
         hideBoard()
         GameStateMachine.getInstance().init(this)
     }
@@ -108,10 +119,13 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this)
                     binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this)
 
-                    val split = ArrayList((quizTask as QuizTaskAssembleString).verifications[0].split(" "))
-                    randomize(split)
+                    val words = ArrayList((quizTask as QuizTaskAssembleString).verifications[0].split(" "))
+                    words.addAll((quizTask as QuizTaskAssembleString).trashWords.split(" "))
+
+                    randomize(words)
+
                     binding.rvAssembleStringOptions.adapter =
-                        QuizAnswerAssembleStringAdapter(this, split, "options")
+                        QuizAnswerAssembleStringAdapter(this, words, "options")
                     binding.rvAssembleStringAnswer.adapter =
                         QuizAnswerAssembleStringAdapter(this, ArrayList(), "answer")
                 }
@@ -134,6 +148,15 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 QuizType.WRITE_LISTENED_PHRASE -> {
                     binding.ibQuizListenBtn.visibility = View.VISIBLE
                     binding.tilBoardInput.visibility = View.VISIBLE
+
+                    binding.etBoardInput.postDelayed(Runnable {
+                        binding.etBoardInput.dispatchTouchEvent(
+                            MotionEvent.obtain(
+                                SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
+                        binding.etBoardInput.dispatchTouchEvent(
+                            MotionEvent.obtain(
+                                SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
+                    }, 200)
 
                     speakOut(quizTask!!.question)
                 }
@@ -160,6 +183,13 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val service = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         service.hideSoftInputFromWindow(binding.rvQuizAnswerItems.rootView.applicationWindowToken, 0)
 
+        controlCheckBtnStatus(false)
+        if (quizTask?.type == QuizType.CHOOSE_CORRECT_OPTION) {
+            binding.rbOptionA.isChecked = false
+            binding.rbOptionB.isChecked = false
+            binding.rbOptionC.isChecked = false
+            binding.rbOptionD.isChecked = false
+        }
         hideBoard()
         GameStateMachine.getInstance().switchState(StateMachineType.CONTINUE_MOVING)
     }
@@ -188,7 +218,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    fun adapterExchangeListener(
+    fun adaptersExchanger(
         from: QuizAnswerAssembleStringAdapter,
         position: Int,
         direction: String
@@ -196,14 +226,19 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         when (quizTask?.type) {
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
                 val changed = from.items.removeAt(position)
-                if (direction == "options") {
-                    (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter).items.add(changed)
-                } else {
-                    (binding.rvAssembleStringOptions.adapter as QuizAnswerAssembleStringAdapter).items.add(changed)
-                }
-                binding.rvAssembleStringOptions.adapter?.notifyDataSetChanged()
-                binding.rvAssembleStringAnswer.adapter?.notifyDataSetChanged()
+                val answerAdapter = (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter)
+                val optionsAdapter = (binding.rvAssembleStringOptions.adapter as QuizAnswerAssembleStringAdapter)
 
+                if (direction == "options") {
+                    answerAdapter.items.add(changed)
+                } else {
+                    optionsAdapter.items.add(changed)
+                }
+
+                optionsAdapter.notifyDataSetChanged()
+                answerAdapter.notifyDataSetChanged()
+
+                controlCheckBtnStatus(answerAdapter.items.size > 0)
             }
             else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
         }

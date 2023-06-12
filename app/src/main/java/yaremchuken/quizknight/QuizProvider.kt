@@ -23,6 +23,25 @@ class QuizProvider private constructor() {
 
     private var quizIdx = -1
     private val quizes = listOf<QuizTask>(
+        QuizTaskChooseOption(
+            "If you go on ........ me like this, i will never be able to finish writing my report.",
+            "disturbing",
+            arrayOf("disturbing", "afflicting", "concerning", "affecting")
+        ),
+        QuizTaskAssembleString(
+            "Ты смотрела тот фильм вчера?",
+            "did you watch that movie yesterday",
+            "will tomorrow this"
+        ),
+        QuizTaskWriteListenedPhrase(
+            "Let's go play in the yard",
+            arrayOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard",)
+        ),
+        QuizTaskInputListenedWord(
+            "I clean this machine every day",
+            "machine",
+            "I clean this <answer> every day"
+        ),
         QuizTaskTranslateWord(
             "Мой босс любит приходить на работу утром.",
             arrayOf("likes", "loves"),
@@ -32,24 +51,6 @@ class QuizProvider private constructor() {
             "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
             arrayOf("schedule"),
             "I finish work at four, so I like my <answer> more."
-        ),
-        QuizTaskInputListenedWord(
-          "I clean this machine every day",
-            "machine",
-            "I clean this <answer> every day"
-        ),
-        QuizTaskWriteListenedPhrase(
-            "Let's go play in the yard",
-            arrayOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard",)
-        ),
-        QuizTaskAssembleString(
-            "Ты смотрела тот фильм вчера?",
-            "did you watch that movie yesterday"
-        ),
-        QuizTaskChooseOption(
-            "If you go on ........ me like this, i will never be able to finish writing my report.",
-            "disturbing",
-            arrayOf("disturbing", "afflicting", "concerning", "affecting")
         )
     )
 

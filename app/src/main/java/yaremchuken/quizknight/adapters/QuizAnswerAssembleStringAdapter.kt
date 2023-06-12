@@ -24,7 +24,7 @@ class QuizAnswerAssembleStringAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.word.text = items[position]
         holder.word.setOnClickListener {
-            activity.adapterExchangeListener(this, position, source)
+            activity.adaptersExchanger(this, position, source)
         }
     }
 }
