@@ -7,7 +7,12 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".activities.QuizActivity">
-    
+
+    <!--
+        The top part, that takes upper half of the screen.
+        It is responsible for drawing canvas with game world, hero, opponent etc.
+        Question bubble with current quiz task also goes here.
+     -->
     <FrameLayout
         android:id="@+id/flQuizTop"
         android:layout_weight=".6"
@@ -55,6 +60,7 @@
 
     </FrameLayout>
 
+    <!-- Lower part is designed for quiz answers, different views used to present different type of quiz -->
     <RelativeLayout
         android:layout_weight=".4"
         android:layout_width="match_parent"
@@ -75,6 +81,7 @@
             android:background="@drawable/ic_bubble_answer_background"
             android:orientation="horizontal">
 
+            <!-- Layout for ASSEMBLE_TRANSLATION_STRING task -->
             <LinearLayout
                 android:id="@+id/llAssembleString"
                 android:layout_width="match_parent"
@@ -113,12 +120,15 @@
 
             </LinearLayout>
 
+            <!-- View for WORD_TRANSLATION_INPUT and INPUT_LISTENED_WORD_IN_STRING tasks -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvQuizAnswerItems"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15sp"/>
+                android:padding="15sp"
+                android:visibility="gone"/>
 
+            <!-- Radio buttons group for CHOOSE_CORRECT_OPTION task -->
             <RadioGroup
                 android:id="@+id/rgOptionsGroup"
                 android:layout_width="match_parent"
@@ -183,11 +193,11 @@
 
             </RadioGroup>
 
+            <!-- Text input field for WRITE_LISTENED_PHRASE task -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilBoardInput"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+                android:layout_height="match_parent">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etBoardInput"
@@ -198,12 +208,14 @@
                     android:textStyle="bold"
                     android:gravity="top"
                     tools:text="text goes here"
-                    android:inputType="textFilter"/>
+                    android:inputType="textFilter"
+                    android:background="@android:color/transparent"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
+        <!-- Button to check player input -->
         <Button
             android:id="@+id/btnCheck"
             android:layout_width="match_parent"
@@ -213,14 +225,15 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:backgroundTint="#FF5722"
+            android:backgroundTint="@color/button_primary"
             android:backgroundTintMode="add"
             android:paddingBottom="8dp"
             android:text="@string/check_btn_title"
             android:textSize="@dimen/font_size"
+            android:textColor="@color/white"
             app:cornerRadius="10dp"
-            app:strokeColor="#FFFFFF"
-            app:strokeWidth="1dp" />
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"/>
 
     </RelativeLayout>
 
