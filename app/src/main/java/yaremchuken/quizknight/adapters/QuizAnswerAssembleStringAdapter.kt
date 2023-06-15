@@ -8,7 +8,7 @@ import yaremchuken.quizknight.databinding.ItemAnswerFieldWordBorderedBinding
 
 class QuizAnswerAssembleStringAdapter(
     private val activity: QuizActivity,
-    val items: ArrayList<String>,
+    val items: MutableList<String>,
     private val source: String
 ): RecyclerView.Adapter<QuizAnswerAssembleStringAdapter.ViewHolder>() {
 

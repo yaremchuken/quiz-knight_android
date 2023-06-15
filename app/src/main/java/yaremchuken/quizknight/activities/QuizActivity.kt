@@ -25,10 +25,6 @@ import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.QuizTask
-import yaremchuken.quizknight.model.QuizTaskAssembleString
-import yaremchuken.quizknight.model.QuizTaskChooseOption
-import yaremchuken.quizknight.model.QuizTaskInputListenedWord
-import yaremchuken.quizknight.model.QuizTaskTranslateWord
 import yaremchuken.quizknight.model.QuizType
 import java.util.Locale
 
@@ -55,22 +51,20 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         updateGold()
 
         tts = TextToSpeech(this, this)
+
         binding.ibQuizListenBtn.setOnClickListener {
             if (quizTask != null) {
-                speakOut(quizTask!!.question)
+                speakOut(quizTask!!.display)
             }
         }
-
         binding.btnCheck.setOnClickListener {
             checkAnswer()
         }
-
         binding.etBoardInput.addTextChangedListener {
             controlCheckBtnStatus(!it.isNullOrBlank())
         }
-        binding.rgOptionsGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgOptionsGroup.setOnCheckedChangeListener { _, _ ->
             controlCheckBtnStatus(true)
-            Log.i("TAG", "onCreate: $checkedId")
         }
 
         hideBoard()
@@ -92,7 +86,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     fun startQuiz() {
         quizTask = QuizProvider.getInstance().nextQuiz()
         if (quizTask != null) {
-            binding.tvQuizQuestion.text = quizTask?.question
+            binding.tvQuizQuestion.text = quizTask?.display
 
             if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE &&
                 quizTask?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
@@ -110,8 +104,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvQuizAnswerItems.visibility = View.VISIBLE
                     binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
                     binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(this,
-                            (quizTask as QuizTaskTranslateWord).placeholder.split(" "))
+                        QuizAnswerWordOrEditableAdapter(this, quizTask!!.options[0].split(" "))
                 }
 
                 QuizType.ASSEMBLE_TRANSLATION_STRING -> {
@@ -119,8 +112,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this)
                     binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this)
 
-                    val words = ArrayList((quizTask as QuizTaskAssembleString).verifications[0].split(" "))
-                    words.addAll((quizTask as QuizTaskAssembleString).trashWords.split(" "))
+                    val words = quizTask!!.verifications[0].split(" ").toMutableList()
+                    words.addAll(quizTask!!.options)
 
                     randomize(words)
 
@@ -132,17 +125,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 QuizType.CHOOSE_CORRECT_OPTION -> {
                     binding.rgOptionsGroup.visibility = View.VISIBLE
-                    val quiz = quizTask as QuizTaskChooseOption
-
-                    binding.rbOptionA.isChecked = false
-                    binding.rbOptionB.isChecked = false
-                    binding.rbOptionC.isChecked = false
-                    binding.rbOptionD.isChecked = false
-
-                    binding.rbOptionA.text = "A. ${quiz.options[0]}"
-                    binding.rbOptionB.text = "B. ${quiz.options[1]}"
-                    binding.rbOptionC.text = "C. ${quiz.options[2]}"
-                    binding.rbOptionD.text = "D. ${quiz.options[3]}"
+                    binding.rbOptionA.text = "A. ${quizTask!!.options[0]}"
+                    binding.rbOptionB.text = "B. ${quizTask!!.options[1]}"
+                    binding.rbOptionC.text = "C. ${quizTask!!.options[2]}"
+                    binding.rbOptionD.text = "D. ${quizTask!!.options[3]}"
                 }
 
                 QuizType.WRITE_LISTENED_PHRASE -> {
@@ -158,7 +144,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
                     }, 200)
 
-                    speakOut(quizTask!!.question)
+                    speakOut(quizTask!!.display)
                 }
 
                 QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
@@ -166,10 +152,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     binding.rvQuizAnswerItems.visibility = View.VISIBLE
                     binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
                     binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(this,
-                            (quizTask as QuizTaskInputListenedWord).placeholder.split(" "))
+                        QuizAnswerWordOrEditableAdapter(this, quizTask!!.options[0].split(" "))
 
-                    speakOut(quizTask!!.question)
+                    speakOut(quizTask!!.display)
                 }
 
                 else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
@@ -183,13 +168,15 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val service = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         service.hideSoftInputFromWindow(binding.rvQuizAnswerItems.rootView.applicationWindowToken, 0)
 
-        controlCheckBtnStatus(false)
         if (quizTask?.type == QuizType.CHOOSE_CORRECT_OPTION) {
             binding.rbOptionA.isChecked = false
             binding.rbOptionB.isChecked = false
             binding.rbOptionC.isChecked = false
             binding.rbOptionD.isChecked = false
         }
+        binding.etBoardInput.text = null
+
+        controlCheckBtnStatus(false)
         hideBoard()
         GameStateMachine.getInstance().switchState(StateMachineType.CONTINUE_MOVING)
     }
@@ -207,7 +194,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.btnCheck.visibility = View.INVISIBLE
     }
 
-    private fun randomize(array: ArrayList<String>) {
+    private fun randomize(array: MutableList<String>) {
         var tmp: String
         var rnd: Int
         for (i in array.indices) {

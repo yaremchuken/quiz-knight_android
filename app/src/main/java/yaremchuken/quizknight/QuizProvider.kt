@@ -1,11 +1,7 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.model.QuizTask
-import yaremchuken.quizknight.model.QuizTaskAssembleString
-import yaremchuken.quizknight.model.QuizTaskChooseOption
-import yaremchuken.quizknight.model.QuizTaskInputListenedWord
-import yaremchuken.quizknight.model.QuizTaskTranslateWord
-import yaremchuken.quizknight.model.QuizTaskWriteListenedPhrase
+import yaremchuken.quizknight.model.QuizType
 
 class QuizProvider private constructor() {
     companion object {
@@ -23,34 +19,35 @@ class QuizProvider private constructor() {
 
     private var quizIdx = -1
     private val quizes = listOf<QuizTask>(
-        QuizTaskChooseOption(
-            "If you go on ........ me like this, i will never be able to finish writing my report.",
-            "disturbing",
-            arrayOf("disturbing", "afflicting", "concerning", "affecting")
-        ),
-        QuizTaskAssembleString(
+        QuizTask(
+            QuizType.ASSEMBLE_TRANSLATION_STRING,
             "Ты смотрела тот фильм вчера?",
-            "did you watch that movie yesterday",
-            "will tomorrow this"
+            arrayOf("will", "tomorrow", "this"),
+            arrayOf("did you watch that movie yesterday")
         ),
-        QuizTaskWriteListenedPhrase(
-            "Let's go play in the yard",
-            arrayOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard",)
-        ),
-        QuizTaskInputListenedWord(
+        QuizTask(
+            QuizType.INPUT_LISTENED_WORD_IN_STRING,
             "I clean this machine every day",
-            "machine",
-            "I clean this <answer> every day"
+            arrayOf("I clean this <answer> every day"),
+            arrayOf("machine")
         ),
-        QuizTaskTranslateWord(
+        QuizTask(
+            QuizType.CHOOSE_CORRECT_OPTION,
+            "If you go on ........ me like this, i will never be able to finish writing my report.",
+            arrayOf("disturbing", "afflicting", "concerning", "affecting"),
+            arrayOf("disturbing")
+        ),
+        QuizTask(
+            QuizType.WRITE_LISTENED_PHRASE,
+            "Let's go play in the yard",
+            arrayOf(),
+            arrayOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard")
+        ),
+        QuizTask(
+            QuizType.WORD_TRANSLATION_INPUT,
             "Мой босс любит приходить на работу утром.",
-            arrayOf("likes", "loves"),
-            "My boss <answer> to come to work in the morning."
-        ),
-        QuizTaskTranslateWord(
-            "Я заканчиваю работу в четыре, поэтому мне нравится моё расписание больше.",
-            arrayOf("schedule"),
-            "I finish work at four, so I like my <answer> more."
+            arrayOf("My boss <answer> to come to work in the morning."),
+            arrayOf("likes", "loves")
         )
     )
 
