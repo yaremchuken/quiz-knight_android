@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Quiz Knight</string>
-    <string name="title_activity_quiz">QuizActivity</string>
+    <string name="app_name" translatable="false">Quiz Knight</string>
+    <string name="title_activity_quiz" translatable="false">QuizActivity</string>
 
-    <string name="check_btn_title">ПРОВЕРИТЬ</string>
+    <string name="check_btn_title">CHECK</string>
     <string name="start_btn_title">START</string>
 </resources>

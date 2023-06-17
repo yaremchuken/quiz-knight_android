@@ -12,11 +12,13 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
+import kotlinx.coroutines.launch
+import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStateMachine
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.QuizProvider
 import yaremchuken.quizknight.QuizTaskChecker
 import yaremchuken.quizknight.StateMachineType
 import yaremchuken.quizknight.adapters.HealthBarAdapter
@@ -24,8 +26,8 @@ import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
 import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
-import yaremchuken.quizknight.model.QuizTask
-import yaremchuken.quizknight.model.QuizType
+import yaremchuken.quizknight.entity.QuizTaskEntity
+import yaremchuken.quizknight.entity.QuizType
 import java.util.Locale
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -35,7 +37,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
 
-    private var quizTask: QuizTask? = null
+    private var quizTaskEntity: QuizTaskEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -53,8 +55,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
 
         binding.ibQuizListenBtn.setOnClickListener {
-            if (quizTask != null) {
-                speakOut(quizTask!!.display)
+            if (quizTaskEntity != null) {
+                speakOut(quizTaskEntity!!.display)
             }
         }
         binding.btnCheck.setOnClickListener {
@@ -84,83 +86,96 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     @SuppressLint("SetTextI18n")
     fun startQuiz() {
-        quizTask = QuizProvider.getInstance().nextQuiz()
-        if (quizTask != null) {
-            binding.tvQuizQuestion.text = quizTask?.display
+        val dao = (application as App).db.getQuizTaskDao()
+        lifecycleScope.launch {
+            dao.fetch(
+                GameStats.getInstance().module,
+                GameStats.getInstance().level,
+                (quizTaskEntity?.order ?: 0) + 1
+            ).collect {
+                if (it.isEmpty()) {
+                    Log.i("TAG", "startQuiz: LEVEL COMPLETED!!!")
+                } else {
+                    quizTaskEntity = it[0]
+                    binding.tvQuizQuestion.text = quizTaskEntity?.display
 
-            if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE &&
-                quizTask?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
-            {
-                binding.tvQuizQuestion.visibility = View.VISIBLE
+                    if (quizTaskEntity?.type != QuizType.WRITE_LISTENED_PHRASE &&
+                        quizTaskEntity?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
+                    {
+                        binding.tvQuizQuestion.visibility = View.VISIBLE
+                    }
+
+                    binding.llQuizBoard.visibility = View.VISIBLE
+
+                    binding.btnCheck.visibility = View.VISIBLE
+                    controlCheckBtnStatus(false)
+
+                    when (quizTaskEntity?.type) {
+                        QuizType.WORD_TRANSLATION_INPUT -> {
+                            binding.rvQuizAnswerItems.visibility = View.VISIBLE
+                            binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                            binding.rvQuizAnswerItems.adapter =
+                                QuizAnswerWordOrEditableAdapter(
+                                    this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
+                        }
+
+                        QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+                            binding.llAssembleString.visibility = View.VISIBLE
+                            binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                            binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+
+                            val words = quizTaskEntity!!.verifications[0].split(" ").toMutableList()
+                            words.addAll(quizTaskEntity!!.options)
+
+                            randomize(words)
+
+                            binding.rvAssembleStringOptions.adapter =
+                                QuizAnswerAssembleStringAdapter(this@QuizActivity, words, "options")
+                            binding.rvAssembleStringAnswer.adapter =
+                                QuizAnswerAssembleStringAdapter(this@QuizActivity, ArrayList(), "answer")
+                        }
+
+                        QuizType.CHOOSE_CORRECT_OPTION -> {
+                            binding.rgOptionsGroup.visibility = View.VISIBLE
+                            binding.rbOptionA.text = "A. ${quizTaskEntity!!.options[0]}"
+                            binding.rbOptionB.text = "B. ${quizTaskEntity!!.options[1]}"
+                            binding.rbOptionC.text = "C. ${quizTaskEntity!!.options[2]}"
+                            binding.rbOptionD.text = "D. ${quizTaskEntity!!.options[3]}"
+                        }
+
+                        QuizType.WRITE_LISTENED_PHRASE -> {
+                            binding.ibQuizListenBtn.visibility = View.VISIBLE
+                            binding.tilBoardInput.visibility = View.VISIBLE
+
+                            binding.etBoardInput.postDelayed(Runnable {
+                                binding.etBoardInput.dispatchTouchEvent(
+                                    MotionEvent.obtain(
+                                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
+                                binding.etBoardInput.dispatchTouchEvent(
+                                    MotionEvent.obtain(
+                                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
+                            }, 200)
+
+                            speakOut(quizTaskEntity!!.display)
+                        }
+
+                        QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
+                            binding.ibQuizListenBtn.visibility = View.VISIBLE
+                            binding.rvQuizAnswerItems.visibility = View.VISIBLE
+                            binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                            binding.rvQuizAnswerItems.adapter =
+                                QuizAnswerWordOrEditableAdapter(
+                                    this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
+
+                            speakOut(quizTaskEntity!!.display)
+                        }
+
+                        else -> throw RuntimeException("Unknown quiz type ${quizTaskEntity?.type}")
+                    }
+
+                    GameStateMachine.getInstance().switchState(StateMachineType.QUIZ)
+                }
             }
-
-            binding.llQuizBoard.visibility = View.VISIBLE
-
-            binding.btnCheck.visibility = View.VISIBLE
-            controlCheckBtnStatus(false)
-
-            when (quizTask?.type) {
-                QuizType.WORD_TRANSLATION_INPUT -> {
-                    binding.rvQuizAnswerItems.visibility = View.VISIBLE
-                    binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
-                    binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(this, quizTask!!.options[0].split(" "))
-                }
-
-                QuizType.ASSEMBLE_TRANSLATION_STRING -> {
-                    binding.llAssembleString.visibility = View.VISIBLE
-                    binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this)
-                    binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this)
-
-                    val words = quizTask!!.verifications[0].split(" ").toMutableList()
-                    words.addAll(quizTask!!.options)
-
-                    randomize(words)
-
-                    binding.rvAssembleStringOptions.adapter =
-                        QuizAnswerAssembleStringAdapter(this, words, "options")
-                    binding.rvAssembleStringAnswer.adapter =
-                        QuizAnswerAssembleStringAdapter(this, ArrayList(), "answer")
-                }
-
-                QuizType.CHOOSE_CORRECT_OPTION -> {
-                    binding.rgOptionsGroup.visibility = View.VISIBLE
-                    binding.rbOptionA.text = "A. ${quizTask!!.options[0]}"
-                    binding.rbOptionB.text = "B. ${quizTask!!.options[1]}"
-                    binding.rbOptionC.text = "C. ${quizTask!!.options[2]}"
-                    binding.rbOptionD.text = "D. ${quizTask!!.options[3]}"
-                }
-
-                QuizType.WRITE_LISTENED_PHRASE -> {
-                    binding.ibQuizListenBtn.visibility = View.VISIBLE
-                    binding.tilBoardInput.visibility = View.VISIBLE
-
-                    binding.etBoardInput.postDelayed(Runnable {
-                        binding.etBoardInput.dispatchTouchEvent(
-                            MotionEvent.obtain(
-                                SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
-                        binding.etBoardInput.dispatchTouchEvent(
-                            MotionEvent.obtain(
-                                SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
-                    }, 200)
-
-                    speakOut(quizTask!!.display)
-                }
-
-                QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
-                    binding.ibQuizListenBtn.visibility = View.VISIBLE
-                    binding.rvQuizAnswerItems.visibility = View.VISIBLE
-                    binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this)
-                    binding.rvQuizAnswerItems.adapter =
-                        QuizAnswerWordOrEditableAdapter(this, quizTask!!.options[0].split(" "))
-
-                    speakOut(quizTask!!.display)
-                }
-
-                else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
-            }
-
-            GameStateMachine.getInstance().switchState(StateMachineType.QUIZ)
         }
     }
 
@@ -168,7 +183,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val service = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         service.hideSoftInputFromWindow(binding.rvQuizAnswerItems.rootView.applicationWindowToken, 0)
 
-        if (quizTask?.type == QuizType.CHOOSE_CORRECT_OPTION) {
+        if (quizTaskEntity?.type == QuizType.CHOOSE_CORRECT_OPTION) {
             binding.rbOptionA.isChecked = false
             binding.rbOptionB.isChecked = false
             binding.rbOptionC.isChecked = false
@@ -210,7 +225,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         position: Int,
         direction: String
     ) {
-        when (quizTask?.type) {
+        when (quizTaskEntity?.type) {
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
                 val changed = from.items.removeAt(position)
                 val answerAdapter = (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter)
@@ -227,14 +242,14 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 controlCheckBtnStatus(answerAdapter.items.size > 0)
             }
-            else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
+            else -> throw RuntimeException("Unknown quiz type ${quizTaskEntity?.type}")
         }
     }
 
     private fun checkAnswer() {
-        if (quizTask == null) return
+        if (quizTaskEntity == null) return
 
-        val answer = when (quizTask?.type) {
+        val answer = when (quizTaskEntity?.type) {
             QuizType.WORD_TRANSLATION_INPUT -> {
                 (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
@@ -251,10 +266,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
 
-            else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
+            else -> throw RuntimeException("Unknown quiz type ${quizTaskEntity?.type}")
         }
 
-        if (QuizTaskChecker.checkAnswer(quizTask!!, answer)) {
+        if (QuizTaskChecker.checkAnswer(quizTaskEntity!!, answer)) {
             endQuiz()
         } else {
             GameStats.getInstance().adjustHealth(-1)

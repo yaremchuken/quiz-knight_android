@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.model
+package yaremchuken.quizknight.entity
 
 enum class QuizType {
     WORD_TRANSLATION_INPUT,

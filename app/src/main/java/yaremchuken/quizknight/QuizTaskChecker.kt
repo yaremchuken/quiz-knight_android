@@ -1,10 +1,10 @@
 package yaremchuken.quizknight
 
-import yaremchuken.quizknight.model.QuizTask
-import yaremchuken.quizknight.model.QuizType
+import yaremchuken.quizknight.entity.QuizTaskEntity
+import yaremchuken.quizknight.entity.QuizType
 
 object QuizTaskChecker {
-    fun checkAnswer(task: QuizTask, answer: String): Boolean {
+    fun checkAnswer(task: QuizTaskEntity, answer: String): Boolean {
         var corrected = answer.lowercase()
         if (task.type == QuizType.ASSEMBLE_TRANSLATION_STRING) {
             return answer == task.verifications.joinToString(" ")

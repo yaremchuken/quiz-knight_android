@@ -1,5 +1,7 @@
 package yaremchuken.quizknight
 
+import yaremchuken.quizknight.entity.ModuleType
+
 class GameStats private constructor() {
     companion object {
         @Volatile
@@ -20,6 +22,12 @@ class GameStats private constructor() {
         private set
 
     var gold: Int = 150
+        private set
+
+    var module: ModuleType = ModuleType.LAZYWOOD
+        private set
+
+    var level: Long = 1
         private set
 
     fun adjustHealth(amount: Int) {
