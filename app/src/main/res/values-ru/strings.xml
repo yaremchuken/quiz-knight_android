@@ -1,4 +1,5 @@
 <resources>
     <string name="check_btn_title">ПРОВЕРИТЬ</string>
     <string name="start_btn_title">НАЧАТЬ</string>
+    <string name="new_game_btn_title">НОВАЯ ИГРА</string>
 </resources>

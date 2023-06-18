@@ -1,6 +1,8 @@
 package yaremchuken.quizknight
 
+import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleType
+import java.util.EnumMap
 
 class GameStats private constructor() {
     companion object {
@@ -16,21 +18,32 @@ class GameStats private constructor() {
         }
     }
 
-    var maxHealth: Int = 3
+    var maxHealth: Long = 3
         private set
-    var health: Int = 2
+    var health: Double = 0.0
         private set
 
-    var gold: Int = 150
+    var gold: Long = 0
         private set
 
     var module: ModuleType = ModuleType.LAZYWOOD
         private set
 
-    var level: Long = 1
+    var progress: Map<ModuleType, Long> = EnumMap(ModuleType::class.java)
         private set
 
-    fun adjustHealth(amount: Int) {
-        health = 0.coerceAtLeast(maxHealth.coerceAtMost(health + amount))
+    var level: Long = -1
+        private set
+
+    fun dropHeart() {
+        health = 0.0.coerceAtLeast(health-1)
+    }
+
+    fun init(stats: GameStatsEntity, progress: Map<ModuleType, Long>) {
+        health = stats.health
+        gold = stats.gold
+        module = stats.module
+        this.progress = progress
+        level = progress[module]!!
     }
 }

@@ -4,4 +4,5 @@
 
     <string name="check_btn_title">CHECK</string>
     <string name="start_btn_title">START</string>
+    <string name="new_game_btn_title">NEW GAME</string>
 </resources>

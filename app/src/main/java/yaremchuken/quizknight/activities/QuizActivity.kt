@@ -90,7 +90,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         lifecycleScope.launch {
             dao.fetch(
                 GameStats.getInstance().module,
-                GameStats.getInstance().level,
+                GameStats.getInstance().level + 1,
                 (quizTaskEntity?.order ?: 0) + 1
             ).collect {
                 if (it.isEmpty()) {
@@ -272,13 +272,13 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (QuizTaskChecker.checkAnswer(quizTaskEntity!!, answer)) {
             endQuiz()
         } else {
-            GameStats.getInstance().adjustHealth(-1)
+            GameStats.getInstance().dropHeart()
             updateHealthBar()
         }
     }
 
     private fun updateHealthBar() {
-        val healths: ArrayList<Boolean> = ArrayList(GameStats.getInstance().maxHealth)
+        val healths: ArrayList<Boolean> = ArrayList(GameStats.getInstance().maxHealth.toInt())
         for (i in 0 until GameStats.getInstance().maxHealth) {
             healths.add(i < GameStats.getInstance().health)
         }
