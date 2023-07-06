@@ -13,5 +13,6 @@
     <color name="palette_a5">#A5A58D</color>
     <color name="palette_6b">#6B705C</color>
 
-    <color name="button_primary">#FF5722</color>
+    <color name="button_primary">#E37958</color>
+    <color name="button_secondary">#835142</color>
 </resources>

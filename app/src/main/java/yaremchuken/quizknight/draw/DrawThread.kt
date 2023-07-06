@@ -7,7 +7,7 @@ import kotlin.math.roundToLong
 
 class DrawThread(private val surface: SurfaceHolder, private val drawView: DrawView): Thread() {
     companion object {
-        const val FPS = 12L
+        const val FPS = 24L
     }
 
     private val frameRate: Long = (1000.0 / FPS).roundToLong()

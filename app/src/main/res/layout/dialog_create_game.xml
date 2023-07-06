@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@color/palette_b7">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/create_new_game"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/font_size"
+        android:textStyle="bold" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilGameName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etGameName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/palette_ff"
+        android:hint="@string/game_name"
+        android:inputType="textFilter"
+        android:textSize="@dimen/font_size"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/original_language"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/rgOriginalGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15sp">
+
+                <RadioButton
+                    android:id="@+id/rbOriginalRU"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="true"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    android:text="RU"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/learn_language"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/rgLearnedGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15sp">
+
+                <RadioButton
+                    android:id="@+id/rbLearnEN"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/drawable_answer_board_option_selector"
+                    android:button="@null"
+                    android:checked="true"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size"
+                    android:textStyle="bold"
+                    android:text="EN"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnDone"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="52dp"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/button_primary"
+            android:backgroundTintMode="add"
+            android:paddingBottom="8dp"
+            android:text="@string/done_btn_title"
+            android:textSize="@dimen/font_size"
+            android:textColor="@color/white"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="52dp"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/button_secondary"
+            android:backgroundTintMode="add"
+            android:paddingBottom="8dp"
+            android:text="@string/cancel_btn_title"
+            android:textSize="@dimen/font_size"
+            android:textColor="@color/white"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+</LinearLayout>

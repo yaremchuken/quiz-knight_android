@@ -1,9 +1,12 @@
 package yaremchuken.quizknight.activities
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +17,7 @@ import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.databinding.ActivityMainBinding
 import yaremchuken.quizknight.databinding.ButtonGameStartBinding
+import yaremchuken.quizknight.databinding.DialogCreateGameBinding
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.Language
 import yaremchuken.quizknight.entity.ModuleProgressEntity
@@ -32,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var createGameDialog: DialogCreateGameBinding
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -47,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             gameStatsDao.fetchAll().collect {
                 it.forEach { game ->
                     val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
-                    gameBtn.root.text = "${game.game} - ${game.studied}"
+                    gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
                     gameBtn.root.setOnClickListener {
                         startGame(game)
                     }
@@ -57,47 +63,70 @@ class MainActivity : AppCompatActivity() {
                     val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
                     gameBtn.root.text = resources.getString(R.string.new_game_btn_title)
                     gameBtn.root.setOnClickListener {
-                        startGame(null, i.toLong())
+                        createGameDialog(i.toLong())
                     }
+                    gameBtn.root.setBackgroundColor(resources.getColor(R.color.palette_6b))
                     binding.buttonsHolder.addView(gameBtn.root)
                 }
             }
         }
     }
 
-    private fun startGame(game: GameStatsEntity?, order: Long? = null) {
+    private fun createGameDialog(idx: Long) {
+        val dialog = Dialog(this)
+        val dialogBinding = DialogCreateGameBinding.inflate(layoutInflater)
+
+        dialog.setContentView(dialogBinding.root)
+
+        dialogBinding.btnDone.setOnClickListener {
+            if (dialogBinding.etGameName.text != null && dialogBinding.etGameName.text!!.isNotBlank()) {
+                val gameStatsDao = (application as App).db.getGameStatsDao()
+                val moduleProgressDao = (application as App).db.getModuleProgressDao()
+
+                val original = Language.RU
+                val learned = Language.EN
+
+                val newGame = GameStatsEntity(
+                    dialogBinding.etGameName.text.toString(), idx, original, learned, 0,
+                    ModuleType.LAZYWOOD, GameStats.getInstance().maxHealth.toDouble())
+
+                val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
+                val progressEntities = ArrayList<ModuleProgressEntity>()
+                ModuleType.values().forEach {
+                    progress[it] = 0
+                    progressEntities.add(ModuleProgressEntity(newGame.game, newGame.module, 0))
+                }
+
+                lifecycleScope.launch {
+                    gameStatsDao.insert(newGame)
+                    moduleProgressDao.insert(progressEntities)
+                }.invokeOnCompletion {
+                    binding.buttonsHolder.visibility = View.INVISIBLE
+                    dialog.dismiss()
+                    switchToGame(newGame, progress)
+                }
+            }
+        }
+
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun startGame(game: GameStatsEntity) {
         val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         val moduleProgressDao = (application as App).db.getModuleProgressDao()
 
         binding.buttonsHolder.visibility = View.INVISIBLE
 
-        if (game == null) {
-            val gameStatsDao = (application as App).db.getGameStatsDao()
-
-            val newGame = GameStatsEntity(
-                "CALL ME $order", order!!, Language.RU, Language.EN, 0,
-                ModuleType.LAZYWOOD, GameStats.getInstance().maxHealth.toDouble())
-
-            val progressEntities = ArrayList<ModuleProgressEntity>()
-            ModuleType.values().forEach {
-                progress[it] = 0
-                progressEntities.add(ModuleProgressEntity(newGame.game, newGame.module, 0))
-            }
-
-            lifecycleScope.launch {
-                gameStatsDao.insert(newGame)
-                moduleProgressDao.insert(progressEntities)
-            }
-
-            switchToGame(newGame, progress)
-        } else {
-            lifecycleScope.launch {
-                moduleProgressDao.fetch(game.game).collect {
-                    it.forEach { pr ->
-                        progress[pr.module] = pr.progress
-                    }
-                    switchToGame(game, progress)
+        lifecycleScope.launch {
+            moduleProgressDao.fetch(game.game).collect {
+                it.forEach { pr ->
+                    progress[pr.module] = pr.progress
                 }
+                switchToGame(game, progress)
             }
         }
     }

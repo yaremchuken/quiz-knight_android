@@ -1,5 +1,11 @@
 <resources>
     <string name="check_btn_title">ПРОВЕРИТЬ</string>
     <string name="start_btn_title">НАЧАТЬ</string>
-    <string name="new_game_btn_title">НОВАЯ ИГРА</string>
+    <string name="new_game_btn_title">новая игра</string>
+    <string name="create_new_game">Начинаем новое приключение герой</string>
+    <string name="done_btn_title">OK</string>
+    <string name="cancel_btn_title">НЕТ</string>
+    <string name="game_name">Имя игры</string>
+    <string name="original_language">Ваш язык</string>
+    <string name="learn_language">Изучаемый</string>
 </resources>
