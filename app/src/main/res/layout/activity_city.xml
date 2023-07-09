@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".activities.QuizActivity">
+
+    <RelativeLayout
+        android:id="@+id/llCityTop"
+        android:layout_weight=".15"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivCityBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:maxHeight="0dp"
+            android:src="@drawable/city_crossroads"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWorldmapMarkers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="15sp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- Lower part is designed for player statistic -->
+    <LinearLayout
+        android:layout_weight=".85"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_bg_answer_board_gradient"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/ibCityWorldmap"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/city_ui_worldmap"
+            android:src="@drawable/selector_btn_border"
+            android:scaleType="fitXY"/>
+
+        <ImageButton
+            android:id="@+id/ibCityCrossroads"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/city_ui_crossroads"
+            android:src="@drawable/selector_btn_border"
+            android:scaleType="fitXY"/>
+
+        <ImageButton
+            android:id="@+id/ibCityBlacksmith"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/city_ui_blacksmith"
+            android:src="@drawable/selector_btn_border"
+            android:scaleType="fitXY"/>
+
+        <ImageButton
+            android:id="@+id/ibCityAlchemy"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/city_ui_alchemy"
+            android:src="@drawable/selector_btn_border"
+            android:scaleType="fitXY"/>
+
+    </LinearLayout>
+
+</LinearLayout>

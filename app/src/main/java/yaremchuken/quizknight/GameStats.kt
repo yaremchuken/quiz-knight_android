@@ -20,10 +20,14 @@ class GameStats private constructor() {
 
     var maxHealth: Long = 3
         private set
+
     var health: Double = 0.0
         private set
 
     var gold: Long = 0
+        private set
+
+    var game: String = ""
         private set
 
     var module: ModuleType = ModuleType.LAZYWOOD
@@ -42,8 +46,13 @@ class GameStats private constructor() {
     fun init(stats: GameStatsEntity, progress: Map<ModuleType, Long>) {
         health = stats.health
         gold = stats.gold
-        module = stats.module
+        game = stats.game
         this.progress = progress
+        switchModule(stats.module)
+    }
+
+    fun switchModule(moduleType: ModuleType) {
+        module = moduleType
         level = progress[module]!!
     }
 }

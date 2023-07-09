@@ -12,9 +12,9 @@ interface QuizTaskDao {
     @Insert
     suspend fun insert(entities: List<QuizTaskEntity>)
 
-    @Query("select * from `quiz_task`")
+    @Query("select * from quiz_task")
     fun fetchAll(): Flow<List<QuizTaskEntity>>
 
-    @Query("select * from `quiz_task` where module = :module and level = :level and `order` = :order")
+    @Query("select * from quiz_task where module = :module and level = :level and `order` = :order")
     fun fetch(module: ModuleType, level: Long, order: Long): Flow<List<QuizTaskEntity>>
 }

@@ -10,7 +10,8 @@ data class GameStatsEntity(
     val order: Long,
     val original: Language,
     val studied: Language,
-    val gold: Long,
-    val module: ModuleType,
-    val health: Double
+
+    var module: ModuleType,
+    var gold: Long,
+    var health: Double,
 )

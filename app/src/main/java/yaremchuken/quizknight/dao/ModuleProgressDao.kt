@@ -12,6 +12,6 @@ interface ModuleProgressDao {
     @Insert
     suspend fun insert(progresses: List<ModuleProgressEntity>)
 
-    @Query("select * from `module_progress` where game = :game")
+    @Query("select * from module_progress where game = :game")
     fun fetch(game: String): Flow<List<ModuleProgressEntity>>
 }

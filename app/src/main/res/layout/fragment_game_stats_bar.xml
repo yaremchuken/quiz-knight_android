@@ -7,33 +7,47 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvHearts"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:orientation="horizontal"/>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvModuleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:padding="5dp">
+            android:textSize="@dimen/font_size"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:src="@drawable/ui_gold"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="5dp">
 
-            <TextView
-                android:id="@+id/tvGold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                tools:text="75"/>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ui_gold"/>
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvGold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            tools:text="75"/>
+
+    </LinearLayout>
 </RelativeLayout>

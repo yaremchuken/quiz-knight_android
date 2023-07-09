@@ -19,6 +19,11 @@
             android:label="@string/title_activity_quiz"
             android:theme="@style/Theme.QuizKnight" />
         <activity
+            android:name=".activities.CityActivity"
+            android:exported="false"
+            android:label="@string/title_activity_city"
+            android:theme="@style/Theme.QuizKnight" />
+        <activity
             android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>

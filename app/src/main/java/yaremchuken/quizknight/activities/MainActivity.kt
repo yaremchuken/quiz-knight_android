@@ -4,13 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
@@ -35,8 +32,6 @@ const val MAX_GAMES = 4
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    private lateinit var createGameDialog: DialogCreateGameBinding
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +67,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.buttonsHolder.visibility = View.VISIBLE
+    }
+
     private fun createGameDialog(idx: Long) {
         val dialog = Dialog(this)
         val dialogBinding = DialogCreateGameBinding.inflate(layoutInflater)
@@ -87,14 +87,14 @@ class MainActivity : AppCompatActivity() {
                 val learned = Language.EN
 
                 val newGame = GameStatsEntity(
-                    dialogBinding.etGameName.text.toString(), idx, original, learned, 0,
-                    ModuleType.LAZYWOOD, GameStats.getInstance().maxHealth.toDouble())
+                    dialogBinding.etGameName.text.toString(), idx, original, learned,
+                    ModuleType.LAZYWOOD, 0, GameStats.getInstance().maxHealth.toDouble())
 
                 val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
                 val progressEntities = ArrayList<ModuleProgressEntity>()
                 ModuleType.values().forEach {
                     progress[it] = 0
-                    progressEntities.add(ModuleProgressEntity(newGame.game, newGame.module, 0))
+                    progressEntities.add(ModuleProgressEntity(newGame.game, it, 0))
                 }
 
                 lifecycleScope.launch {
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun switchToGame(game: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
         GameStats.getInstance().init(game, progress)
-        val intent = Intent(this@MainActivity, QuizActivity::class.java)
+        val intent = Intent(this@MainActivity, CityActivity::class.java)
         startActivity(intent)
     }
 
@@ -188,6 +188,23 @@ class MainActivity : AppCompatActivity() {
                 "Мой босс любит приходить на работу утром.",
                 listOf("My boss <answer> to come to work in the morning."),
                 listOf("likes", "loves"),
+                5
+            ),
+
+            QuizTaskEntity(
+                ModuleType.CANDYVALE, 1, 1,
+                QuizType.WORD_TRANSLATION_INPUT,
+                "Мне очень нравится это утро.",
+                listOf("I like this morning <answer>."),
+                listOf("so much", "very much", "a lot"),
+                5
+            ),
+            QuizTaskEntity(
+                ModuleType.CANDYVALE, 1, 2,
+                QuizType.CHOOSE_CORRECT_OPTION,
+                "Let's go for a walk ........ .",
+                listOf("in 5:00 p.m.", "on 5:00 p.m.", "at 5:00", "as 5:00 p.m."),
+                listOf("at 5:00 p.m."),
                 5
             )
         )
