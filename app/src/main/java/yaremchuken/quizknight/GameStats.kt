@@ -1,6 +1,7 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.entity.GameStatsEntity
+import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
 import java.util.EnumMap
 
@@ -36,8 +37,7 @@ class GameStats private constructor() {
     var progress: Map<ModuleType, Long> = EnumMap(ModuleType::class.java)
         private set
 
-    var level: Long = -1
-        private set
+    var currentLevel: Long = -1
 
     fun dropHeart() {
         health = 0.0.coerceAtLeast(health-1)
@@ -53,6 +53,5 @@ class GameStats private constructor() {
 
     fun switchModule(moduleType: ModuleType) {
         module = moduleType
-        level = progress[module]!!
     }
 }

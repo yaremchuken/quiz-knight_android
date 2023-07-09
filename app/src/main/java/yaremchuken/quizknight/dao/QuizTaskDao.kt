@@ -15,6 +15,6 @@ interface QuizTaskDao {
     @Query("select * from quiz_task")
     fun fetchAll(): Flow<List<QuizTaskEntity>>
 
-    @Query("select * from quiz_task where module = :module and level = :level and `order` = :order")
-    fun fetch(module: ModuleType, level: Long, order: Long): Flow<List<QuizTaskEntity>>
+    @Query("select * from quiz_task where module = :module and level = :level")
+    fun fetch(module: ModuleType, level: Long): Flow<List<QuizTaskEntity>>
 }

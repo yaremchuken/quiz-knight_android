@@ -1,6 +1,7 @@
 package yaremchuken.quizknight.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.speech.tts.TextToSpeech
@@ -15,6 +16,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStateMachine
@@ -38,6 +40,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
 
     private var quizTaskEntity: QuizTaskEntity? = null
+
+    private lateinit var quizzes: List<QuizTaskEntity>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -69,8 +73,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             controlCheckBtnStatus(true)
         }
 
-        hideBoard()
         GameStateMachine.getInstance().init(this)
+
+        hideBoard()
+        initQuizzes()
     }
 
     override fun onInit(status: Int) {
@@ -84,99 +90,98 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    fun startQuiz() {
+    private fun initQuizzes() {
         val dao = (application as App).db.getQuizTaskDao()
         lifecycleScope.launch {
-            dao.fetch(
-                GameStats.getInstance().module,
-                GameStats.getInstance().level + 1,
-                (quizTaskEntity?.order ?: 0) + 1
-            ).collect {
-                if (it.isEmpty()) {
-                    Log.i("TAG", "startQuiz: LEVEL COMPLETED!!!")
-                } else {
-                    quizTaskEntity = it[0]
-                    binding.tvQuizQuestion.text = quizTaskEntity?.display
-
-                    if (quizTaskEntity?.type != QuizType.WRITE_LISTENED_PHRASE &&
-                        quizTaskEntity?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
-                    {
-                        binding.tvQuizQuestion.visibility = View.VISIBLE
-                    }
-
-                    binding.llQuizBoard.visibility = View.VISIBLE
-
-                    binding.btnCheck.visibility = View.VISIBLE
-                    controlCheckBtnStatus(false)
-
-                    when (quizTaskEntity?.type) {
-                        QuizType.WORD_TRANSLATION_INPUT -> {
-                            binding.rvQuizAnswerItems.visibility = View.VISIBLE
-                            binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
-                            binding.rvQuizAnswerItems.adapter =
-                                QuizAnswerWordOrEditableAdapter(
-                                    this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
-                        }
-
-                        QuizType.ASSEMBLE_TRANSLATION_STRING -> {
-                            binding.llAssembleString.visibility = View.VISIBLE
-                            binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this@QuizActivity)
-                            binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this@QuizActivity)
-
-                            val words = quizTaskEntity!!.verifications[0].split(" ").toMutableList()
-                            words.addAll(quizTaskEntity!!.options)
-
-                            randomize(words)
-
-                            binding.rvAssembleStringOptions.adapter =
-                                QuizAnswerAssembleStringAdapter(this@QuizActivity, words, "options")
-                            binding.rvAssembleStringAnswer.adapter =
-                                QuizAnswerAssembleStringAdapter(this@QuizActivity, ArrayList(), "answer")
-                        }
-
-                        QuizType.CHOOSE_CORRECT_OPTION -> {
-                            binding.rgOptionsGroup.visibility = View.VISIBLE
-                            binding.rbOptionA.text = "A. ${quizTaskEntity!!.options[0]}"
-                            binding.rbOptionB.text = "B. ${quizTaskEntity!!.options[1]}"
-                            binding.rbOptionC.text = "C. ${quizTaskEntity!!.options[2]}"
-                            binding.rbOptionD.text = "D. ${quizTaskEntity!!.options[3]}"
-                        }
-
-                        QuizType.WRITE_LISTENED_PHRASE -> {
-                            binding.ibQuizListenBtn.visibility = View.VISIBLE
-                            binding.tilBoardInput.visibility = View.VISIBLE
-
-                            binding.etBoardInput.postDelayed(Runnable {
-                                binding.etBoardInput.dispatchTouchEvent(
-                                    MotionEvent.obtain(
-                                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
-                                binding.etBoardInput.dispatchTouchEvent(
-                                    MotionEvent.obtain(
-                                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
-                            }, 200)
-
-                            speakOut(quizTaskEntity!!.display)
-                        }
-
-                        QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
-                            binding.ibQuizListenBtn.visibility = View.VISIBLE
-                            binding.rvQuizAnswerItems.visibility = View.VISIBLE
-                            binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
-                            binding.rvQuizAnswerItems.adapter =
-                                QuizAnswerWordOrEditableAdapter(
-                                    this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
-
-                            speakOut(quizTaskEntity!!.display)
-                        }
-
-                        else -> throw RuntimeException("Unknown quiz type ${quizTaskEntity?.type}")
-                    }
-
-                    GameStateMachine.getInstance().switchState(StateMachineType.QUIZ)
+            dao.fetch(GameStats.getInstance().module, GameStats.getInstance().currentLevel)
+                .collect {
+                    quizzes = it
+                    GameStateMachine.getInstance().startMachine()
                 }
-            }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun startQuiz() {
+        quizTaskEntity = quizzes.find { it.order == (quizTaskEntity?.order ?: 0) + 1 }
+
+        binding.tvQuizQuestion.text = quizTaskEntity?.display
+
+        if (quizTaskEntity?.type != QuizType.WRITE_LISTENED_PHRASE &&
+            quizTaskEntity?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
+        {
+            binding.tvQuizQuestion.visibility = View.VISIBLE
+        }
+
+        binding.llQuizBoard.visibility = View.VISIBLE
+
+        binding.btnCheck.visibility = View.VISIBLE
+        controlCheckBtnStatus(false)
+
+        when (quizTaskEntity?.type) {
+            QuizType.WORD_TRANSLATION_INPUT -> {
+                binding.rvQuizAnswerItems.visibility = View.VISIBLE
+                binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                binding.rvQuizAnswerItems.adapter =
+                    QuizAnswerWordOrEditableAdapter(
+                        this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
+            }
+
+            QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+                binding.llAssembleString.visibility = View.VISIBLE
+                binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+
+                val words = quizTaskEntity!!.verifications[0].split(" ").toMutableList()
+                words.addAll(quizTaskEntity!!.options)
+
+                randomize(words)
+
+                binding.rvAssembleStringOptions.adapter =
+                    QuizAnswerAssembleStringAdapter(this@QuizActivity, words, "options")
+                binding.rvAssembleStringAnswer.adapter =
+                    QuizAnswerAssembleStringAdapter(this@QuizActivity, ArrayList(), "answer")
+            }
+
+            QuizType.CHOOSE_CORRECT_OPTION -> {
+                binding.rgOptionsGroup.visibility = View.VISIBLE
+                binding.rbOptionA.text = "A. ${quizTaskEntity!!.options[0]}"
+                binding.rbOptionB.text = "B. ${quizTaskEntity!!.options[1]}"
+                binding.rbOptionC.text = "C. ${quizTaskEntity!!.options[2]}"
+                binding.rbOptionD.text = "D. ${quizTaskEntity!!.options[3]}"
+            }
+
+            QuizType.WRITE_LISTENED_PHRASE -> {
+                binding.ibQuizListenBtn.visibility = View.VISIBLE
+                binding.tilBoardInput.visibility = View.VISIBLE
+
+                binding.etBoardInput.postDelayed(Runnable {
+                    binding.etBoardInput.dispatchTouchEvent(
+                        MotionEvent.obtain(
+                            SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
+                    binding.etBoardInput.dispatchTouchEvent(
+                        MotionEvent.obtain(
+                            SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
+                }, 200)
+
+                speakOut(quizTaskEntity!!.display)
+            }
+
+            QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
+                binding.ibQuizListenBtn.visibility = View.VISIBLE
+                binding.rvQuizAnswerItems.visibility = View.VISIBLE
+                binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+                binding.rvQuizAnswerItems.adapter =
+                    QuizAnswerWordOrEditableAdapter(
+                        this@QuizActivity, quizTaskEntity!!.options[0].split(" "))
+
+                speakOut(quizTaskEntity!!.display)
+            }
+
+            else -> throw RuntimeException("Unknown quiz type ${quizTaskEntity?.type}")
+        }
+
+        GameStateMachine.getInstance().switchState(StateMachineType.QUIZ)
     }
 
     private fun endQuiz() {
@@ -193,7 +198,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         controlCheckBtnStatus(false)
         hideBoard()
-        GameStateMachine.getInstance().switchState(StateMachineType.CONTINUE_MOVING)
+
+        if (quizTaskEntity?.order == quizzes[quizzes.size-1].order) {
+            completeLevel()
+        } else {
+            GameStateMachine.getInstance().switchState(StateMachineType.CONTINUE_MOVING)
+        }
     }
 
     private fun hideBoard() {
@@ -297,5 +307,31 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     fun controlCheckBtnStatus(enabled: Boolean) {
         binding.btnCheck.isEnabled = enabled
         binding.btnCheck.alpha = if (enabled) 1F else .2F
+    }
+
+    private fun completeLevel() {
+        val dao = (application as App).db.getModuleProgressDao()
+        lifecycleScope.launch {
+            dao.fetch(GameStats.getInstance().game).collect {
+                val progress = it.find { gs -> gs.module == GameStats.getInstance().module }
+                val existedProgress = progress?.progress ?: 0
+                if (existedProgress < GameStats.getInstance().currentLevel) {
+                    dao.updateProgress(
+                        GameStats.getInstance().game,
+                        GameStats.getInstance().module,
+                        GameStats.getInstance().currentLevel
+                    )
+                    backToCity()
+                } else {
+                    backToCity()
+                }
+            }
+        }
+    }
+
+    private fun backToCity() {
+        GameStats.getInstance().currentLevel = -1
+        val intent = Intent(this, CityActivity::class.java)
+        startActivity(intent)
     }
 }

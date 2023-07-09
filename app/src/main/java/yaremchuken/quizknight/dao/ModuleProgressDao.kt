@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import yaremchuken.quizknight.entity.ModuleProgressEntity
+import yaremchuken.quizknight.entity.ModuleType
 
 
 @Dao
@@ -14,4 +15,7 @@ interface ModuleProgressDao {
 
     @Query("select * from module_progress where game = :game")
     fun fetch(game: String): Flow<List<ModuleProgressEntity>>
+
+    @Query("update module_progress set progress = :progress where game = :game and module = :module")
+    suspend fun updateProgress(game: String, module: ModuleType, progress: Long)
 }

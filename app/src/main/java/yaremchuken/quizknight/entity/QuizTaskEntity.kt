@@ -11,8 +11,7 @@ data class QuizTaskEntity(
     val type: QuizType,
     val display: String,
     val options: List<String>,
-    val verifications: List<String>,
-    val tribute: Long,
+    val verifications: List<String>
 ) {
     @PrimaryKey(true)
     var id: Long = 0

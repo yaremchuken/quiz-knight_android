@@ -29,6 +29,9 @@ class GameStateMachine {
 
     fun init(activity: QuizActivity) {
         this.activity = activity
+    }
+
+    fun startMachine() {
         state = StateMachineType.MOVING
     }
 

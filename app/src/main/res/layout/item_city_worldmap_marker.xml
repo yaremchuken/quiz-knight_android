@@ -14,15 +14,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvWorldmapMarker"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textSize="@dimen/font_size"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            tools:text="LAZYWOOD"/>
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvWorldmapMarker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                tools:text="LAZYWOOD"/>
+
+            <TextView
+                android:id="@+id/tvWorldmapMarkerCompleted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textSize="@dimen/font_size"
+                android:textStyle="bold"
+                android:textColor="@color/yellow"
+                android:gravity="end"
+                tools:text="0/12"/>
+
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"

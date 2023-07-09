@@ -3,6 +3,7 @@ package yaremchuken.quizknight.draw
 import android.content.Context
 import android.graphics.Point
 import yaremchuken.quizknight.GameStateMachine
+import yaremchuken.quizknight.OpponentType
 import yaremchuken.quizknight.StateMachineType
 
 class Opponent(context: Context, sceneDims: Point): Animated() {
@@ -10,7 +11,7 @@ class Opponent(context: Context, sceneDims: Point): Animated() {
     private var targetPos: Float = 0F
 
     init {
-        super.init(context, sceneDims, "goblin")
+        super.init(context, sceneDims, OpponentType.GOBLIN.name.lowercase())
     }
 
     fun resetPos() {
