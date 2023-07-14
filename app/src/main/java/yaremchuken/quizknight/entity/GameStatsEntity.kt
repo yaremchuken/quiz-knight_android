@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class GameStatsEntity(
     @PrimaryKey
     val game: String,
+
     val order: Long,
     val original: Language,
     val studied: Language,

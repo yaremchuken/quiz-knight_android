@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
@@ -42,10 +41,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initializeDictionaries()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        initializeGameButtons()
+    }
+
+    private fun initializeGameButtons() {
         val gameStatsDao = (application as App).db.getGameStatsDao()
         lifecycleScope.launch {
             gameStatsDao.fetchAll().collect {
+                binding.buttonsHolder.removeAllViews()
                 it.forEach { game ->
                     val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
                     gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
@@ -65,11 +72,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.buttonsHolder.visibility = View.VISIBLE
     }
 
     private fun createGameDialog(idx: Long) {
@@ -101,8 +103,8 @@ class MainActivity : AppCompatActivity() {
                     gameStatsDao.insert(newGame)
                     moduleProgressDao.insert(progressEntities)
                 }.invokeOnCompletion {
-                    binding.buttonsHolder.visibility = View.INVISIBLE
                     dialog.dismiss()
+                    Log.i("TAG_1", "createGameDialog: ")
                     switchToGame(newGame, progress)
                 }
             }
@@ -119,21 +121,19 @@ class MainActivity : AppCompatActivity() {
         val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         val moduleProgressDao = (application as App).db.getModuleProgressDao()
 
-        binding.buttonsHolder.visibility = View.INVISIBLE
-
         lifecycleScope.launch {
             moduleProgressDao.fetch(game.game).collect {
                 it.forEach { pr ->
                     progress[pr.module] = pr.progress
                 }
-                switchToGame(game, progress)
             }
-        }
+        }.onJoin
+        switchToGame(game, progress)
     }
 
     private fun switchToGame(game: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
         GameStats.getInstance().init(game, progress)
-        val intent = Intent(this@MainActivity, CityActivity::class.java)
+        val intent = Intent(this, CityActivity::class.java)
         startActivity(intent)
     }
 

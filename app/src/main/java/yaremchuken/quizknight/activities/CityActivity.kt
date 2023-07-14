@@ -2,7 +2,6 @@ package yaremchuken.quizknight.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.RelativeLayout
@@ -10,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
@@ -22,8 +20,6 @@ import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
-import yaremchuken.quizknight.utils.Tuple
-import java.util.EnumMap
 
 enum class CitySceneType {
     WORLDMAP,
@@ -60,13 +56,11 @@ class CityActivity : AppCompatActivity() {
                         modulesData[entity.module] = (modulesData[entity.module] ?: 0) + 1
                     }
                     binding.rvWorldmapMarkers.adapter =
-                        CityWorldmapAdapter(this@CityActivity, modulesData.keys.toList(), modulesData)
+                        CityWorldmapAdapter(this@CityActivity, modulesData.keys.toList().sorted(), modulesData)
                 }
         }
 
         binding.rvCrossroadsLevels.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
-        switchScene(CitySceneType.CROSSROADS)
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
         binding.llCityTop.addView(gameStatsBarBinding.root)
@@ -74,6 +68,24 @@ class CityActivity : AppCompatActivity() {
 
         updateHealthBar()
         updateGold()
+
+        switchScene(CitySceneType.CROSSROADS)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (GameStats.getInstance().currentLevel != -1L) {
+            lifecycleScope.launch {
+                val dao = (application as App).db.getModuleProgressDao()
+                dao.updateProgress(
+                    GameStats.getInstance().game,
+                    GameStats.getInstance().module,
+                    GameStats.getInstance().currentLevel
+                )
+            }
+            GameStats.getInstance().currentLevel = -1
+            switchScene(CitySceneType.CROSSROADS)
+        }
     }
 
     private fun updateHealthBar() {
@@ -87,6 +99,18 @@ class CityActivity : AppCompatActivity() {
 
     private fun updateGold() {
         gameStatsBarBinding.tvGold.text = GameStats.getInstance().gold.toString()
+    }
+
+    fun switchModule(moduleType: ModuleType) {
+        val gameStatsDao = (application as App).db.getGameStatsDao()
+
+        lifecycleScope.launch {
+            gameStatsDao.switchModule(GameStats.getInstance().game, moduleType)
+        }.invokeOnCompletion {
+            GameStats.getInstance().switchModule(moduleType)
+            gameStatsBarBinding.tvModuleName.text = moduleType.name
+            switchScene(CitySceneType.CROSSROADS)
+        }
     }
 
     private fun initSceneSwitchers() {
@@ -140,18 +164,6 @@ class CityActivity : AppCompatActivity() {
         binding.ibCityCrossroads.alpha = if (currentScene == CitySceneType.CROSSROADS) 1f else .5f
         binding.ibCityBlacksmith.alpha = if (currentScene == CitySceneType.BLACKSMITH) 1f else .5f
         binding.ibCityAlchemy.alpha = if (currentScene == CitySceneType.ALCHEMY) 1f else .5f
-    }
-
-    fun switchModule(moduleType: ModuleType) {
-        val gameStatsDao = (application as App).db.getGameStatsDao()
-
-        lifecycleScope.launch {
-            gameStatsDao.switchModule(GameStats.getInstance().game, moduleType)
-        }.invokeOnCompletion {
-            GameStats.getInstance().switchModule(moduleType)
-            gameStatsBarBinding.tvModuleName.text = moduleType.name
-            switchScene(CitySceneType.CROSSROADS)
-        }
     }
 
     fun launchLevel(level: ModuleLevelEntity) {

@@ -20,9 +20,9 @@ class DummyDataProvider {
                 QuizTaskEntity(
                     ModuleType.LAZYWOOD, 1, 1,
                     QuizType.ASSEMBLE_TRANSLATION_STRING,
-                    "Ты смотрела тот фильм вчера?",
-                    listOf("will", "tomorrow", "this"),
-                    listOf("did you watch that movie yesterday")
+                    "Ты смотрела?",
+                    listOf("will", "this"),
+                    listOf("did you watch")
                 ),
                 QuizTaskEntity(
                     ModuleType.LAZYWOOD, 1, 2,
@@ -41,9 +41,9 @@ class DummyDataProvider {
                 QuizTaskEntity(
                     ModuleType.LAZYWOOD, 2, 1,
                     QuizType.WRITE_LISTENED_PHRASE,
-                    "Let's go play in the yard",
+                    "Let's go",
                     listOf(),
-                    listOf("let's go play in the yard", "lets go play in the yard", "let us go play in the yard")
+                    listOf("let's go", "lets go", "let us go")
                 ),
                 QuizTaskEntity(
                     ModuleType.LAZYWOOD, 2, 2,

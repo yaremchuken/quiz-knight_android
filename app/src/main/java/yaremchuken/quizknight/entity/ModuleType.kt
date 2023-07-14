@@ -4,9 +4,6 @@ package yaremchuken.quizknight.entity
  * Modules are represents different topics to learn, they are same as Game locations for hero adventures.
  */
 enum class ModuleType {
-
-    // FIXME: On adding new module you have to insert it to `module_progress` table!
-
     LAZYWOOD,
     CANDYVALE;
 

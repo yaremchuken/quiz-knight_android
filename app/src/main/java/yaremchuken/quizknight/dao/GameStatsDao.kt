@@ -3,7 +3,6 @@ package yaremchuken.quizknight.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleType
@@ -21,4 +20,7 @@ interface GameStatsDao {
 
     @Query("update game_stats set module = :moduleType where game = :game")
     suspend fun switchModule(game: String, moduleType: ModuleType)
+
+    @Query("update game_stats set gold = :gold where game = :game")
+    suspend fun updateGold(game: String, gold: Long)
 }

@@ -16,7 +16,7 @@ import yaremchuken.quizknight.entity.QuizTaskEntity
 
 
 @Database(
-    version = 4,
+    version = 6,
     entities = [
         QuizTaskEntity::class,
         GameStatsEntity::class,

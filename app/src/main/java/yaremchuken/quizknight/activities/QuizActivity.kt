@@ -1,7 +1,6 @@
 package yaremchuken.quizknight.activities
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.speech.tts.TextToSpeech
@@ -16,7 +15,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStateMachine
@@ -310,28 +308,42 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun completeLevel() {
+        GameStateMachine.getInstance().switchState(StateMachineType.QUIZ_COMPLETED)
         val dao = (application as App).db.getModuleProgressDao()
         lifecycleScope.launch {
-            dao.fetch(GameStats.getInstance().game).collect {
-                val progress = it.find { gs -> gs.module == GameStats.getInstance().module }
-                val existedProgress = progress?.progress ?: 0
-                if (existedProgress < GameStats.getInstance().currentLevel) {
-                    dao.updateProgress(
-                        GameStats.getInstance().game,
-                        GameStats.getInstance().module,
-                        GameStats.getInstance().currentLevel
-                    )
-                    backToCity()
-                } else {
-                    backToCity()
+            dao.fetch(GameStats.getInstance().game, GameStats.getInstance().module).collect {
+                if (it[0].progress >= GameStats.getInstance().currentLevel) {
+                    GameStats.getInstance().currentLevel = -1
                 }
+                onBackPressed()
             }
         }
-    }
-
-    private fun backToCity() {
-        GameStats.getInstance().currentLevel = -1
-        val intent = Intent(this, CityActivity::class.java)
-        startActivity(intent)
+//        lifecycleScope.launch {
+//            val dao = (application as App).db.getModuleProgressDao()
+//            val gsdao = (application as App).db.getGameStatsDao()
+//            dao.updateIt(GameStats.getInstance().game, 1)
+////            dao.fetch(GameStats.getInstance().game, GameStats.getInstance().module).collect {
+////                val entity = it[0]
+////                if (entity.progress < GameStats.getInstance().currentLevel) {
+////                    entity.progress = GameStats.getInstance().currentLevel
+//////                    gsdao.updateGold(GameStats.getInstance().game, 20)
+//////                    dao.save(entity)
+////                }
+////            }
+////            dao.updateProgress(GameStats.getInstance().currentLevel, GameStats.getInstance().game, GameStats.getInstance().module)
+////            dao.fetch(GameStats.getInstance().game).collect {
+////                val progress = it.find { gs -> gs.module == GameStats.getInstance().module }
+////                val existedProgress = progress?.progress ?: 0
+////                Log.i("TAG_PROGRESS", "completeLevel: $existedProgress")
+////                if (existedProgress < GameStats.getInstance().currentLevel) {
+////                    dao.updateProgress(
+//////                        GameStats.getInstance().game,
+//////                        GameStats.getInstance().module,
+//////                        GameStats.getInstance().currentLevel
+////                    )
+////                }
+////                onBackPressed()
+////            }
+//        }
     }
 }
