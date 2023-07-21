@@ -74,9 +74,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             controlCheckBtnStatus(true)
         }
 
-        GameStateMachine.init(this)
-        AssetsProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
-
         hideBoard()
         initLevel()
     }
@@ -98,9 +95,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             level = levels[GameStats.currentLevel.toInt()-1]
             quizzes = (application as App).db.getQuizTaskDao().fetch(GameStats.module, GameStats.currentLevel)
         }.invokeOnCompletion {
+            AssetsProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
             AssetsProvider.preparePersonages(this@QuizActivity, level.opponents)
-            randomOpponent()
-            GameStateMachine.startMachine()
+            randomizeOpponent()
+            GameStateMachine.init(this)
         }
     }
 
@@ -205,12 +203,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (quizTask?.order == quizzes[quizzes.size-1].order) {
             completeLevel()
         } else {
-            randomOpponent()
+            randomizeOpponent()
             GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
         }
     }
 
-    private fun randomOpponent() {
+    private fun randomizeOpponent() {
         GameStats.opponent = level.opponents[(Math.random() * level.opponents.size).toInt()]
     }
 

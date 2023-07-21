@@ -20,6 +20,7 @@ import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.Language
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.utils.Responsive
 import java.util.EnumMap
 
 // FIXME: Canvas is blacked out when app is suspends (when middle btn clicked)
@@ -104,7 +105,6 @@ class MainActivity : AppCompatActivity() {
                     moduleProgressDao.insert(progressEntities)
                 }.invokeOnCompletion {
                     dialog.dismiss()
-                    Log.i("TAG_1", "createGameDialog: ")
                     switchToGame(newGame, progress)
                 }
             }

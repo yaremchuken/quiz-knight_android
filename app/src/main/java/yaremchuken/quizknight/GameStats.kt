@@ -26,7 +26,10 @@ object GameStats {
 
     var currentLevel: Long = -1
 
-    lateinit var opponent: PersonageType
+    /**
+     * Initializing with goblin to preheat draw view
+     */
+    var opponent: PersonageType = PersonageType.GOBLIN
 
     fun dropHeart() {
         health = 0.0.coerceAtLeast(health-1)

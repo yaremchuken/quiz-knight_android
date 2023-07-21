@@ -5,7 +5,7 @@ import yaremchuken.quizknight.draw.DrawView
 
 object GameStateMachine {
 
-    var state: StateMachineType = StateMachineType.INITIALIZING
+    var state: StateMachineType = StateMachineType.EMPTY
         private set
 
     var drawer: DrawView? = null
@@ -14,10 +14,6 @@ object GameStateMachine {
 
     fun init(activity: QuizActivity) {
         this.activity = activity
-    }
-
-    fun startMachine() {
-        state = StateMachineType.MOVING
     }
 
     fun switchState(state: StateMachineType) {

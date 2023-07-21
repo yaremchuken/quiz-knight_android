@@ -20,6 +20,7 @@ import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.utils.Responsive
 import java.util.EnumMap
 
 enum class CitySceneType {

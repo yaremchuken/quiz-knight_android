@@ -1,6 +1,8 @@
 package yaremchuken.quizknight
 
 enum class StateMachineType {
+    EMPTY,
+    PREPARE_ASSETS,
     INITIALIZING,
     MOVING,
     START_QUIZ,

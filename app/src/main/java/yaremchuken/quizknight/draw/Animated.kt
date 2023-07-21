@@ -17,8 +17,11 @@ open class Animated {
 
     private lateinit var actionType: ActionType
 
+    private var pers: PersonageType? = null
+
     fun init(personage: PersonageType, sceneDims: Point) {
         this.sceneDims = sceneDims
+        pers = personage
         animations = AssetsProvider.getAnimation(personage)
         actionType = ActionType.IDLE
         switchAction(actionType)
@@ -31,9 +34,7 @@ open class Animated {
     }
 
     fun draw(canvas: Canvas, viewHeight: Int) {
-        val frame = animations[actionType]?.getFrame()
-        if (frame != null) {
-            canvas.drawBitmap(frame, xPos, (viewHeight - frame.height - 50).toFloat(), null)
-        }
+        val frame = animations[actionType]!!.getFrame()
+        canvas.drawBitmap(frame, xPos, (viewHeight - frame.height - 50).toFloat(), null)
     }
 }

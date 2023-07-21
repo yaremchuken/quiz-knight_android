@@ -25,7 +25,7 @@ class DrawView(context: Context, attributes: AttributeSet):
     private var thread: DrawThread
 
     private lateinit var hero: Personage
-    private lateinit var opponent: Personage
+    private var opponent: Personage? = null
 
     private val skyBG: Bitmap
     private val farBG: Bitmap
@@ -36,6 +36,8 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     private var farOffset: Float = 0F
     private var farOffset2: Float = 0F
+
+    private lateinit var dimensions: Point
 
     init {
         holder.addCallback(this)
@@ -52,12 +54,10 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        hero = Personage(PersonageType.HERO, Point(width, height))
-        hero.switchAction(ActionType.WALK)
-        opponent = Personage(PersonageType.GOBLIN, Point(width, height))
-
+        dimensions = Point(width, height)
         thread.running = true
         thread.start()
+        GameStateMachine.switchState(StateMachineType.PREPARE_ASSETS)
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
@@ -69,11 +69,17 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     fun propagateStateChanged() {
         when(GameStateMachine.state) {
-            StateMachineType.START_QUIZ -> {
+            StateMachineType.PREPARE_ASSETS -> {
+                hero = Personage(PersonageType.HERO, dimensions)
+                hero.switchAction(ActionType.WALK)
+                opponent = Personage(GameStats.opponent, dimensions)
+                GameStateMachine.switchState(StateMachineType.MOVING)
+            }
+            StateMachineType.QUIZ -> {
                 hero.switchAction(ActionType.IDLE)
             }
             StateMachineType.CONTINUE_MOVING -> {
-                opponent.changePersonage(GameStats.opponent)
+                opponent?.changePersonage(GameStats.opponent)
                 hero.switchAction(ActionType.WALK)
                 GameStateMachine.switchState(StateMachineType.MOVING)
             }
@@ -83,7 +89,9 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        if (canvas == null || GameStateMachine.state == StateMachineType.INITIALIZING) return
+        if (canvas == null ||
+            GameStateMachine.state == StateMachineType.EMPTY ||
+            GameStateMachine.state == StateMachineType.INITIALIZING) return
 
         updatePositions()
 
@@ -92,7 +100,7 @@ class DrawView(context: Context, attributes: AttributeSet):
         canvas.drawBitmap(farBG, farOffset, (height - farBG.height).toFloat(), null)
         canvas.drawBitmap(farBG, farOffset2, (height - farBG.height).toFloat(), null)
 
-        opponent.draw(canvas, height)
+        opponent?.draw(canvas, height)
         hero.draw(canvas, height)
 
         canvas.drawBitmap(road, roadOffset, (height - 100).toFloat(), null)
@@ -121,7 +129,7 @@ class DrawView(context: Context, attributes: AttributeSet):
                 farOffset2 = farOffset + farBG.width
             }
 
-            opponent.updatePos()
+            opponent?.updatePos()
         }
     }
 }

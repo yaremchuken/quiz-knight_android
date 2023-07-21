@@ -23,7 +23,7 @@ class Personage(personage: PersonageType, sceneDims: Point): Animated() {
 
     private fun resetPos() {
         if (personage == PersonageType.HERO) {
-            xPos = 40F
+            xPos = 60F
         } else {
             targetPos = sceneDims.x - 50F - dimensions.x
             xPos = DrawView.WORLD_SPEED * 30 + targetPos
