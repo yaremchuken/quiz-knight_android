@@ -98,7 +98,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             AssetsProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
             AssetsProvider.preparePersonages(this@QuizActivity, level.opponents)
             randomizeOpponent()
-            GameStateMachine.init(this)
+            GameStateMachine.registerActivity(this)
         }
     }
 

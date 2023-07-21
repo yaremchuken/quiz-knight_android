@@ -37,8 +37,6 @@ class DrawView(context: Context, attributes: AttributeSet):
     private var farOffset: Float = 0F
     private var farOffset2: Float = 0F
 
-    private lateinit var dimensions: Point
-
     init {
         holder.addCallback(this)
         thread = DrawThread(holder, this)
@@ -54,10 +52,11 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        dimensions = Point(width, height)
         thread.running = true
         thread.start()
-        GameStateMachine.switchState(StateMachineType.PREPARE_ASSETS)
+
+        GameStateMachine.canvasReady = true
+        GameStateMachine.startMachine()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
@@ -70,9 +69,10 @@ class DrawView(context: Context, attributes: AttributeSet):
     fun propagateStateChanged() {
         when(GameStateMachine.state) {
             StateMachineType.PREPARE_ASSETS -> {
-                hero = Personage(PersonageType.HERO, dimensions)
+                hero = Personage(PersonageType.HERO, Point(width, height))
+                opponent = Personage(GameStats.opponent, Point(width, height))
+
                 hero.switchAction(ActionType.WALK)
-                opponent = Personage(GameStats.opponent, dimensions)
                 GameStateMachine.switchState(StateMachineType.MOVING)
             }
             StateMachineType.QUIZ -> {
@@ -89,9 +89,7 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        if (canvas == null ||
-            GameStateMachine.state == StateMachineType.EMPTY ||
-            GameStateMachine.state == StateMachineType.INITIALIZING) return
+        if (canvas == null || GameStateMachine.state == StateMachineType.EMPTY) return
 
         updatePositions()
 

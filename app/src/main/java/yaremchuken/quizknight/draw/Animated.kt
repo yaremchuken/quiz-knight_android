@@ -17,11 +17,8 @@ open class Animated {
 
     private lateinit var actionType: ActionType
 
-    private var pers: PersonageType? = null
-
     fun init(personage: PersonageType, sceneDims: Point) {
         this.sceneDims = sceneDims
-        pers = personage
         animations = AssetsProvider.getAnimation(personage)
         actionType = ActionType.IDLE
         switchAction(actionType)

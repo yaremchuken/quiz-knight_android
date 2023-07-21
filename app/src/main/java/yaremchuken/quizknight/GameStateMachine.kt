@@ -12,8 +12,20 @@ object GameStateMachine {
 
     private lateinit var activity: QuizActivity
 
-    fun init(activity: QuizActivity) {
+    /**
+     * Flags that shows that canvas is ready and animations loaded
+     */
+    var canvasReady = false
+    private var levelReady = false
+
+    fun registerActivity(activity: QuizActivity) {
         this.activity = activity
+        levelReady = true
+        startMachine()
+    }
+
+    fun startMachine() {
+        if (canvasReady && levelReady) switchState(StateMachineType.PREPARE_ASSETS)
     }
 
     fun switchState(state: StateMachineType) {
