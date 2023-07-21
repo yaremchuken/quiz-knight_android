@@ -4,19 +4,7 @@ import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleType
 import java.util.EnumMap
 
-class GameStats private constructor() {
-    companion object {
-        @Volatile
-        private var INSTANCE: GameStats? = null
-
-        fun getInstance(): GameStats {
-            synchronized(this) {
-                val instance = INSTANCE ?: GameStats()
-                INSTANCE = instance
-                return instance
-            }
-        }
-    }
+object GameStats {
 
     var maxHealth: Long = 3
         private set
@@ -37,6 +25,8 @@ class GameStats private constructor() {
         private set
 
     var currentLevel: Long = -1
+
+    lateinit var opponent: PersonageType
 
     fun dropHeart() {
         health = 0.0.coerceAtLeast(health-1)

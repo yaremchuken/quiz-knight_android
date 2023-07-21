@@ -1,6 +1,6 @@
 package yaremchuken.quizknight.dummy
 
-import yaremchuken.quizknight.OpponentType
+import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
 import yaremchuken.quizknight.entity.QuizTaskEntity
@@ -10,9 +10,9 @@ class DummyDataProvider {
     companion object {
         fun dummyLevels() =
             listOf(
-                ModuleLevelEntity(ModuleType.LAZYWOOD, 1, "Take me to the tour.", OpponentType.GOBLIN, 20),
-                ModuleLevelEntity(ModuleType.LAZYWOOD, 2, "Too green, too pretty.", OpponentType.GOBLIN, 40),
-                ModuleLevelEntity(ModuleType.CANDYVALE, 1, "There's a rose grows.", OpponentType.GOBLIN, 100)
+                ModuleLevelEntity(ModuleType.LAZYWOOD, 1, "Take me to the tour.", listOf(PersonageType.GOBLIN), 20),
+                ModuleLevelEntity(ModuleType.LAZYWOOD, 2, "Too green, too pretty.", listOf(PersonageType.GOBLIN), 40),
+                ModuleLevelEntity(ModuleType.CANDYVALE, 1, "There's a rose grows.", listOf(PersonageType.GOBLIN), 100)
             )
 
         fun dummyQuizzes() =

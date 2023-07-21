@@ -1,30 +1,37 @@
 package yaremchuken.quizknight.draw
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Point
+import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.utils.AssetsProvider
 import java.util.EnumMap
 
 open class Animated {
 
-    private var animations: Map<AnimationType, Animation> = EnumMap(AnimationType::class.java)
+    private var animations: Map<ActionType, Animation> = EnumMap(ActionType::class.java)
 
     var xPos: Float = 0F
 
     protected lateinit var dimensions: Point
     protected lateinit var sceneDims: Point
 
-    fun init(context: Context, sceneDims: Point, char: String) {
+    private lateinit var actionType: ActionType
+
+    fun init(personage: PersonageType, sceneDims: Point) {
         this.sceneDims = sceneDims
-        AssetsProvider.getAnimations(context, char).forEach { t, u ->
-            (animations as EnumMap<AnimationType, Animation>)[t] = Animation(u)
-        }
-        dimensions = animations[AnimationType.IDLE]!!.getDimensions()
+        animations = AssetsProvider.getAnimation(personage)
+        actionType = ActionType.IDLE
+        switchAction(actionType)
+    }
+
+    fun switchAction(type: ActionType) {
+        actionType = type
+        dimensions = animations[type]?.getDimensions() ?: Point()
+        animations[type]?.reset()
     }
 
     fun draw(canvas: Canvas, viewHeight: Int) {
-        val frame = animations[AnimationType.IDLE]!!.getFrame()
+        val frame = animations[actionType]!!.getFrame()
         canvas.drawBitmap(frame, xPos, (viewHeight - frame.height - 50).toFloat(), null)
     }
 }

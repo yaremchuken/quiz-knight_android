@@ -6,9 +6,12 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Point
 import android.util.AttributeSet
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import yaremchuken.quizknight.GameStateMachine
+import yaremchuken.quizknight.GameStats
+import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.StateMachineType
 
@@ -22,8 +25,8 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     private var thread: DrawThread
 
-    private lateinit var hero: Hero
-    private lateinit var opponent: Opponent
+    private lateinit var hero: Personage
+    private lateinit var opponent: Personage
 
     private val skyBG: Bitmap
     private val farBG: Bitmap
@@ -48,9 +51,8 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        hero = Hero(context, Point(width, height))
-        opponent = Opponent(context, Point(width, height))
-        opponent.resetPos()
+        hero = Personage(PersonageType.HERO, Point(width, height))
+        opponent = Personage(PersonageType.GOBLIN, Point(width, height))
 
         thread.running = true
         thread.start()
@@ -64,7 +66,7 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     private fun updateDraws() {
-        when (GameStateMachine.getInstance().state) {
+        when (GameStateMachine.state) {
             StateMachineType.MOVING -> {
                 roadOffset -= WORLD_SPEED
                 roadOffset2 -= WORLD_SPEED
@@ -89,8 +91,8 @@ class DrawView(context: Context, attributes: AttributeSet):
                 opponent.updatePos()
             }
             StateMachineType.CONTINUE_MOVING -> {
-                opponent.resetPos()
-                GameStateMachine.getInstance().switchState(StateMachineType.MOVING)
+                opponent.changePersonage(GameStats.opponent)
+                GameStateMachine.switchState(StateMachineType.MOVING)
             }
             else -> {}
         }
@@ -98,7 +100,7 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        if (canvas == null) return
+        if (canvas == null || GameStateMachine.state == StateMachineType.INITIALIZING) return
 
         updateDraws()
 
@@ -107,8 +109,8 @@ class DrawView(context: Context, attributes: AttributeSet):
         canvas.drawBitmap(farBG, farOffset, (height - farBG.height).toFloat(), null)
         canvas.drawBitmap(farBG, farOffset2, (height - farBG.height).toFloat(), null)
 
-        hero.draw(canvas, height)
         opponent.draw(canvas, height)
+        hero.draw(canvas, height)
 
         canvas.drawBitmap(road, roadOffset, (height - 100).toFloat(), null)
         canvas.drawBitmap(road, roadOffset2, (height - 100).toFloat(), null)

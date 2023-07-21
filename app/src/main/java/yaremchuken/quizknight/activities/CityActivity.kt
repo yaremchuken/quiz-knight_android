@@ -20,6 +20,7 @@ import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
+import java.util.EnumMap
 
 enum class CitySceneType {
     WORLDMAP,
@@ -46,7 +47,7 @@ class CityActivity : AppCompatActivity() {
 
         binding.rvWorldmapMarkers.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        val modulesData: HashMap<ModuleType, Long> = HashMap()
+        val modulesData: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         lifecycleScope.launch {
             (application as App).db
                 .getModuleLevelDao()
@@ -64,7 +65,7 @@ class CityActivity : AppCompatActivity() {
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
         binding.llCityTop.addView(gameStatsBarBinding.root)
-        gameStatsBarBinding.tvModuleName.text = GameStats.getInstance().module.name
+        gameStatsBarBinding.tvModuleName.text = GameStats.module.name
 
         updateHealthBar()
         updateGold()
@@ -74,40 +75,40 @@ class CityActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (GameStats.getInstance().currentLevel != -1L) {
+        if (GameStats.currentLevel != -1L) {
             lifecycleScope.launch {
                 val dao = (application as App).db.getModuleProgressDao()
                 dao.updateProgress(
-                    GameStats.getInstance().game,
-                    GameStats.getInstance().module,
-                    GameStats.getInstance().currentLevel
+                    GameStats.game,
+                    GameStats.module,
+                    GameStats.currentLevel
                 )
             }
-            GameStats.getInstance().currentLevel = -1
+            GameStats.currentLevel = -1
             switchScene(CitySceneType.CROSSROADS)
         }
     }
 
     private fun updateHealthBar() {
-        val healths: ArrayList<Boolean> = ArrayList(GameStats.getInstance().maxHealth.toInt())
-        for (i in 0 until GameStats.getInstance().maxHealth) {
-            healths.add(i < GameStats.getInstance().health)
+        val healths: ArrayList<Boolean> = ArrayList(GameStats.maxHealth.toInt())
+        for (i in 0 until GameStats.maxHealth) {
+            healths.add(i < GameStats.health)
         }
         gameStatsBarBinding.rvHearts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         gameStatsBarBinding.rvHearts.adapter = HealthBarAdapter(healths)
     }
 
     private fun updateGold() {
-        gameStatsBarBinding.tvGold.text = GameStats.getInstance().gold.toString()
+        gameStatsBarBinding.tvGold.text = GameStats.gold.toString()
     }
 
     fun switchModule(moduleType: ModuleType) {
         val gameStatsDao = (application as App).db.getGameStatsDao()
 
         lifecycleScope.launch {
-            gameStatsDao.switchModule(GameStats.getInstance().game, moduleType)
+            gameStatsDao.switchModule(GameStats.game, moduleType)
         }.invokeOnCompletion {
-            GameStats.getInstance().switchModule(moduleType)
+            GameStats.switchModule(moduleType)
             gameStatsBarBinding.tvModuleName.text = moduleType.name
             switchScene(CitySceneType.CROSSROADS)
         }
@@ -135,9 +136,8 @@ class CityActivity : AppCompatActivity() {
         if (scene == CitySceneType.CROSSROADS) {
             val levelDao = (application as App).db.getModuleLevelDao()
             lifecycleScope.launch {
-                levelDao.fetch(GameStats.getInstance().module).collect {
-                    binding.rvCrossroadsLevels.adapter = CityCrossroadsAdapter(this@CityActivity, it)
-                }
+                val levels = levelDao.fetch(GameStats.module)
+                binding.rvCrossroadsLevels.adapter = CityCrossroadsAdapter(this@CityActivity, levels)
             }
         }
 
@@ -167,7 +167,7 @@ class CityActivity : AppCompatActivity() {
     }
 
     fun launchLevel(level: ModuleLevelEntity) {
-        GameStats.getInstance().currentLevel = level.order
+        GameStats.currentLevel = level.order
         val intent = Intent(this, QuizActivity::class.java)
         startActivity(intent)
     }

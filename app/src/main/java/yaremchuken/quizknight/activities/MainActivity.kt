@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
                 val newGame = GameStatsEntity(
                     dialogBinding.etGameName.text.toString(), idx, original, learned,
-                    ModuleType.LAZYWOOD, 0, GameStats.getInstance().maxHealth.toDouble())
+                    ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble())
 
                 val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
                 val progressEntities = ArrayList<ModuleProgressEntity>()
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchToGame(game: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
-        GameStats.getInstance().init(game, progress)
+        GameStats.init(game, progress)
         val intent = Intent(this, CityActivity::class.java)
         startActivity(intent)
     }

@@ -1,5 +1,6 @@
 package yaremchuken.quizknight
 
-enum class OpponentType {
+enum class PersonageType {
+    HERO,
     GOBLIN
 }

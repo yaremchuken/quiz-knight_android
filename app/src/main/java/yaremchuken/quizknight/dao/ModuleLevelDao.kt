@@ -16,5 +16,5 @@ interface ModuleLevelDao {
     fun fetchAll(): Flow<List<ModuleLevelEntity>>
 
     @Query("select * from module_level where module = :module")
-    fun fetch(module: ModuleType): Flow<List<ModuleLevelEntity>>
+    suspend fun fetch(module: ModuleType): List<ModuleLevelEntity>
 }

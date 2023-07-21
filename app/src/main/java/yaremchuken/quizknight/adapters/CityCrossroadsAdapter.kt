@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.OpponentType
+import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activities.CityActivity
 import yaremchuken.quizknight.databinding.ItemCityCrossroadsLevelBinding
@@ -35,12 +35,15 @@ class CityCrossroadsAdapter(
             activity.launchLevel(items[position])
         }
         holder.title.text = "${position+1}. ${items[position].title}"
-        holder.portrait.setImageResource(
-            when (items[position].opponent) {
-                OpponentType.GOBLIN -> R.drawable.ic_portrait_goblin
-            }
-        )
-        val progress = GameStats.getInstance().progress[GameStats.getInstance().module] ?: 0
+        if (items[position].opponents.isNotEmpty()) {
+            holder.portrait.setImageResource(
+                when (items[position].opponents[0]) {
+                    PersonageType.HERO -> -1
+                    PersonageType.GOBLIN -> R.drawable.ic_portrait_goblin
+                }
+            )
+        }
+        val progress = GameStats.progress[GameStats.module] ?: 0
         holder.completedMark.visibility = if (position < progress) View.VISIBLE else View.INVISIBLE
     }
 }

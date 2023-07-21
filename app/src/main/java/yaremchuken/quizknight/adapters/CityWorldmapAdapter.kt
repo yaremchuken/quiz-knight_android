@@ -35,7 +35,7 @@ class CityWorldmapAdapter(
         holder.mapMarker.text = items[position].name
         holder.markerDescription.text = ModuleType.description(items[position])
 
-        val completed = GameStats.getInstance().progress[items[position]]
+        val completed = GameStats.progress[items[position]]
         holder.markerCompleted.text = "${completed.toString()}/${modulesData[items[position]]}"
     }
 }

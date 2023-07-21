@@ -1,7 +1,7 @@
 package yaremchuken.quizknight.entity
 
 import androidx.room.Entity
-import yaremchuken.quizknight.OpponentType
+import yaremchuken.quizknight.PersonageType
 
 /**
  * Description of particular level from the module.
@@ -12,6 +12,6 @@ data class ModuleLevelEntity(
     val module: ModuleType,
     val order: Long,
     val title: String,
-    val opponent: OpponentType,
+    val opponents: List<PersonageType>,
     val tribute: Long
 )

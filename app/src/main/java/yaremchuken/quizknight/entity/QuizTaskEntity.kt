@@ -3,7 +3,7 @@ package yaremchuken.quizknight.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity("quiz_task")
+@Entity(tableName = "quiz_task", primaryKeys = ["module", "level", "order"])
 data class QuizTaskEntity(
     val module: ModuleType,
     val level: Long,
@@ -12,7 +12,4 @@ data class QuizTaskEntity(
     val display: String,
     val options: List<String>,
     val verifications: List<String>
-) {
-    @PrimaryKey(true)
-    var id: Long = 0
-}
+)

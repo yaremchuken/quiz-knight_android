@@ -16,13 +16,14 @@ import yaremchuken.quizknight.entity.QuizTaskEntity
 
 
 @Database(
-    version = 6,
+    version = 9,
     entities = [
         QuizTaskEntity::class,
         GameStatsEntity::class,
         ModuleLevelEntity::class,
         ModuleProgressEntity::class])
-@TypeConverters(StringConverter::class)
+//@TypeConverters(PersonageTypeConverter::class, StringConverter::class)
+@TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun getQuizTaskDao(): QuizTaskDao

@@ -2,25 +2,7 @@ package yaremchuken.quizknight
 
 import yaremchuken.quizknight.activities.QuizActivity
 
-class GameStateMachine {
-
-    companion object {
-        @Volatile
-        private var INSTANCE: GameStateMachine? = null
-
-        fun getInstance(): GameStateMachine {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = GameStateMachine()
-                    INSTANCE = instance
-                }
-
-                return instance
-            }
-        }
-    }
+object GameStateMachine {
 
     var state: StateMachineType = StateMachineType.INITIALIZING
         private set
