@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Point
 import android.util.AttributeSet
-import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import yaremchuken.quizknight.GameStateMachine
@@ -48,10 +47,13 @@ class DrawView(context: Context, attributes: AttributeSet):
 
         farOffset2 = farBG.width.toFloat()
         roadOffset2 = road.width.toFloat()
+
+        GameStateMachine.drawer = this
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         hero = Personage(PersonageType.HERO, Point(width, height))
+        hero.switchAction(ActionType.WALK)
         opponent = Personage(PersonageType.GOBLIN, Point(width, height))
 
         thread.running = true
@@ -65,33 +67,14 @@ class DrawView(context: Context, attributes: AttributeSet):
         thread.join()
     }
 
-    private fun updateDraws() {
-        when (GameStateMachine.state) {
-            StateMachineType.MOVING -> {
-                roadOffset -= WORLD_SPEED
-                roadOffset2 -= WORLD_SPEED
-
-                if (roadOffset <= -road.width - 20) {
-                    roadOffset = roadOffset2 + road.width
-                }
-                if (roadOffset2 <= -road.width - 20) {
-                    roadOffset2 = roadOffset + road.width
-                }
-
-                farOffset -= FAR_WORLD_SPEED
-                farOffset2 -= FAR_WORLD_SPEED
-
-                if (farOffset <= -farBG.width - 20) {
-                    farOffset = farOffset2 + farBG.width
-                }
-                if (farOffset2 <= -farBG.width - 20) {
-                    farOffset2 = farOffset + farBG.width
-                }
-
-                opponent.updatePos()
+    fun propagateStateChanged() {
+        when(GameStateMachine.state) {
+            StateMachineType.START_QUIZ -> {
+                hero.switchAction(ActionType.IDLE)
             }
             StateMachineType.CONTINUE_MOVING -> {
                 opponent.changePersonage(GameStats.opponent)
+                hero.switchAction(ActionType.WALK)
                 GameStateMachine.switchState(StateMachineType.MOVING)
             }
             else -> {}
@@ -102,7 +85,7 @@ class DrawView(context: Context, attributes: AttributeSet):
         super.draw(canvas)
         if (canvas == null || GameStateMachine.state == StateMachineType.INITIALIZING) return
 
-        updateDraws()
+        updatePositions()
 
         canvas.drawBitmap(skyBG, 0F, 0F, null)
 
@@ -114,5 +97,31 @@ class DrawView(context: Context, attributes: AttributeSet):
 
         canvas.drawBitmap(road, roadOffset, (height - 100).toFloat(), null)
         canvas.drawBitmap(road, roadOffset2, (height - 100).toFloat(), null)
+    }
+
+    private fun updatePositions() {
+        if (GameStateMachine.state == StateMachineType.MOVING) {
+            roadOffset -= WORLD_SPEED
+            roadOffset2 -= WORLD_SPEED
+
+            if (roadOffset <= -road.width - 20) {
+                roadOffset = roadOffset2 + road.width
+            }
+            if (roadOffset2 <= -road.width - 20) {
+                roadOffset2 = roadOffset + road.width
+            }
+
+            farOffset -= FAR_WORLD_SPEED
+            farOffset2 -= FAR_WORLD_SPEED
+
+            if (farOffset <= -farBG.width - 20) {
+                farOffset = farOffset2 + farBG.width
+            }
+            if (farOffset2 <= -farBG.width - 20) {
+                farOffset2 = farOffset + farBG.width
+            }
+
+            opponent.updatePos()
+        }
     }
 }

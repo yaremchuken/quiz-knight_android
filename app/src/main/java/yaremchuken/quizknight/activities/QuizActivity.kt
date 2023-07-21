@@ -95,7 +95,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun initLevel() {
         lifecycleScope.launch {
             val levels = (application as App).db.getModuleLevelDao().fetch(GameStats.module)
-            level = levels[GameStats.currentLevel.toInt()]
+            level = levels[GameStats.currentLevel.toInt()-1]
             quizzes = (application as App).db.getQuizTaskDao().fetch(GameStats.module, GameStats.currentLevel)
         }.invokeOnCompletion {
             AssetsProvider.preparePersonages(this@QuizActivity, level.opponents)
@@ -328,5 +328,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 onBackPressed()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        if (quizTask?.order != quizzes[quizzes.size-1].order) {
+            GameStats.currentLevel = -1
+        }
+        super.onBackPressed()
     }
 }

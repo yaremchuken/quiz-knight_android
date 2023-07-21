@@ -7,8 +7,8 @@ import yaremchuken.quizknight.PersonageType
 
 class Converters {
 
-    val stringListType = object : TypeToken<List<String>>() {}.type
-    val personageListType = object : TypeToken<List<PersonageType>>() {}.type
+    private val stringListType = object : TypeToken<List<String>>() {}.type
+    private val personageListType = object : TypeToken<List<PersonageType>>() {}.type
 
     @TypeConverter
     fun listToString(value: List<String>): String = Gson().toJson(value, stringListType)
@@ -21,10 +21,5 @@ class Converters {
 
     @TypeConverter
     fun personagesToList(value: String): List<PersonageType> =
-        Gson().fromJson<List<String>?>(value, stringListType).map {
-            PersonageType.valueOf(it)
-        }
+        Gson().fromJson<List<String>?>(value, stringListType).map { PersonageType.valueOf(it) }
 }
-
-//class PersonageTypeConverter: Converters<PersonageType>()
-//class StringConverter: Converters<String>()

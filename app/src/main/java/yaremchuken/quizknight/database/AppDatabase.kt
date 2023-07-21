@@ -22,7 +22,6 @@ import yaremchuken.quizknight.entity.QuizTaskEntity
         GameStatsEntity::class,
         ModuleLevelEntity::class,
         ModuleProgressEntity::class])
-//@TypeConverters(PersonageTypeConverter::class, StringConverter::class)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
 
