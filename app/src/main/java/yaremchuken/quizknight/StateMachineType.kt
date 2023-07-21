@@ -6,6 +6,5 @@ enum class StateMachineType {
     MOVING,
     START_QUIZ,
     QUIZ,
-    CONTINUE_MOVING,
-    QUIZ_COMPLETED
+    CONTINUE_MOVING
 }

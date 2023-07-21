@@ -20,7 +20,6 @@ import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.entity.ModuleLevelEntity
 import yaremchuken.quizknight.entity.ModuleType
-import yaremchuken.quizknight.utils.Responsive
 import java.util.EnumMap
 
 enum class CitySceneType {
@@ -47,21 +46,6 @@ class CityActivity : AppCompatActivity() {
         initSceneSwitchers()
 
         binding.rvWorldmapMarkers.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
-        val modulesData: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
-        lifecycleScope.launch {
-            (application as App).db
-                .getModuleLevelDao()
-                .fetchAll()
-                .collect {
-                    it.forEach { entity ->
-                        modulesData[entity.module] = (modulesData[entity.module] ?: 0) + 1
-                    }
-                    binding.rvWorldmapMarkers.adapter =
-                        CityWorldmapAdapter(this@CityActivity, modulesData.keys.toList().sorted(), modulesData)
-                }
-        }
-
         binding.rvCrossroadsLevels.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
@@ -84,9 +68,11 @@ class CityActivity : AppCompatActivity() {
                     GameStats.module,
                     GameStats.currentLevel
                 )
+                GameStats.updateProgress()
+            }.invokeOnCompletion {
+                GameStats.currentLevel = -1
+                switchScene(CitySceneType.CROSSROADS)
             }
-            GameStats.currentLevel = -1
-            switchScene(CitySceneType.CROSSROADS)
         }
     }
 
@@ -134,12 +120,25 @@ class CityActivity : AppCompatActivity() {
         currentScene = scene
         findViewById<RelativeLayout>(R.id.llCityTop).performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
 
-        if (scene == CitySceneType.CROSSROADS) {
-            val levelDao = (application as App).db.getModuleLevelDao()
-            lifecycleScope.launch {
-                val levels = levelDao.fetch(GameStats.module)
-                binding.rvCrossroadsLevels.adapter = CityCrossroadsAdapter(this@CityActivity, levels)
+        when(scene) {
+            CitySceneType.CROSSROADS -> {
+                lifecycleScope.launch {
+                    val levels = (application as App).db.getModuleLevelDao().fetch(GameStats.module)
+                    binding.rvCrossroadsLevels.adapter = CityCrossroadsAdapter(this@CityActivity, levels)
+                }
             }
+            CitySceneType.WORLDMAP -> {
+                lifecycleScope.launch {
+                    val modulesData: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
+                    (application as App).db
+                        .getModuleLevelDao()
+                        .fetchAll()
+                        .forEach { modulesData[it.module] = (modulesData[it.module] ?: 0) + 1 }
+                    binding.rvWorldmapMarkers.adapter =
+                        CityWorldmapAdapter(this@CityActivity, modulesData.keys.toList().sorted(), modulesData)
+                }
+            }
+            else -> {}
         }
 
         binding.rvWorldmapMarkers.visibility = if (scene == CitySceneType.WORLDMAP) View.VISIBLE else View.GONE

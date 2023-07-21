@@ -22,7 +22,7 @@ class DrawView(context: Context, attributes: AttributeSet):
         const val FAR_WORLD_SPEED = WORLD_SPEED * .5F
     }
 
-    private var thread: DrawThread
+    private lateinit var thread: DrawThread
 
     private lateinit var hero: Personage
     private var opponent: Personage? = null
@@ -39,7 +39,6 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     init {
         holder.addCallback(this)
-        thread = DrawThread(holder, this)
 
         skyBG = BitmapFactory.decodeResource(context.resources, R.drawable.gw_bg_sky)
         farBG = BitmapFactory.decodeResource(context.resources, R.drawable.gw_far_mountains)
@@ -52,6 +51,7 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
+        thread = DrawThread(holder, this)
         thread.running = true
         thread.start()
 
@@ -89,14 +89,16 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        if (canvas == null || GameStateMachine.state == StateMachineType.EMPTY) return
-
-        updatePositions()
+        if (canvas == null) return
 
         canvas.drawBitmap(skyBG, 0F, 0F, null)
 
+        updatePositions()
+
         canvas.drawBitmap(farBG, farOffset, (height - farBG.height).toFloat(), null)
         canvas.drawBitmap(farBG, farOffset2, (height - farBG.height).toFloat(), null)
+
+        if (GameStateMachine.state == StateMachineType.EMPTY) return
 
         opponent?.draw(canvas, height)
         hero.draw(canvas, height)

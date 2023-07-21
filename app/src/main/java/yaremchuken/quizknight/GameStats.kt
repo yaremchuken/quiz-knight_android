@@ -21,7 +21,7 @@ object GameStats {
     var module: ModuleType = ModuleType.LAZYWOOD
         private set
 
-    var progress: Map<ModuleType, Long> = EnumMap(ModuleType::class.java)
+    var progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         private set
 
     var currentLevel: Long = -1
@@ -35,12 +35,16 @@ object GameStats {
         health = 0.0.coerceAtLeast(health-1)
     }
 
-    fun init(stats: GameStatsEntity, progress: Map<ModuleType, Long>) {
+    fun init(stats: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
         health = stats.health
         gold = stats.gold
         game = stats.game
         this.progress = progress
         switchModule(stats.module)
+    }
+
+    fun updateProgress() {
+        progress[module] = currentLevel
     }
 
     fun switchModule(moduleType: ModuleType) {

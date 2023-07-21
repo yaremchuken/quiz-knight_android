@@ -18,6 +18,8 @@ object GameStateMachine {
     var canvasReady = false
     private var levelReady = false
 
+    private var started = false
+
     fun registerActivity(activity: QuizActivity) {
         this.activity = activity
         levelReady = true
@@ -25,7 +27,10 @@ object GameStateMachine {
     }
 
     fun startMachine() {
-        if (canvasReady && levelReady) switchState(StateMachineType.PREPARE_ASSETS)
+        if (canvasReady && levelReady && !started) {
+            switchState(StateMachineType.PREPARE_ASSETS)
+            started = true
+        }
     }
 
     fun switchState(state: StateMachineType) {
@@ -36,5 +41,12 @@ object GameStateMachine {
             }
         }
         drawer?.propagateStateChanged()
+    }
+
+    fun stopMachine() {
+        state = StateMachineType.EMPTY
+        started = false
+        levelReady = false
+        canvasReady = false
     }
 }

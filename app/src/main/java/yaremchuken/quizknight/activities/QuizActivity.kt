@@ -316,21 +316,23 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun completeLevel() {
-        GameStateMachine.switchState(StateMachineType.QUIZ_COMPLETED)
-        val dao = (application as App).db.getModuleProgressDao()
+        GameStateMachine.stopMachine()
         lifecycleScope.launch {
-            dao.fetch(GameStats.game, GameStats.module).collect {
-                if (it[0].progress >= GameStats.currentLevel) {
-                    GameStats.currentLevel = -1
-                }
-                onBackPressed()
+            val moduleProgress =
+                (application as App).db.getModuleProgressDao().fetch(GameStats.game, GameStats.module)[0]
+            if (moduleProgress.progress >= GameStats.currentLevel) {
+                GameStats.currentLevel = -1
             }
+            onBackPressed()
         }
     }
 
     override fun onBackPressed() {
         if (quizTask?.order != quizzes[quizzes.size-1].order) {
             GameStats.currentLevel = -1
+        }
+        if (GameStateMachine.state != StateMachineType.EMPTY) {
+            GameStateMachine.stopMachine()
         }
         super.onBackPressed()
     }

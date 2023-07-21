@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -20,12 +19,7 @@ import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.Language
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.entity.ModuleType
-import yaremchuken.quizknight.utils.Responsive
 import java.util.EnumMap
-
-// FIXME: Canvas is blacked out when app is suspends (when middle btn clicked)
-
-// TODO: Hide gamestats bar on keyboard appear
 
 const val MAX_GAMES = 4
 
@@ -50,27 +44,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeGameButtons() {
-        val gameStatsDao = (application as App).db.getGameStatsDao()
         lifecycleScope.launch {
-            gameStatsDao.fetchAll().collect {
-                binding.buttonsHolder.removeAllViews()
-                it.forEach { game ->
-                    val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
-                    gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
-                    gameBtn.root.setOnClickListener {
-                        startGame(game)
-                    }
-                    binding.buttonsHolder.addView(gameBtn.root)
+            binding.buttonsHolder.removeAllViews()
+            val games = (application as App).db.getGameStatsDao().fetchAll()
+            games.forEach { game ->
+                val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
+                gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
+                gameBtn.root.setOnClickListener {
+                    startGame(game)
                 }
-                for(i in it.size until  MAX_GAMES) {
-                    val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
-                    gameBtn.root.text = resources.getString(R.string.new_game_btn_title)
-                    gameBtn.root.setOnClickListener {
-                        createGameDialog(i.toLong())
-                    }
-                    gameBtn.root.setBackgroundColor(resources.getColor(R.color.palette_6b))
-                    binding.buttonsHolder.addView(gameBtn.root)
+                binding.buttonsHolder.addView(gameBtn.root)
+            }
+            for(i in games.size until  MAX_GAMES) {
+                val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
+                gameBtn.root.text = resources.getString(R.string.new_game_btn_title)
+                gameBtn.root.setOnClickListener {
+                    createGameDialog(i.toLong())
                 }
+                gameBtn.root.setBackgroundColor(resources.getColor(R.color.palette_6b))
+                binding.buttonsHolder.addView(gameBtn.root)
             }
         }
     }
@@ -119,16 +111,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGame(game: GameStatsEntity) {
         val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
-        val moduleProgressDao = (application as App).db.getModuleProgressDao()
-
         lifecycleScope.launch {
-            moduleProgressDao.fetch(game.game).collect {
-                it.forEach { pr ->
+            (application as App).db
+                .getModuleProgressDao()
+                .fetch(game.game)
+                .forEach { pr ->
                     progress[pr.module] = pr.progress
                 }
-            }
-        }.onJoin
-        switchToGame(game, progress)
+        }.invokeOnCompletion {
+            switchToGame(game, progress)
+        }
     }
 
     private fun switchToGame(game: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
@@ -141,11 +133,10 @@ class MainActivity : AppCompatActivity() {
         val levelDao = (application as App).db.getModuleLevelDao()
         val quizDao = (application as App).db.getQuizTaskDao()
         lifecycleScope.launch {
-            levelDao.fetchAll().collect {
-                if (it.isEmpty()) {
-                    levelDao.insert(DummyDataProvider.dummyLevels())
-                    quizDao.insert(DummyDataProvider.dummyQuizzes())
-                }
+            val levels = levelDao.fetchAll()
+            if (levels.isEmpty()) {
+                levelDao.insert(DummyDataProvider.dummyLevels())
+                quizDao.insert(DummyDataProvider.dummyQuizzes())
             }
         }
     }
