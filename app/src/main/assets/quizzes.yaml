@@ -1,0 +1,85 @@
+quizzes:
+
+#------------------ LAZYWOOD ------------------#
+
+#----- level 1 -----#
+  -
+    module: LAZYWOOD
+    title: Take me to the tour.
+    opponents:
+      - GOBLIN
+    tribute: 20
+    tasks:
+      - type: ASSEMBLE_TRANSLATION_STRING
+        display: Ты смотрела?
+        options:
+          - will
+          - this
+        verifications:
+          - did you watch
+      - type: INPUT_LISTENED_WORD_IN_STRING
+        display: I clean this machine every day
+        options:
+          - I clean this <answer> every day
+        verifications:
+          - machine
+      - type: CHOOSE_CORRECT_OPTION
+        display: If you go on ........ me like this, i will never be able to finish writing my report.
+        options:
+          - disturbing
+          - afflicting
+          - concerning
+          - affecting
+        verifications:
+          - disturbing
+
+#----- level 2 -----#
+  -
+    module: LAZYWOOD
+    title: Too green, too pretty.
+    opponents:
+      - GOBLIN
+    tribute: 40
+    tasks:
+      - type: WRITE_LISTENED_PHRASE
+        display: Let's go
+        options: []
+        verifications:
+          - let's go
+          - lets go
+          - let us go
+      - type: WORD_TRANSLATION_INPUT
+        display: Мой босс любит приходить на работу утром.
+        options:
+          - My boss <answer> to come to work in the morning.
+        verifications:
+          - likes
+          - loves
+
+#------------------ CANDYVALE ------------------#
+
+#----- level 1 -----#
+  -
+    module: CANDYVALE
+    title: There's a rose grows.
+    opponents:
+      - GOBLIN
+    tribute: 100
+    tasks:
+      - type: WORD_TRANSLATION_INPUT
+        display: Мне очень нравится это утро.
+        options:
+          - I like this morning <answer> .
+        verifications:
+          - so much
+          - very much
+          - a lot
+      - type: CHOOSE_CORRECT_OPTION
+        display: Let's go for a walk ........ .
+        options:
+          - in 5:00 p.m.
+          - on 5:00 p.m.
+          - at 5:00 p.m.
+          - as 5:00 p.m.
+        verifications:
+          - at 5:00 p.m.

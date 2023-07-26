@@ -1,7 +1,7 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.entity.GameStatsEntity
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
 import java.util.EnumMap
 
 object GameStats {

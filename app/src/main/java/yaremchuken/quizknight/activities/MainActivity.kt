@@ -1,6 +1,5 @@
 package yaremchuken.quizknight.activities
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -14,20 +13,21 @@ import yaremchuken.quizknight.R
 import yaremchuken.quizknight.databinding.ActivityMainBinding
 import yaremchuken.quizknight.databinding.ButtonGameStartBinding
 import yaremchuken.quizknight.databinding.DialogCreateGameBinding
-import yaremchuken.quizknight.dummy.DummyDataProvider
 import yaremchuken.quizknight.entity.GameStatsEntity
-import yaremchuken.quizknight.entity.Language
+import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.entity.ModuleProgressEntity
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
+import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.EnumMap
 
 const val MAX_GAMES = 4
+
+const val DEFAULT_MODULE_PROGRESS = -1L
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initializeDictionaries()
+        QuizzesProvider.preload(this)
     }
 
     override fun onResume() {
@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity() {
                 val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
                 val progressEntities = ArrayList<ModuleProgressEntity>()
                 ModuleType.values().forEach {
-                    progress[it] = 0
-                    progressEntities.add(ModuleProgressEntity(newGame.game, it, 0))
+                    progress[it] = DEFAULT_MODULE_PROGRESS
+                    progressEntities.add(ModuleProgressEntity(newGame.game, it, DEFAULT_MODULE_PROGRESS))
                 }
 
                 lifecycleScope.launch {
@@ -127,17 +127,5 @@ class MainActivity : AppCompatActivity() {
         GameStats.init(game, progress)
         val intent = Intent(this, CityActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun initializeDictionaries() {
-        val levelDao = (application as App).db.getModuleLevelDao()
-        val quizDao = (application as App).db.getQuizTaskDao()
-        lifecycleScope.launch {
-            val levels = levelDao.fetchAll()
-            if (levels.isEmpty()) {
-                levelDao.insert(DummyDataProvider.dummyLevels())
-                quizDao.insert(DummyDataProvider.dummyQuizzes())
-            }
-        }
     }
 }

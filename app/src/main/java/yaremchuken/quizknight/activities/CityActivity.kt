@@ -18,8 +18,8 @@ import yaremchuken.quizknight.adapters.CityWorldmapAdapter
 import yaremchuken.quizknight.adapters.HealthBarAdapter
 import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
-import yaremchuken.quizknight.entity.ModuleLevelEntity
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
+import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.EnumMap
 
 enum class CitySceneType {
@@ -122,20 +122,18 @@ class CityActivity : AppCompatActivity() {
 
         when(scene) {
             CitySceneType.CROSSROADS -> {
-                lifecycleScope.launch {
-                    val levels = (application as App).db.getModuleLevelDao().fetch(GameStats.module)
-                    binding.rvCrossroadsLevels.adapter = CityCrossroadsAdapter(this@CityActivity, levels)
-                }
+                binding.rvCrossroadsLevels.adapter =
+                    CityCrossroadsAdapter(this@CityActivity, QuizzesProvider.getModuleLevels(GameStats.module))
             }
             CitySceneType.WORLDMAP -> {
                 lifecycleScope.launch {
-                    val modulesData: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
-                    (application as App).db
-                        .getModuleLevelDao()
-                        .fetchAll()
-                        .forEach { modulesData[it.module] = (modulesData[it.module] ?: 0) + 1 }
+                    val modulesLevelsCounter: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
+                    QuizzesProvider.getAllLevels().forEach {
+                        modulesLevelsCounter[it.module] = (modulesLevelsCounter[it.module] ?: 0) + 1
+                    }
                     binding.rvWorldmapMarkers.adapter =
-                        CityWorldmapAdapter(this@CityActivity, modulesData.keys.toList().sorted(), modulesData)
+                        CityWorldmapAdapter(
+                            this@CityActivity, modulesLevelsCounter.keys.toList().sorted(), modulesLevelsCounter)
                 }
             }
             else -> {}
@@ -166,8 +164,8 @@ class CityActivity : AppCompatActivity() {
         binding.ibCityAlchemy.alpha = if (currentScene == CitySceneType.ALCHEMY) 1f else .5f
     }
 
-    fun launchLevel(level: ModuleLevelEntity) {
-        GameStats.currentLevel = level.order
+    fun launchLevel(levelIdx: Long) {
+        GameStats.currentLevel = levelIdx
         val intent = Intent(this, QuizActivity::class.java)
         startActivity(intent)
     }

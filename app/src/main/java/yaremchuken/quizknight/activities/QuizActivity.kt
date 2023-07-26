@@ -27,10 +27,11 @@ import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
 import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
-import yaremchuken.quizknight.entity.ModuleLevelEntity
-import yaremchuken.quizknight.entity.QuizTaskEntity
-import yaremchuken.quizknight.entity.QuizType
-import yaremchuken.quizknight.utils.AssetsProvider
+import yaremchuken.quizknight.model.ModuleLevel
+import yaremchuken.quizknight.model.QuizTask
+import yaremchuken.quizknight.model.QuizType
+import yaremchuken.quizknight.providers.AnimationProvider
+import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.Locale
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -40,9 +41,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
 
-    private lateinit var level: ModuleLevelEntity
-    private lateinit var quizzes: List<QuizTaskEntity>
-    private var quizTask: QuizTaskEntity? = null
+    private lateinit var level: ModuleLevel
+    private lateinit var quizTask: QuizTask
+    private var quizIdx = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -60,9 +61,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
 
         binding.ibQuizListenBtn.setOnClickListener {
-            if (quizTask != null) {
-                speakOut(quizTask!!.display)
-            }
+            speakOut(quizTask.display)
         }
         binding.btnCheck.setOnClickListener {
             checkAnswer()
@@ -90,26 +89,21 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun initLevel() {
-        lifecycleScope.launch {
-            val levels = (application as App).db.getModuleLevelDao().fetch(GameStats.module)
-            level = levels[GameStats.currentLevel.toInt()-1]
-            quizzes = (application as App).db.getQuizTaskDao().fetch(GameStats.module, GameStats.currentLevel)
-        }.invokeOnCompletion {
-            AssetsProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
-            AssetsProvider.preparePersonages(this@QuizActivity, level.opponents)
-            randomizeOpponent()
-            GameStateMachine.registerActivity(this)
-        }
+        level = QuizzesProvider.getModuleLevels(GameStats.module)[GameStats.currentLevel.toInt()]
+        AnimationProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
+        AnimationProvider.preparePersonages(this@QuizActivity, level.opponents)
+        randomizeOpponent()
+        GameStateMachine.registerActivity(this)
     }
 
     @SuppressLint("SetTextI18n")
     fun startQuiz() {
-        quizTask = quizzes.find { it.order == (quizTask?.order ?: 0) + 1 }
+        quizTask = level.tasks[quizIdx]
 
-        binding.tvQuizQuestion.text = quizTask?.display
+        binding.tvQuizQuestion.text = quizTask.display
 
-        if (quizTask?.type != QuizType.WRITE_LISTENED_PHRASE &&
-            quizTask?.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
+        if (quizTask.type != QuizType.WRITE_LISTENED_PHRASE &&
+            quizTask.type != QuizType.INPUT_LISTENED_WORD_IN_STRING)
         {
             binding.tvQuizQuestion.visibility = View.VISIBLE
         }
@@ -119,13 +113,13 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.btnCheck.visibility = View.VISIBLE
         controlCheckBtnStatus(false)
 
-        when (quizTask?.type) {
+        when (quizTask.type) {
             QuizType.WORD_TRANSLATION_INPUT -> {
                 binding.rvQuizAnswerItems.visibility = View.VISIBLE
                 binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.rvQuizAnswerItems.adapter =
                     QuizAnswerWordOrEditableAdapter(
-                        this@QuizActivity, quizTask!!.options[0].split(" "))
+                        this@QuizActivity, quizTask.options[0].split(" "))
             }
 
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
@@ -133,8 +127,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 binding.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this@QuizActivity)
 
-                val words = quizTask!!.verifications[0].split(" ").toMutableList()
-                words.addAll(quizTask!!.options)
+                val words = quizTask.verifications[0].split(" ").toMutableList()
+                words.addAll(quizTask.options)
 
                 randomize(words)
 
@@ -146,10 +140,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
             QuizType.CHOOSE_CORRECT_OPTION -> {
                 binding.rgOptionsGroup.visibility = View.VISIBLE
-                binding.rbOptionA.text = "A. ${quizTask!!.options[0]}"
-                binding.rbOptionB.text = "B. ${quizTask!!.options[1]}"
-                binding.rbOptionC.text = "C. ${quizTask!!.options[2]}"
-                binding.rbOptionD.text = "D. ${quizTask!!.options[3]}"
+                binding.rbOptionA.text = "A. ${quizTask.options[0]}"
+                binding.rbOptionB.text = "B. ${quizTask.options[1]}"
+                binding.rbOptionC.text = "C. ${quizTask.options[2]}"
+                binding.rbOptionD.text = "D. ${quizTask.options[3]}"
             }
 
             QuizType.WRITE_LISTENED_PHRASE -> {
@@ -165,7 +159,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
                 }, 200)
 
-                speakOut(quizTask!!.display)
+                speakOut(quizTask.display)
             }
 
             QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
@@ -174,12 +168,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 binding.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.rvQuizAnswerItems.adapter =
                     QuizAnswerWordOrEditableAdapter(
-                        this@QuizActivity, quizTask!!.options[0].split(" "))
+                        this@QuizActivity, quizTask.options[0].split(" "))
 
-                speakOut(quizTask!!.display)
+                speakOut(quizTask.display)
             }
-
-            else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
         }
 
         GameStateMachine.switchState(StateMachineType.QUIZ)
@@ -189,7 +181,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val service = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         service.hideSoftInputFromWindow(binding.rvQuizAnswerItems.rootView.applicationWindowToken, 0)
 
-        if (quizTask?.type == QuizType.CHOOSE_CORRECT_OPTION) {
+        if (quizTask.type == QuizType.CHOOSE_CORRECT_OPTION) {
             binding.rbOptionA.isChecked = false
             binding.rbOptionB.isChecked = false
             binding.rbOptionC.isChecked = false
@@ -200,9 +192,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         controlCheckBtnStatus(false)
         hideBoard()
 
-        if (quizTask?.order == quizzes[quizzes.size-1].order) {
+        if (quizIdx == level.tasks.size-1) {
             completeLevel()
         } else {
+            quizIdx++
             randomizeOpponent()
             GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
         }
@@ -241,7 +234,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         position: Int,
         direction: String
     ) {
-        when (quizTask?.type) {
+        when (quizTask.type) {
             QuizType.ASSEMBLE_TRANSLATION_STRING -> {
                 val changed = from.items.removeAt(position)
                 val answerAdapter = (binding.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter)
@@ -258,14 +251,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 controlCheckBtnStatus(answerAdapter.items.size > 0)
             }
-            else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
+            else -> throw RuntimeException("Unknown quiz type ${quizTask.type}")
         }
     }
 
     private fun checkAnswer() {
-        if (quizTask == null) return
-
-        val answer = when (quizTask?.type) {
+        val answer = when (quizTask.type) {
             QuizType.WORD_TRANSLATION_INPUT -> {
                 (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
@@ -281,11 +272,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             QuizType.INPUT_LISTENED_WORD_IN_STRING -> {
                 (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
             }
-
-            else -> throw RuntimeException("Unknown quiz type ${quizTask?.type}")
         }
 
-        if (QuizTaskChecker.checkAnswer(quizTask!!, answer)) {
+        if (QuizTaskChecker.checkAnswer(quizTask, answer)) {
             endQuiz()
         } else {
             GameStats.dropHeart()
@@ -320,6 +309,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         lifecycleScope.launch {
             val moduleProgress =
                 (application as App).db.getModuleProgressDao().fetch(GameStats.game, GameStats.module)[0]
+            Log.i("TAG", "completeLevel: ${moduleProgress.progress} ${GameStats.currentLevel}")
             if (moduleProgress.progress >= GameStats.currentLevel) {
                 GameStats.currentLevel = -1
             }
@@ -328,7 +318,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onBackPressed() {
-        if (quizTask?.order != quizzes[quizzes.size-1].order) {
+        if (quizIdx != level.tasks.size-1) {
             GameStats.currentLevel = -1
         }
         if (GameStateMachine.state != StateMachineType.EMPTY) {

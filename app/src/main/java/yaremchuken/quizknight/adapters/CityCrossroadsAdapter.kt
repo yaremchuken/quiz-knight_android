@@ -10,11 +10,11 @@ import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activities.CityActivity
 import yaremchuken.quizknight.databinding.ItemCityCrossroadsLevelBinding
-import yaremchuken.quizknight.entity.ModuleLevelEntity
+import yaremchuken.quizknight.model.ModuleLevel
 
 class CityCrossroadsAdapter(
     private val activity: CityActivity,
-    val items: List<ModuleLevelEntity>
+    val items: List<ModuleLevel>
 ): RecyclerView.Adapter<CityCrossroadsAdapter.ViewHolder>() {
 
     class ViewHolder(binding: ItemCityCrossroadsLevelBinding): RecyclerView.ViewHolder(binding.root) {
@@ -32,7 +32,7 @@ class CityCrossroadsAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.viewHolder.setOnClickListener {
-            activity.launchLevel(items[position])
+            activity.launchLevel(position.toLong())
         }
         holder.title.text = "${position+1}. ${items[position].title}"
         if (items[position].opponents.isNotEmpty()) {
@@ -43,7 +43,7 @@ class CityCrossroadsAdapter(
                 }
             )
         }
-        val progress = GameStats.progress[GameStats.module] ?: 0
+        val progress = GameStats.progress[GameStats.module]!! + 1
         holder.completedMark.visibility = if (position < progress) View.VISIBLE else View.INVISIBLE
     }
 }

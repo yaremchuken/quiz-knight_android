@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.entity
+package yaremchuken.quizknight.model
 
 enum class Language {
     EN,

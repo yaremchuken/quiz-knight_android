@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.activities.CityActivity
 import yaremchuken.quizknight.databinding.ItemCityWorldmapMarkerBinding
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
 
 class CityWorldmapAdapter(
     private val activity: CityActivity,
@@ -35,7 +35,7 @@ class CityWorldmapAdapter(
         holder.mapMarker.text = items[position].name
         holder.markerDescription.text = ModuleType.description(items[position])
 
-        val completed = GameStats.progress[items[position]]
-        holder.markerCompleted.text = "${completed.toString()}/${modulesData[items[position]]}"
+        val completed = GameStats.progress[items[position]]!! + 1
+        holder.markerCompleted.text = "${completed}/${modulesData[items[position]]}"
     }
 }

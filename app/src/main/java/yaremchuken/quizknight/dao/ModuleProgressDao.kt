@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import yaremchuken.quizknight.entity.ModuleProgressEntity
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
 
 
 @Dao

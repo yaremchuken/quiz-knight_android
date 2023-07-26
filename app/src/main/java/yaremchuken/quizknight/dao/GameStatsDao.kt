@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import yaremchuken.quizknight.entity.GameStatsEntity
-import yaremchuken.quizknight.entity.ModuleType
+import yaremchuken.quizknight.model.ModuleType
 
 @Dao
 interface GameStatsDao {

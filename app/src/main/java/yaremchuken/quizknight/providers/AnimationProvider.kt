@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.utils
+package yaremchuken.quizknight.providers
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,7 +8,7 @@ import yaremchuken.quizknight.draw.ActionType
 import yaremchuken.quizknight.draw.Animation
 import java.util.EnumMap
 
-object AssetsProvider {
+object AnimationProvider {
 
     private val animations: MutableMap<PersonageType, Map<ActionType, Animation>> = EnumMap(PersonageType::class.java)
 

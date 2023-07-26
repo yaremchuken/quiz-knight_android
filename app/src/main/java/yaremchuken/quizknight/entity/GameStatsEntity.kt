@@ -2,6 +2,8 @@ package yaremchuken.quizknight.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import yaremchuken.quizknight.model.Language
+import yaremchuken.quizknight.model.ModuleType
 
 @Entity("game_stats")
 data class GameStatsEntity(

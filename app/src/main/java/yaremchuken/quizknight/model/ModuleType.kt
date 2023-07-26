@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.entity
+package yaremchuken.quizknight.model
 
 /**
  * Modules are represents different topics to learn, they are same as Game locations for hero adventures.

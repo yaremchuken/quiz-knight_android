@@ -3,7 +3,7 @@ package yaremchuken.quizknight.draw
 import android.graphics.Canvas
 import android.graphics.Point
 import yaremchuken.quizknight.PersonageType
-import yaremchuken.quizknight.utils.AssetsProvider
+import yaremchuken.quizknight.providers.AnimationProvider
 import java.util.EnumMap
 
 open class Animated {
@@ -19,7 +19,7 @@ open class Animated {
 
     fun init(personage: PersonageType, sceneDims: Point) {
         this.sceneDims = sceneDims
-        animations = AssetsProvider.getAnimation(personage)
+        animations = AnimationProvider.getAnimation(personage)
         actionType = ActionType.IDLE
         switchAction(actionType)
     }
