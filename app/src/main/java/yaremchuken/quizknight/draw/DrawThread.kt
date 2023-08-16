@@ -28,7 +28,7 @@ class DrawThread(private val surface: SurfaceHolder, private val drawView: DrawV
             } catch (e: Exception) {
                 Log.e("Draw Thread", "Unable to lock canvas ${e.message}")
             }
-            sleep(frameRate)
+            sleep((frameRate - drawView.drawMs).coerceAtLeast(0))
         }
     }
 }

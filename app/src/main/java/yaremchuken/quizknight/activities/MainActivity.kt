@@ -14,8 +14,8 @@ import yaremchuken.quizknight.databinding.ActivityMainBinding
 import yaremchuken.quizknight.databinding.ButtonGameStartBinding
 import yaremchuken.quizknight.databinding.DialogCreateGameBinding
 import yaremchuken.quizknight.entity.GameStatsEntity
-import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.entity.ModuleProgressEntity
+import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.EnumMap

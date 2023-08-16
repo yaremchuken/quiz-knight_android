@@ -24,6 +24,9 @@ class DrawView(context: Context, attributes: AttributeSet):
 
     private lateinit var thread: DrawThread
 
+    private var frameStart = 0L
+    var drawMs = 0L
+
     private lateinit var hero: Personage
     private var opponent: Personage? = null
 
@@ -88,8 +91,11 @@ class DrawView(context: Context, attributes: AttributeSet):
     }
 
     override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
         if (canvas == null) return
+
+        frameStart = System.currentTimeMillis();
+
+        super.draw(canvas)
 
         canvas.drawBitmap(skyBG, 0F, 0F, null)
 
@@ -105,6 +111,8 @@ class DrawView(context: Context, attributes: AttributeSet):
 
         canvas.drawBitmap(road, roadOffset, (height - 100).toFloat(), null)
         canvas.drawBitmap(road, roadOffset2, (height - 100).toFloat(), null)
+
+        drawMs = System.currentTimeMillis() - frameStart;
     }
 
     private fun updatePositions() {
