@@ -15,7 +15,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStateMachine
 import yaremchuken.quizknight.GameStats
@@ -25,6 +28,7 @@ import yaremchuken.quizknight.StateMachineType
 import yaremchuken.quizknight.adapters.HealthBarAdapter
 import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
 import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
+import yaremchuken.quizknight.adapters.QuizProgressStarsAdapter
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.ModuleLevel
@@ -35,6 +39,8 @@ import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.Locale
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+
+    private val PROGRESS_BAR_SPEED = 2
 
     private lateinit var binding: ActivityQuizBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
@@ -93,6 +99,17 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         AnimationProvider.preparePersonages(this@QuizActivity, listOf(PersonageType.HERO))
         AnimationProvider.preparePersonages(this@QuizActivity, level.opponents)
         randomizeOpponent()
+
+        binding.pbQuizProgress.progress = 0
+        val flexboxLayout = FlexboxLayoutManager(this)
+        flexboxLayout.justifyContent = JustifyContent.SPACE_BETWEEN
+        binding.rvQuizProgressStars.layoutManager = flexboxLayout
+
+        val progress: MutableList<Boolean> = ArrayList()
+        progress.add(false)
+        for (task in level.tasks) { progress.add(false) }
+        binding.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(progress)
+
         GameStateMachine.registerActivity(this)
     }
 
@@ -107,6 +124,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         {
             binding.tvQuizQuestion.visibility = View.VISIBLE
         }
+
+        binding.pbQuizProgress.visibility = View.INVISIBLE
+        binding.rvQuizProgressStars.visibility = View.INVISIBLE
 
         binding.llQuizBoard.visibility = View.VISIBLE
 
@@ -192,13 +212,39 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         controlCheckBtnStatus(false)
         hideBoard()
 
-        if (quizIdx == level.tasks.size-1) {
-            completeLevel()
-        } else {
-            quizIdx++
-            randomizeOpponent()
-            GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
+        lifecycleScope.launch {
+            var progress = ((100 / level.tasks.size-1) * quizIdx).toDouble()
+            val target = ((100 / level.tasks.size-1) * (quizIdx+1)).toDouble()
+
+            while (progress < target) {
+                progress += PROGRESS_BAR_SPEED
+                if (progress > target) {
+                    progress = target
+                }
+                binding.pbQuizProgress.progress = progress.toInt()
+                withContext(Dispatchers.IO) {
+                    Thread.sleep(25)
+                }
+            }
+
+            val stars: MutableList<Boolean> = ArrayList()
+            stars.add(false)
+            for (i in 0 until level.tasks.size) {
+                stars.add(i <= quizIdx)
+            }
+            binding.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(stars)
+
+            if (quizIdx == level.tasks.size-1) {
+                completeLevel()
+            } else {
+                quizIdx++
+                randomizeOpponent()
+                GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
+            }
         }
+
+        binding.pbQuizProgress.visibility = View.VISIBLE
+        binding.rvQuizProgressStars.visibility = View.VISIBLE
     }
 
     private fun randomizeOpponent() {

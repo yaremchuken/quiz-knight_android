@@ -40,6 +40,7 @@ class CityCrossroadsAdapter(
                 when (items[position].opponents[0]) {
                     PersonageType.HERO -> -1
                     PersonageType.GOBLIN -> R.drawable.ic_portrait_goblin
+                    PersonageType.PEASANT -> R.drawable.ic_portrait_peasant
                 }
             )
         }

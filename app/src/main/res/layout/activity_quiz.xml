@@ -60,13 +60,32 @@
 
     </FrameLayout>
 
-    <!-- Lower part is designed for quiz answers, different views used to present different type of quiz -->
+    <!--
+        Lower part is designed for quiz answers,
+        different views used to present different type of quiz
+    -->
     <RelativeLayout
         android:layout_weight=".4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_answer_board_gradient"
         android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/pbQuizProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/ic_quiz_progress_bar"
+            android:layout_height="30dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvQuizProgressStars"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15sp" />
 
         <LinearLayout
             android:id="@+id/llQuizBoard"

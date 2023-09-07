@@ -2,5 +2,6 @@ package yaremchuken.quizknight
 
 enum class PersonageType {
     HERO,
-    GOBLIN
+    GOBLIN,
+    PEASANT
 }
