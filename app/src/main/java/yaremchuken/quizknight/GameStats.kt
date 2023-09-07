@@ -13,7 +13,6 @@ object GameStats {
         private set
 
     var gold: Long = 0
-        private set
 
     var game: String = ""
         private set

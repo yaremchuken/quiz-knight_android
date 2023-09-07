@@ -24,6 +24,7 @@ import yaremchuken.quizknight.GameStateMachine
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.QuizTaskChecker
+import yaremchuken.quizknight.R
 import yaremchuken.quizknight.StateMachineType
 import yaremchuken.quizknight.adapters.HealthBarAdapter
 import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
@@ -38,9 +39,9 @@ import yaremchuken.quizknight.providers.AnimationProvider
 import yaremchuken.quizknight.providers.QuizzesProvider
 import java.util.Locale
 
-class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+const val PROGRESS_BAR_SPEED = 2
 
-    private val PROGRESS_BAR_SPEED = 2
+class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var binding: ActivityQuizBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
@@ -70,7 +71,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             speakOut(quizTask.display)
         }
         binding.btnCheck.setOnClickListener {
-            checkAnswer()
+            btnCheckClickListener()
         }
         binding.etBoardInput.addTextChangedListener {
             controlCheckBtnStatus(!it.isNullOrBlank())
@@ -301,7 +302,12 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun checkAnswer() {
+    private fun btnCheckClickListener() {
+        if (GameStateMachine.state == StateMachineType.COMPLETED) {
+            onBackPressed()
+            return
+        }
+
         val answer = when (quizTask.type) {
             QuizType.WORD_TRANSLATION_INPUT -> {
                 (binding.rvQuizAnswerItems.adapter as QuizAnswerWordOrEditableAdapter).playerInput
@@ -351,15 +357,34 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun completeLevel() {
-        GameStateMachine.stopMachine()
+        GameStateMachine.switchState(StateMachineType.COMPLETED)
+
         lifecycleScope.launch {
             val moduleProgress =
-                (application as App).db.getModuleProgressDao().fetch(GameStats.game, GameStats.module)[0]
-            Log.i("TAG", "completeLevel: ${moduleProgress.progress} ${GameStats.currentLevel}")
+                (application as App)
+                    .db
+                    .getModuleProgressDao()
+                    .fetch(GameStats.game, GameStats.module)[0]
+
             if (moduleProgress.progress >= GameStats.currentLevel) {
                 GameStats.currentLevel = -1
             }
-            onBackPressed()
+
+            binding.tvLevelTribute.text = "+${level.tribute}"
+            binding.llLevelCompleted.visibility = View.VISIBLE
+            binding.btnCheck.text = resources.getString(R.string.complete_btn_title)
+            controlCheckBtnStatus(true)
+            binding.btnCheck.visibility = View.VISIBLE
+
+            val gold = GameStats.gold + level.tribute
+
+            (application as App)
+                .db
+                .getGameStatsDao()
+                .updateGold(GameStats.game, gold)
+
+            GameStats.gold = gold
+            gameStatsBarBinding.tvGold.text = gold.toString()
         }
     }
 

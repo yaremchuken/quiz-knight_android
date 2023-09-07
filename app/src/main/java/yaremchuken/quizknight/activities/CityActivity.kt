@@ -52,9 +52,6 @@ class CityActivity : AppCompatActivity() {
         binding.llCityTop.addView(gameStatsBarBinding.root)
         gameStatsBarBinding.tvModuleName.text = GameStats.module.name
 
-        updateHealthBar()
-        updateGold()
-
         switchScene(CitySceneType.CROSSROADS)
     }
 
@@ -74,6 +71,9 @@ class CityActivity : AppCompatActivity() {
                 switchScene(CitySceneType.CROSSROADS)
             }
         }
+
+        updateHealthBar()
+        updateGold()
     }
 
     private fun updateHealthBar() {

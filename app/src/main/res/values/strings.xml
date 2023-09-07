@@ -5,6 +5,7 @@
 
     <string name="check_btn_title">CHECK</string>
     <string name="start_btn_title">START</string>
+    <string name="complete_btn_title">COMPLETE</string>
     <string name="new_game_btn_title">new game</string>
     <string name="create_new_game">Let`s start a new adventure Hero</string>
     <string name="done_btn_title">OK</string>
