@@ -3,7 +3,7 @@ package yaremchuken.quizknight.draw
 import android.graphics.Canvas
 import android.graphics.Point
 import yaremchuken.quizknight.PersonageType
-import yaremchuken.quizknight.providers.AnimationProvider
+import yaremchuken.quizknight.provider.AnimationProvider
 import java.util.EnumMap
 
 open class Animated {

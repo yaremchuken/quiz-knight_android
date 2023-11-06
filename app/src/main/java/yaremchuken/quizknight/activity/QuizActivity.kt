@@ -1,6 +1,7 @@
-package yaremchuken.quizknight.activities
+package yaremchuken.quizknight.activity
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.os.SystemClock
 import android.speech.tts.TextToSpeech
@@ -26,17 +27,22 @@ import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.QuizTaskChecker
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.StateMachineType
-import yaremchuken.quizknight.adapters.HealthBarAdapter
-import yaremchuken.quizknight.adapters.QuizAnswerAssembleStringAdapter
-import yaremchuken.quizknight.adapters.QuizAnswerWordOrEditableAdapter
-import yaremchuken.quizknight.adapters.QuizProgressStarsAdapter
+import yaremchuken.quizknight.adapter.HealthBarAdapter
+import yaremchuken.quizknight.adapter.QuizAnswerAssembleStringAdapter
+import yaremchuken.quizknight.adapter.QuizAnswerWordOrEditableAdapter
+import yaremchuken.quizknight.adapter.QuizProgressStarsAdapter
+import yaremchuken.quizknight.adapter.TranslationDialogAdapter
+import yaremchuken.quizknight.api.RestException
+import yaremchuken.quizknight.api.yandex.translate.YaTranslateClient
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
+import yaremchuken.quizknight.databinding.DialogTranslationBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.ModuleLevel
 import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizType
-import yaremchuken.quizknight.providers.AnimationProvider
-import yaremchuken.quizknight.providers.QuizzesProvider
+import yaremchuken.quizknight.provider.AnimationProvider
+import yaremchuken.quizknight.provider.QuizzesProvider
+import java.lang.Exception
 import java.util.Locale
 
 const val PROGRESS_BAR_SPEED = 2
@@ -47,6 +53,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
 
     private lateinit var tts: TextToSpeech
+
+    private lateinit var translateClient: YaTranslateClient
+    private var dialogTranslationBinding: DialogTranslationBinding? = null
 
     private lateinit var level: ModuleLevel
     private lateinit var quizTask: QuizTask
@@ -66,6 +75,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         updateGold()
 
         tts = TextToSpeech(this, this)
+        translateClient = YaTranslateClient(resources.getString(R.string.YA_TRANSLATE_API_KEY))
 
         binding.ibQuizListenBtn.setOnClickListener {
             speakOut(quizTask.display)
@@ -347,8 +357,47 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         gameStatsBarBinding.tvGold.text = GameStats.gold.toString()
     }
 
-    private fun speakOut(text: String) {
+    fun speakOut(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+    }
+
+    fun showTranslationDialog(texts: Array<String>) {
+        if (texts.isEmpty() || dialogTranslationBinding != null) return
+
+        val dialog = Dialog(this)
+
+        dialogTranslationBinding = DialogTranslationBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogTranslationBinding!!.root)
+
+        dialogTranslationBinding!!.rvTranslations.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        dialogTranslationBinding!!.btnBack.setOnClickListener {
+            dialog.dismiss()
+            dialogTranslationBinding = null
+        }
+
+        dialog.show()
+
+        lifecycleScope.launch {
+            try {
+                val translations = translateClient.translate(texts, GameStats.studied, GameStats.original)
+                if (dialogTranslationBinding != null) {
+                    dialogTranslationBinding!!.llLoader.visibility = View.GONE
+                    dialogTranslationBinding!!.tvErrorMessage.visibility = View.GONE
+
+                    val sorted = translations.toList().sortedBy { it.first.length }
+                    dialogTranslationBinding!!.rvTranslations.adapter =
+                        TranslationDialogAdapter(this@QuizActivity, sorted)
+                }
+            } catch (ex: Exception) {
+                if (dialogTranslationBinding != null) {
+                    dialogTranslationBinding!!.llLoader.visibility = View.GONE
+                    dialogTranslationBinding!!.rvTranslations.visibility = View.GONE
+                    dialogTranslationBinding!!.tvErrorMessage.text = getString(R.string.translation_not_available)
+                }
+            }
+        }
     }
 
     fun controlCheckBtnStatus(enabled: Boolean) {

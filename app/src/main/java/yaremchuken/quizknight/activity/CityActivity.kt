@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.activities
+package yaremchuken.quizknight.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,13 +13,13 @@ import kotlinx.coroutines.launch
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.R
-import yaremchuken.quizknight.adapters.CityCrossroadsAdapter
-import yaremchuken.quizknight.adapters.CityWorldmapAdapter
-import yaremchuken.quizknight.adapters.HealthBarAdapter
+import yaremchuken.quizknight.adapter.CityCrossroadsAdapter
+import yaremchuken.quizknight.adapter.CityWorldmapAdapter
+import yaremchuken.quizknight.adapter.HealthBarAdapter
 import yaremchuken.quizknight.databinding.ActivityCityBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.ModuleType
-import yaremchuken.quizknight.providers.QuizzesProvider
+import yaremchuken.quizknight.provider.QuizzesProvider
 import java.util.EnumMap
 
 enum class CitySceneType {

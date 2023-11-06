@@ -2,11 +2,13 @@
     <string name="check_btn_title">ПРОВЕРИТЬ</string>
     <string name="start_btn_title">НАЧАТЬ</string>
     <string name="complete_btn_title">ГОТОВО</string>
+    <string name="done_btn_title">ГОТОВО</string>
     <string name="new_game_btn_title">новая игра</string>
     <string name="create_new_game">Начинаем новое приключение герой</string>
-    <string name="done_btn_title">OK</string>
-    <string name="cancel_btn_title">НЕТ</string>
+    <string name="ok_btn_title">OK</string>
+    <string name="back_btn_title">НАЗАД</string>
     <string name="game_name">Имя игры</string>
     <string name="original_language">Ваш язык</string>
     <string name="learn_language">Изучаемый</string>
+    <string name="translation_not_available">Извините, в данный момент перевод не работает!</string>
 </resources>

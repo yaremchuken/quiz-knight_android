@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".activities.QuizActivity">
+    tools:context=".activity.QuizActivity">
 
     <!--
         The top part, that takes upper half of the screen.

@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.adapters
+package yaremchuken.quizknight.adapter
 
 import android.view.LayoutInflater
 import android.view.View

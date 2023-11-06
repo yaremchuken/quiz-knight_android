@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.activities
+package yaremchuken.quizknight.activity
 
 import android.app.Dialog
 import android.content.Intent
@@ -17,7 +17,7 @@ import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
-import yaremchuken.quizknight.providers.QuizzesProvider
+import yaremchuken.quizknight.provider.QuizzesProvider
 import java.util.EnumMap
 
 const val MAX_GAMES = 4

@@ -148,7 +148,7 @@
             android:backgroundTint="@color/button_secondary"
             android:backgroundTintMode="add"
             android:paddingBottom="8dp"
-            android:text="@string/cancel_btn_title"
+            android:text="@string/back_btn_title"
             android:textSize="@dimen/font_size"
             android:textColor="@color/white"
             app:cornerRadius="10dp"

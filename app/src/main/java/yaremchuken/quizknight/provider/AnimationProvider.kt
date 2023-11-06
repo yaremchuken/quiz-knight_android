@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.providers
+package yaremchuken.quizknight.provider
 
 import android.content.Context
 import android.graphics.Bitmap

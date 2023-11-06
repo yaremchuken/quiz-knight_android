@@ -1,9 +1,9 @@
-package yaremchuken.quizknight.adapters
+package yaremchuken.quizknight.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import yaremchuken.quizknight.activities.QuizActivity
+import yaremchuken.quizknight.activity.QuizActivity
 import yaremchuken.quizknight.databinding.ItemAnswerFieldWordBorderedBinding
 
 class QuizAnswerAssembleStringAdapter(

@@ -1,11 +1,11 @@
-package yaremchuken.quizknight.adapters
+package yaremchuken.quizknight.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.activities.CityActivity
+import yaremchuken.quizknight.activity.CityActivity
 import yaremchuken.quizknight.databinding.ItemCityWorldmapMarkerBinding
 import yaremchuken.quizknight.model.ModuleType
 

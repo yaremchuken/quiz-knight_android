@@ -4,6 +4,15 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def getSecrets() {
+    Properties props = new Properties()
+    File propFile = file('../secrets.properties')
+    if (propFile.exists()) {
+        props.load(new FileInputStream(propFile))
+    }
+    return props
+}
+
 android {
     namespace 'yaremchuken.quizknight'
     compileSdk 33
@@ -14,6 +23,9 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        Properties secrets = getSecrets()
+        resValue "string", "YA_TRANSLATE_API_KEY", secrets["yandex.cloud.translate.api.key"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,7 +56,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.activity:activity-ktx:1.7.2"
 
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -58,6 +70,10 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.1-1'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.7.1'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.28'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

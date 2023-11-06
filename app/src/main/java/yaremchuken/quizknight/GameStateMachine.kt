@@ -1,6 +1,6 @@
 package yaremchuken.quizknight
 
-import yaremchuken.quizknight.activities.QuizActivity
+import yaremchuken.quizknight.activity.QuizActivity
 import yaremchuken.quizknight.draw.DrawView
 
 object GameStateMachine {

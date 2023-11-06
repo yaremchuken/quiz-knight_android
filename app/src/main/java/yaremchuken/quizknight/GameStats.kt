@@ -1,6 +1,7 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.entity.GameStatsEntity
+import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
 import java.util.EnumMap
 
@@ -15,6 +16,12 @@ object GameStats {
     var gold: Long = 0
 
     var game: String = ""
+        private set
+
+    var original: Language = Language.EN
+        private set
+
+    var studied: Language = Language.EN
         private set
 
     var module: ModuleType = ModuleType.LAZYWOOD
@@ -38,6 +45,8 @@ object GameStats {
         health = stats.health
         gold = stats.gold
         game = stats.game
+        original = stats.original
+        studied = stats.studied
         this.progress = progress
         switchModule(stats.module)
     }

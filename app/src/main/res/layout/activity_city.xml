@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".activities.QuizActivity">
+    tools:context=".activity.QuizActivity">
 
     <RelativeLayout
         android:id="@+id/llCityTop"

@@ -1,4 +1,4 @@
-package yaremchuken.quizknight.adapters
+package yaremchuken.quizknight.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
-import yaremchuken.quizknight.activities.CityActivity
+import yaremchuken.quizknight.activity.CityActivity
 import yaremchuken.quizknight.databinding.ItemCityCrossroadsLevelBinding
 import yaremchuken.quizknight.model.ModuleLevel
 

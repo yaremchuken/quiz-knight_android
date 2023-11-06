@@ -6,11 +6,13 @@
     <string name="check_btn_title">CHECK</string>
     <string name="start_btn_title">START</string>
     <string name="complete_btn_title">COMPLETE</string>
+    <string name="done_btn_title">DONE</string>
     <string name="new_game_btn_title">new game</string>
     <string name="create_new_game">Let`s start a new adventure Hero</string>
-    <string name="done_btn_title">OK</string>
-    <string name="cancel_btn_title">BACK</string>
+    <string name="ok_btn_title">OK</string>
+    <string name="back_btn_title">BACK</string>
     <string name="game_name">Name your game</string>
     <string name="original_language">Original</string>
     <string name="learn_language">To learn</string>
+    <string name="translation_not_available">Sorry, right now translation is not available!</string>
 </resources>
