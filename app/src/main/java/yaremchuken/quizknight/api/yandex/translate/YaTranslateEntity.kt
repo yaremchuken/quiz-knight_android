@@ -1,3 +1,3 @@
 package yaremchuken.quizknight.api.yandex.translate
 
-data class YaTranslationEntity(val text: String)
+data class YaTranslateEntity(val text: String)

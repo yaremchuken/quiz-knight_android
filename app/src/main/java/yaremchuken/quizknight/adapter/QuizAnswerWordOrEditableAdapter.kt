@@ -48,7 +48,7 @@ class QuizAnswerWordOrEditableAdapter(
             holder.word.visibility = View.VISIBLE
             holder.input.visibility = View.GONE
             holder.word.setOnClickListener {
-                activity.showTranslationDialog(collectTextsToTranslate(position))
+                activity.showDictionaryDialog(items[position])
             }
         }
         holder.input.addTextChangedListener {

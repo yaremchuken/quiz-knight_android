@@ -18,4 +18,6 @@
 
     <color name="button_primary">#E37958</color>
     <color name="button_secondary">#835142</color>
+
+    <color name="text_primary">#752800</color>
 </resources>

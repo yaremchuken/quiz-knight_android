@@ -13,7 +13,7 @@
         android:padding="4dp"
         android:textSize="@dimen/font_size"
         android:textStyle="bold"
-        android:textColor="#752800"
+        android:textColor="@color/text_primary"
         android:textAlignment="center"/>
 
     <com.google.android.material.textfield.TextInputEditText

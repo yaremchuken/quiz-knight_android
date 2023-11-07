@@ -1,6 +1,6 @@
 package yaremchuken.quizknight.api.yandex.translate
 
-data class YaTranslateResponse(val translations: Array<YaTranslationEntity>) {
+data class YaTranslateResponse(val translations: Array<YaTranslateEntity>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

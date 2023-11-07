@@ -26,6 +26,7 @@ android {
 
         Properties secrets = getSecrets()
         resValue "string", "YA_TRANSLATE_API_KEY", secrets["yandex.cloud.translate.api.key"]
+        resValue "string", "YA_DICTIONARY_API_KEY", secrets["yandex.dictionary.api.key"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,6 +56,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.activity:activity-ktx:1.7.2"
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 
     implementation 'com.google.code.gson:gson:2.10.1'
 

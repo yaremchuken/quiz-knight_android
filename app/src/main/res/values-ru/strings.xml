@@ -7,8 +7,11 @@
     <string name="create_new_game">Начинаем новое приключение герой</string>
     <string name="ok_btn_title">OK</string>
     <string name="back_btn_title">НАЗАД</string>
+    <string name="close_btn_title">ЗАКРЫТЬ</string>
     <string name="game_name">Имя игры</string>
     <string name="original_language">Ваш язык</string>
     <string name="learn_language">Изучаемый</string>
     <string name="translation_not_available">Извините, в данный момент перевод не работает!</string>
+
+    <string name="yandex_dictionary_license">Реализовано с помощью сервиса «API «Яндекс.Словарь»</string>
 </resources>

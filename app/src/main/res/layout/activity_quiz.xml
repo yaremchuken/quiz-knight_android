@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_xxl"
                     android:textStyle="bold"
-                    android:textColor="#752800"
+                    android:textColor="@color/text_primary"
                     tools:text="+75"/>
 
                 <ImageView

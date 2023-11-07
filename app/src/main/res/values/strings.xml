@@ -11,8 +11,12 @@
     <string name="create_new_game">Let`s start a new adventure Hero</string>
     <string name="ok_btn_title">OK</string>
     <string name="back_btn_title">BACK</string>
+    <string name="close_btn_title">CLOSE</string>
     <string name="game_name">Name your game</string>
     <string name="original_language">Original</string>
     <string name="learn_language">To learn</string>
     <string name="translation_not_available">Sorry, right now translation is not available!</string>
+
+    <string name="yandex_dictionary_license">Implemented using the service API Yandex.Dictionary</string>
+    <string name="yandex_dictionary_api_link" translatable="false"><a href='http://api.yandex.ru/dictionary'>http://api.yandex.ru/dictionary</a></string>
 </resources>

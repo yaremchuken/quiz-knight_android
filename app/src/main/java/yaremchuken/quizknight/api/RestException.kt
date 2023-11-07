@@ -9,6 +9,5 @@ class RestException(
     cause: Throwable
 ): RuntimeException(cause) {
     val debugMessage: String
-        get() =
-            "Exception raised while trying to access REST endpoint $url with params $params \n cause: ${super.message}"
+        get() = "Error is raised while accessing REST endpoint $url with params $params\n cause: ${super.message}"
 }
