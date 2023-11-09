@@ -1,8 +1,10 @@
 package yaremchuken.quizknight.activity
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -15,10 +17,10 @@ import yaremchuken.quizknight.databinding.ButtonGameStartBinding
 import yaremchuken.quizknight.databinding.DialogCreateGameBinding
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
-import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.provider.QuizzesProvider
 import java.util.EnumMap
+import java.util.Locale
 
 const val MAX_GAMES = 4
 
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         initializeGameButtons()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initializeGameButtons() {
         lifecycleScope.launch {
             binding.buttonsHolder.removeAllViews()
@@ -55,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 binding.buttonsHolder.addView(gameBtn.root)
             }
-            for(i in games.size until  MAX_GAMES) {
+            for(i in games.size until MAX_GAMES) {
                 val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
                 gameBtn.root.text = resources.getString(R.string.new_game_btn_title)
                 gameBtn.root.setOnClickListener {
@@ -78,11 +81,11 @@ class MainActivity : AppCompatActivity() {
                 val gameStatsDao = (application as App).db.getGameStatsDao()
                 val moduleProgressDao = (application as App).db.getModuleProgressDao()
 
-                val original = Language.RU
-                val learned = Language.EN
+                val original = toLocale(dialogBinding.rgOriginalGroup.checkedRadioButtonId)
+                val studied = toLocale(dialogBinding.rgStudiedGroup.checkedRadioButtonId)
 
                 val newGame = GameStatsEntity(
-                    dialogBinding.etGameName.text.toString(), idx, original, learned,
+                    dialogBinding.etGameName.text.toString(), idx, original, studied,
                     ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble())
 
                 val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
@@ -128,4 +131,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, CityActivity::class.java)
         startActivity(intent)
     }
+
+    private fun toLocale(btnId: Int) = Locale(findViewById<RadioButton>(btnId).text.toString().lowercase())
 }

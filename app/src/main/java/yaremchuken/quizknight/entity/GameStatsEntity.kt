@@ -2,8 +2,8 @@ package yaremchuken.quizknight.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
+import java.util.Locale
 
 @Entity("game_stats")
 data class GameStatsEntity(
@@ -11,8 +11,8 @@ data class GameStatsEntity(
     val game: String,
 
     val order: Long,
-    val original: Language,
-    val studied: Language,
+    val original: Locale,
+    val studied: Locale,
 
     var module: ModuleType,
     var gold: Long,

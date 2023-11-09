@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,7 +16,7 @@
      -->
     <FrameLayout
         android:id="@+id/flQuizTop"
-        android:layout_weight=".6"
+        android:layout_weight=".5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_sky_gradient">
@@ -40,7 +41,6 @@
             android:textStyle="bold"
             android:textColor="#e6d9d2"
             tools:text="Я заканчиваю работу в четыре, поэтому мне нравится моё расписание."
-            android:visibility="gone"
             />
 
         <ImageButton
@@ -56,6 +56,7 @@
             android:src="@drawable/sound_icon"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
+            android:visibility="gone"
             />
 
     </FrameLayout>
@@ -65,7 +66,7 @@
         different views used to present different type of quiz
     -->
     <RelativeLayout
-        android:layout_weight=".4"
+        android:layout_weight=".5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_answer_board_gradient"
@@ -81,48 +82,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"/>
 
-        <!-- Level complete message -->
-        <LinearLayout
-            android:id="@+id/llLevelCompleted"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="70dp"
-            android:layout_marginBottom="70dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
-                android:src="@drawable/ic_module_level_completed"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/tvLevelTribute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_xxl"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    tools:text="+75"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:src="@drawable/ui_gold"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        <include android:id="@+id/incCompleted" layout="@layout/quiz_layout_level_completed"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvQuizProgressStars"
@@ -144,136 +104,16 @@
             android:orientation="horizontal">
 
             <!-- Layout for ASSEMBLE_TRANSLATION_STRING task -->
-            <LinearLayout
-                android:id="@+id/llAssembleString"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
+            <include android:id="@+id/incAssemble" layout="@layout/quiz_layout_assemble_translation_string"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    android:background="@drawable/ic_answer_field_lined_background"
-                    android:orientation="horizontal">
+            <!-- Layout for WORD_TRANSLATION_INPUT and INPUT_LISTENED_WORD_IN_STRING tasks -->
+            <include android:id="@+id/incWord" layout="@layout/quiz_layout_input_word"/>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvAssembleStringAnswer"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="15sp" />
+            <!-- Layout for CHOOSE_CORRECT_OPTION task -->
+            <include android:id="@+id/incOption" layout="@layout/quiz_layout_choose_correct_option"/>
 
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    android:orientation="horizontal">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvAssembleStringOptions"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="15sp" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <!-- View for WORD_TRANSLATION_INPUT and INPUT_LISTENED_WORD_IN_STRING tasks -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvQuizAnswerItems"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="15sp"
-                android:visibility="gone"/>
-
-            <!-- Radio buttons group for CHOOSE_CORRECT_OPTION task -->
-            <RadioGroup
-                android:id="@+id/rgOptionsGroup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="15sp"
-                android:visibility="gone">
-
-                <RadioButton
-                    android:id="@+id/rbOptionA"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/drawable_answer_board_option_selector"
-                    android:button="@null"
-                    android:checked="false"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size"
-                    android:textStyle="bold"
-                    tools:text="A. This" />
-
-                <RadioButton
-                    android:id="@+id/rbOptionB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/drawable_answer_board_option_selector"
-                    android:button="@null"
-                    android:checked="false"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size"
-                    android:textStyle="bold"
-                    tools:text="B. That" />
-
-                <RadioButton
-                    android:id="@+id/rbOptionC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/drawable_answer_board_option_selector"
-                    android:button="@null"
-                    android:checked="false"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size"
-                    android:textStyle="bold"
-                    tools:text="C. Do" />
-
-                <RadioButton
-                    android:id="@+id/rbOptionD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/drawable_answer_board_option_selector"
-                    android:button="@null"
-                    android:checked="false"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_size"
-                    android:textStyle="bold"
-                    tools:text="D. Donet" />
-
-            </RadioGroup>
-
-            <!-- Text input field for WRITE_LISTENED_PHRASE task -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilBoardInput"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/etBoardInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/font_size"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:gravity="top"
-                    tools:text="text goes here"
-                    android:inputType="textFilter"
-                    android:background="@android:color/transparent"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
+            <!-- Layout for WRITE_LISTENED_PHRASE task -->
+            <include android:id="@+id/incPhrase" layout="@layout/quiz_layout_write_listened_phrase"/>
 
         </LinearLayout>
 

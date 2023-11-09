@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- layout for CHOOSE_CORRECT_OPTION task -->
+<RadioGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rgOptionsGroup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15sp">
+
+    <RadioButton
+        android:id="@+id/rbOptionA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/drawable_answer_board_option_selector"
+        android:button="@null"
+        android:checked="false"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size"
+        android:textStyle="bold"
+        tools:text="A. This" />
+
+    <RadioButton
+        android:id="@+id/rbOptionB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/drawable_answer_board_option_selector"
+        android:button="@null"
+        android:checked="false"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size"
+        android:textStyle="bold"
+        tools:text="B. That" />
+
+    <RadioButton
+        android:id="@+id/rbOptionC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/drawable_answer_board_option_selector"
+        android:button="@null"
+        android:checked="false"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size"
+        android:textStyle="bold"
+        tools:text="C. Do" />
+
+    <RadioButton
+        android:id="@+id/rbOptionD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/drawable_answer_board_option_selector"
+        android:button="@null"
+        android:checked="false"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size"
+        android:textStyle="bold"
+        tools:text="D. Donet" />
+</RadioGroup>

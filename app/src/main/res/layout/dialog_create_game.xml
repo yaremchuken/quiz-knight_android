@@ -93,13 +93,13 @@
                 android:textStyle="bold" />
 
             <RadioGroup
-                android:id="@+id/rgLearnedGroup"
+                android:id="@+id/rgStudiedGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="15sp">
 
                 <RadioButton
-                    android:id="@+id/rbLearnEN"
+                    android:id="@+id/rbStudiedEN"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/drawable_answer_board_option_selector"

@@ -9,11 +9,13 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.activity.QuizActivity
 import yaremchuken.quizknight.databinding.ItemAnswerFieldWordOrEditableBinding
+import java.util.Locale
 
-class QuizAnswerWordOrEditableAdapter(
+class QuizWordOrEditableAdapter(
     private val activity: QuizActivity,
-    private val items: List<String>
-): RecyclerView.Adapter<QuizAnswerWordOrEditableAdapter.ViewHolder>() {
+    private val items: List<String>,
+    private val lang: Locale
+): RecyclerView.Adapter<QuizWordOrEditableAdapter.ViewHolder>() {
 
     companion object {
         private const val SENTENCES_TO_TRANSLATE_SIZE = 3
@@ -48,7 +50,7 @@ class QuizAnswerWordOrEditableAdapter(
             holder.word.visibility = View.VISIBLE
             holder.input.visibility = View.GONE
             holder.word.setOnClickListener {
-                activity.showDictionaryDialog(items[position])
+                activity.showDictionaryDialog(items[position], lang)
             }
         }
         holder.input.addTextChangedListener {

@@ -9,8 +9,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import yaremchuken.quizknight.api.RestException
-import yaremchuken.quizknight.model.Language
 import java.io.IOException
+import java.util.Locale
 
 /**
  * REST Client for Yandex Cloud Translate Service V2
@@ -35,8 +35,8 @@ class YaTranslateClient(
      * Make REST call to Yandex Translate service.
      * @return map where key is source text and value is it translation.
      */
-    suspend fun translate(texts: Array<String>, source: Language, target: Language): Map<String, String> {
-        val yaReq = YaTranslateRequest(texts, source.code, target.code)
+    suspend fun translate(texts: Array<String>, source: Locale, target: Locale): Map<String, String> {
+        val yaReq = YaTranslateRequest(texts, source.language, target.language)
         val body = Gson().toJson(yaReq).toRequestBody(MEDIA_TYPE.toMediaType())
 
         val request = Request.Builder()

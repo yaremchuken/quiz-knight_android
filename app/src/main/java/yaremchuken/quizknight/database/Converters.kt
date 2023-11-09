@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import yaremchuken.quizknight.PersonageType
+import java.util.Locale
 
 class Converters {
 
@@ -22,4 +23,10 @@ class Converters {
     @TypeConverter
     fun personagesToList(value: String): List<PersonageType> =
         Gson().fromJson<List<String>?>(value, stringListType).map { PersonageType.valueOf(it) }
+
+    @TypeConverter
+    fun localeToString(value: Locale) = value.toLanguageTag()
+
+    @TypeConverter
+    fun stringToLocale(value: String) = Locale.forLanguageTag(value)
 }

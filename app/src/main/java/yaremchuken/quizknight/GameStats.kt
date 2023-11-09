@@ -1,9 +1,9 @@
 package yaremchuken.quizknight
 
 import yaremchuken.quizknight.entity.GameStatsEntity
-import yaremchuken.quizknight.model.Language
 import yaremchuken.quizknight.model.ModuleType
 import java.util.EnumMap
+import java.util.Locale
 
 object GameStats {
 
@@ -18,10 +18,10 @@ object GameStats {
     var game: String = ""
         private set
 
-    var original: Language = Language.EN
+    var original: Locale = Locale.ENGLISH
         private set
 
-    var studied: Language = Language.EN
+    var studied: Locale = Locale.ENGLISH
         private set
 
     var module: ModuleType = ModuleType.LAZYWOOD

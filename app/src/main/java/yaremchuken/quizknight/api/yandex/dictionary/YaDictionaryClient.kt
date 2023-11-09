@@ -7,8 +7,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import yaremchuken.quizknight.api.RestException
-import yaremchuken.quizknight.model.Language
 import java.io.IOException
+import java.util.Locale
 
 /**
  * REST Client for Yandex Dictionary API Service
@@ -24,14 +24,14 @@ class YaDictionaryClient(
 
     private val httpClient = OkHttpClient()
 
-    suspend fun lookup(text: String, source: Language, target: Language): Array<YaDictionaryEntity> {
-        val lang = "${source.code}-${target.code}"
+    suspend fun lookup(text: String, source: Locale, target: Locale): Array<YaDictionaryEntity> {
+        val lang = "${source.language}-${target.language}"
 
         val url = SERVICE_URL.toHttpUrl().newBuilder()
         url.addQueryParameter("key", apiKey)
         url.addQueryParameter("lang", lang)
         url.addQueryParameter("text", text)
-        url.addQueryParameter("ui", target.code)
+        url.addQueryParameter("ui", target.language)
         url.addQueryParameter("flags", PART_OF_SPEECH_SHORT_FLAG)
 
         val request = Request.Builder().url(url.build()).build()
@@ -46,7 +46,7 @@ class YaDictionaryClient(
                     return@withContext Gson().fromJson(it.body!!.string(), YaDictionaryResponse::class.java).def
                 }
             } catch (ex: IOException) {
-                throw RestException(SERVICE_URL, "{text=$text, lang=$lang, ui=${target.code}}", ex)
+                throw RestException(SERVICE_URL, "{text=$text, lang=$lang, ui=${target.language}}", ex)
             }
         }
     }
