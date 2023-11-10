@@ -16,7 +16,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,7 +29,6 @@ import yaremchuken.quizknight.StateMachineType
 import yaremchuken.quizknight.adapter.DictionaryDialogAdapter
 import yaremchuken.quizknight.adapter.HealthBarAdapter
 import yaremchuken.quizknight.adapter.QuizAnswerAssembleStringAdapter
-import yaremchuken.quizknight.adapter.QuizProgressStarsAdapter
 import yaremchuken.quizknight.adapter.QuizWordOrEditableAdapter
 import yaremchuken.quizknight.adapter.TranslationDialogAdapter
 import yaremchuken.quizknight.api.yandex.dictionary.YaDictionaryClient
@@ -121,14 +119,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         randomizeOpponent()
 
         binding.incProgressBar.pbQuizProgress.progress = 0
-        val starsLayout = FlexboxLayoutManager(this)
-        starsLayout.justifyContent = JustifyContent.SPACE_BETWEEN
-        binding.incProgressBar.rvQuizProgressStars.layoutManager = starsLayout
-
-        val progress: MutableList<Boolean> = ArrayList()
-        progress.add(false)
-        for (task in level.tasks) { progress.add(false) }
-        binding.incProgressBar.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(progress)
+        binding.incProgressBar.pbQuizProgress.visibility = View.INVISIBLE
 
         GameStateMachine.registerActivity(this)
     }
@@ -139,7 +130,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         fillQuizQuestionArea()
 
         binding.incProgressBar.pbQuizProgress.visibility = View.INVISIBLE
-        binding.incProgressBar.rvQuizProgressStars.visibility = View.INVISIBLE
 
         binding.llQuizBoard.visibility = View.VISIBLE
 
@@ -250,42 +240,38 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         hideBoard()
 
         lifecycleScope.launch {
-            var progress = ((100 / level.tasks.size-1) * quizIdx).toDouble()
-            val target = ((100 / level.tasks.size-1) * (quizIdx+1)).toDouble()
-
-            while (progress < target) {
-                progress += PROGRESS_BAR_ANIMATION_SPEED
-                if (progress > target) {
-                    progress = target
-                }
-                binding.incProgressBar.pbQuizProgress.progress = progress.toInt()
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(25)
-                }
-            }
-
-            val stars: MutableList<Boolean> = ArrayList()
-            stars.add(false)
-            for (i in 0 until level.tasks.size) {
-                stars.add(i <= quizIdx)
-            }
-            binding.incProgressBar.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(stars)
-
-            if (quizIdx == level.tasks.size-1) {
-                completeLevel()
-            } else {
-                quizIdx++
-                randomizeOpponent()
-                GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
-            }
+            animateProgressBar()
+            checkLevelCompleted()
         }
 
         binding.incProgressBar.pbQuizProgress.visibility = View.VISIBLE
-        binding.incProgressBar.rvQuizProgressStars.visibility = View.VISIBLE
     }
 
-    private fun randomizeOpponent() {
-        GameStats.opponent = level.opponents[(Math.random() * level.opponents.size).toInt()]
+    private suspend fun animateProgressBar() {
+        val step = 100.0 / level.tasks.size
+        var current = step * quizIdx
+        val target = current + step
+
+        while (current < target) {
+            current += PROGRESS_BAR_ANIMATION_SPEED
+            if (current > target) {
+                current = target
+            }
+            binding.incProgressBar.pbQuizProgress.progress = current.toInt()
+            withContext(Dispatchers.IO) {
+                Thread.sleep(25)
+            }
+        }
+    }
+
+    private fun checkLevelCompleted() {
+        if (quizIdx == level.tasks.size-1) {
+            completeLevel()
+        } else {
+            quizIdx++
+            randomizeOpponent()
+            GameStateMachine.switchState(StateMachineType.CONTINUE_MOVING)
+        }
     }
 
     private fun hideBoard() {
@@ -497,6 +483,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             GameStats.gold = gold
             gameStatsBarBinding.tvGold.text = gold.toString()
         }
+    }
+
+    private fun randomizeOpponent() {
+        GameStats.opponent = level.opponents[(Math.random() * level.opponents.size).toInt()]
     }
 
     override fun onBackPressed() {
