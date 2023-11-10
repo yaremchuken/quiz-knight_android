@@ -50,7 +50,7 @@ import yaremchuken.quizknight.provider.QuizzesProvider
 import yaremchuken.quizknight.utils.StringUtils
 import java.util.Locale
 
-const val PROGRESS_BAR_ANIMATION_SPEED = 2
+const val PROGRESS_BAR_ANIMATION_SPEED = 4
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
@@ -120,15 +120,15 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         AnimationProvider.preparePersonages(this@QuizActivity, level.opponents)
         randomizeOpponent()
 
-        binding.pbQuizProgress.progress = 0
-        val flexboxLayout = FlexboxLayoutManager(this)
-        flexboxLayout.justifyContent = JustifyContent.SPACE_BETWEEN
-        binding.rvQuizProgressStars.layoutManager = flexboxLayout
+        binding.incProgressBar.pbQuizProgress.progress = 0
+        val starsLayout = FlexboxLayoutManager(this)
+        starsLayout.justifyContent = JustifyContent.SPACE_BETWEEN
+        binding.incProgressBar.rvQuizProgressStars.layoutManager = starsLayout
 
         val progress: MutableList<Boolean> = ArrayList()
         progress.add(false)
         for (task in level.tasks) { progress.add(false) }
-        binding.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(progress)
+        binding.incProgressBar.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(progress)
 
         GameStateMachine.registerActivity(this)
     }
@@ -138,8 +138,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         fillQuizQuestionArea()
 
-        binding.pbQuizProgress.visibility = View.INVISIBLE
-        binding.rvQuizProgressStars.visibility = View.INVISIBLE
+        binding.incProgressBar.pbQuizProgress.visibility = View.INVISIBLE
+        binding.incProgressBar.rvQuizProgressStars.visibility = View.INVISIBLE
 
         binding.llQuizBoard.visibility = View.VISIBLE
 
@@ -258,7 +258,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 if (progress > target) {
                     progress = target
                 }
-                binding.pbQuizProgress.progress = progress.toInt()
+                binding.incProgressBar.pbQuizProgress.progress = progress.toInt()
                 withContext(Dispatchers.IO) {
                     Thread.sleep(25)
                 }
@@ -269,7 +269,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             for (i in 0 until level.tasks.size) {
                 stars.add(i <= quizIdx)
             }
-            binding.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(stars)
+            binding.incProgressBar.rvQuizProgressStars.adapter = QuizProgressStarsAdapter(stars)
 
             if (quizIdx == level.tasks.size-1) {
                 completeLevel()
@@ -280,8 +280,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
 
-        binding.pbQuizProgress.visibility = View.VISIBLE
-        binding.rvQuizProgressStars.visibility = View.VISIBLE
+        binding.incProgressBar.pbQuizProgress.visibility = View.VISIBLE
+        binding.incProgressBar.rvQuizProgressStars.visibility = View.VISIBLE
     }
 
     private fun randomizeOpponent() {

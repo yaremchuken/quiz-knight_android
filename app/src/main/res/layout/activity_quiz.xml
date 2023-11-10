@@ -27,6 +27,8 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <include android:id="@+id/incProgressBar" layout="@layout/quiz_layout_level_progress_bar" />
+
         <include android:id="@+id/incQuestionArea" layout="@layout/quiz_layout_question_area"/>
     </FrameLayout>
 
@@ -40,22 +42,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_answer_board_gradient"
         android:orientation="horizontal">
-
-        <ProgressBar
-            android:id="@+id/pbQuizProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:progressDrawable="@drawable/ic_quiz_progress_bar"
-            android:layout_height="30dp"
-            android:layout_width="match_parent"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="24dp"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvQuizProgressStars"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="15dp" />
 
         <include android:id="@+id/incCompleted" layout="@layout/quiz_layout_level_completed"/>
 
