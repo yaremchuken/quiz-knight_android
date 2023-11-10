@@ -58,7 +58,7 @@
                 android:id="@+id/rgOriginalGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15sp">
+                android:padding="15dp">
 
                 <RadioButton
                     android:id="@+id/rbOriginalRU"
@@ -96,7 +96,7 @@
                 android:id="@+id/rgStudiedGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15sp">
+                android:padding="15dp">
 
                 <RadioButton
                     android:id="@+id/rbStudiedEN"

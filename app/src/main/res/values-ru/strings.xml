@@ -11,6 +11,7 @@
     <string name="game_name">Имя игры</string>
     <string name="original_language">Ваш язык</string>
     <string name="learn_language">Изучаемый</string>
+    <string name="translation_not_found">Извините, я умею переводить только существительные :(</string>
     <string name="translation_not_available">Извините, в данный момент перевод не работает!</string>
 
     <string name="yandex_dictionary_license">Реализовано с помощью сервиса «API «Яндекс.Словарь»</string>

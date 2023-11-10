@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.activity.QuizActivity
-import yaremchuken.quizknight.databinding.ItemAnswerFieldWordBorderedBinding
+import yaremchuken.quizknight.databinding.ItemQuizWordBorderedBinding
 
 class QuizAnswerAssembleStringAdapter(
     private val activity: QuizActivity,
@@ -12,12 +12,12 @@ class QuizAnswerAssembleStringAdapter(
     private val source: String
 ): RecyclerView.Adapter<QuizAnswerAssembleStringAdapter.ViewHolder>() {
 
-    class ViewHolder(binding: ItemAnswerFieldWordBorderedBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemQuizWordBorderedBinding): RecyclerView.ViewHolder(binding.root) {
         val word = binding.tvWord
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemAnswerFieldWordBorderedBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ViewHolder(ItemQuizWordBorderedBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun getItemCount() = items.size
 

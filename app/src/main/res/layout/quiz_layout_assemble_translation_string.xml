@@ -18,7 +18,7 @@
             android:id="@+id/rvAssembleStringAnswer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15sp" />
+            android:padding="15dp" />
 
     </RelativeLayout>
 
@@ -32,6 +32,6 @@
             android:id="@+id/rvAssembleStringOptions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15sp" />
+            android:padding="15dp" />
     </RelativeLayout>
 </LinearLayout>

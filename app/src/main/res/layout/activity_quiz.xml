@@ -27,38 +27,7 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/tvQuizQuestion"
-            android:layout_width="match_parent"
-            android:minHeight="130dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_bubble_question_background"
-            android:layout_marginTop="42dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:padding="10sp"
-            android:textSize="@dimen/font_size"
-            android:textStyle="bold"
-            android:textColor="#e6d9d2"
-            tools:text="Я заканчиваю работу в четыре, поэтому мне нравится моё расписание."
-            />
-
-        <ImageButton
-            android:id="@+id/ibQuizListenBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="130dp"
-            android:layout_gravity="top|center"
-            android:background="@drawable/ic_bubble_question_background"
-            android:layout_marginTop="42dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:padding="10sp"
-            android:src="@drawable/sound_icon"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:visibility="gone"
-            />
-
+        <include android:id="@+id/incQuestionArea" layout="@layout/quiz_layout_question_area"/>
     </FrameLayout>
 
     <!--
@@ -82,13 +51,13 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"/>
 
-        <include android:id="@+id/incCompleted" layout="@layout/quiz_layout_level_completed"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvQuizProgressStars"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15sp" />
+            android:padding="15dp" />
+
+        <include android:id="@+id/incCompleted" layout="@layout/quiz_layout_level_completed"/>
 
         <LinearLayout
             android:id="@+id/llQuizBoard"
@@ -114,7 +83,6 @@
 
             <!-- Layout for WRITE_LISTENED_PHRASE task -->
             <include android:id="@+id/incPhrase" layout="@layout/quiz_layout_write_listened_phrase"/>
-
         </LinearLayout>
 
         <!-- Button to check player input -->
@@ -135,5 +103,4 @@
             app:strokeWidth="1dp"/>
 
     </RelativeLayout>
-
 </LinearLayout>

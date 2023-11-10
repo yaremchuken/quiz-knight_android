@@ -43,6 +43,7 @@ import yaremchuken.quizknight.model.ModuleLevel
 import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizType
 import yaremchuken.quizknight.model.QuizType.INPUT_LISTENED_WORD_IN_STRING
+import yaremchuken.quizknight.model.QuizType.WORD_TRANSLATION_INPUT
 import yaremchuken.quizknight.model.QuizType.WRITE_LISTENED_PHRASE
 import yaremchuken.quizknight.provider.AnimationProvider
 import yaremchuken.quizknight.provider.QuizzesProvider
@@ -85,7 +86,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         translateClient = YaTranslateClient(resources.getString(R.string.YA_TRANSLATE_API_KEY))
         dictionaryClient = YaDictionaryClient(resources.getString(R.string.YA_DICTIONARY_API_KEY))
 
-        binding.ibQuizListenBtn.setOnClickListener {
+        binding.incQuestionArea.ibQuizListenBtn.setOnClickListener {
             speakOut(quizTask.display)
         }
         binding.btnCheck.setOnClickListener {
@@ -152,9 +153,19 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun fillQuizQuestionArea() {
-        binding.tvQuizQuestion.text = quizTask.display
-        if (quizTask.type != WRITE_LISTENED_PHRASE && quizTask.type != INPUT_LISTENED_WORD_IN_STRING) {
-            binding.tvQuizQuestion.visibility = View.VISIBLE
+        binding.incQuestionArea.root.visibility = View.VISIBLE
+        if (QuizType.isAudition(quizTask.type)) {
+            binding.incQuestionArea.ibQuizListenBtn.visibility = View.VISIBLE
+        } else {
+            Log.i("TAG", "fillQuizQuestionArea: ${quizTask.type}")
+            binding.incQuestionArea.llWordsDisplay.visibility = View.VISIBLE
+            binding.incQuestionArea.rvWordItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
+            binding.incQuestionArea.rvWordItems.adapter =
+                QuizWordOrEditableAdapter(
+                    this@QuizActivity,
+                    quizTask.display.split(" "),
+                    if (quizTask.type == WORD_TRANSLATION_INPUT) GameStats.original else GameStats.studied,
+                    resources.getColor(R.color.white))
         }
     }
 
@@ -196,9 +207,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             WRITE_LISTENED_PHRASE -> {
-                binding.ibQuizListenBtn.visibility = View.VISIBLE
                 binding.incPhrase.root.visibility = View.VISIBLE
-
                 binding.incPhrase.etBoardInput.postDelayed(Runnable {
                     binding.incPhrase.etBoardInput.dispatchTouchEvent(
                         MotionEvent.obtain(
@@ -212,7 +221,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             INPUT_LISTENED_WORD_IN_STRING -> {
-                binding.ibQuizListenBtn.visibility = View.VISIBLE
                 binding.incWord.rvQuizAnswerItems.visibility = View.VISIBLE
                 binding.incWord.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.incWord.rvQuizAnswerItems.adapter =
@@ -281,8 +289,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun hideBoard() {
-        binding.tvQuizQuestion.visibility = View.INVISIBLE
-        binding.ibQuizListenBtn.visibility = View.INVISIBLE
+        binding.incQuestionArea.root.visibility = View.INVISIBLE
+        binding.incQuestionArea.ibQuizListenBtn.visibility = View.GONE
+        binding.incQuestionArea.llWordsDisplay.visibility = View.GONE
 
         binding.llQuizBoard.visibility = View.INVISIBLE
         binding.incWord.rvQuizAnswerItems.visibility = View.GONE
@@ -423,22 +432,29 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
+        val isOriginal = sourceLang == GameStats.original
+
         lifecycleScope.launch {
             try {
                 val translations =
                     dictionaryClient.lookup(
                         clearedText,
                         sourceLang,
-                        if (sourceLang == GameStats.original) GameStats.studied else GameStats.original)
+                        if (isOriginal) GameStats.studied else GameStats.original)
 
                 dialogDictionaryBinding.llLoader.visibility = View.GONE
-                dialogDictionaryBinding.tvErrorMessage.visibility = View.GONE
-                dialogDictionaryBinding.rvDictionaryEntities.layoutManager =
-                    LinearLayoutManager(this@QuizActivity, LinearLayoutManager.VERTICAL, false)
-                dialogDictionaryBinding.rvDictionaryEntities.adapter =
-                    DictionaryDialogAdapter(this@QuizActivity, translations)
+
+                if (translations.isEmpty()) {
+                    dialogDictionaryBinding.rvDictionaryEntities.visibility = View.GONE
+                    dialogDictionaryBinding.tvErrorMessage.text = getString(R.string.translation_not_found)
+                } else {
+                    dialogDictionaryBinding.tvErrorMessage.visibility = View.GONE
+                    dialogDictionaryBinding.rvDictionaryEntities.layoutManager =
+                        LinearLayoutManager(this@QuizActivity, LinearLayoutManager.VERTICAL, false)
+                    dialogDictionaryBinding.rvDictionaryEntities.adapter =
+                        DictionaryDialogAdapter(this@QuizActivity, translations, !isOriginal)
+                }
             } catch (ex: Exception) {
-                dialogDictionaryBinding.llLoader.visibility = View.GONE
                 dialogDictionaryBinding.rvDictionaryEntities.visibility = View.GONE
                 dialogDictionaryBinding.tvErrorMessage.text = getString(R.string.translation_not_available)
             }

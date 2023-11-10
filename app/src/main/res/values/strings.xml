@@ -15,6 +15,7 @@
     <string name="game_name">Name your game</string>
     <string name="original_language">Original</string>
     <string name="learn_language">To learn</string>
+    <string name="translation_not_found">Sorry, I don`t know how to translate this</string>
     <string name="translation_not_available">Sorry, right now translation is not available!</string>
 
     <string name="yandex_dictionary_license">Implemented using the service API Yandex.Dictionary</string>

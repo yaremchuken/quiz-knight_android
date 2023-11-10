@@ -1,5 +1,6 @@
 package yaremchuken.quizknight.api.yandex.dictionary
 
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

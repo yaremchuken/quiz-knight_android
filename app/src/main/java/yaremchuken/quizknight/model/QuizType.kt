@@ -28,5 +28,9 @@ enum class QuizType {
     /**
      * Quiz where Player have to write listened word to complete sentence.
      */
-    INPUT_LISTENED_WORD_IN_STRING
+    INPUT_LISTENED_WORD_IN_STRING;
+
+    companion object {
+        fun isAudition(type: QuizType) = type == WRITE_LISTENED_PHRASE || type == INPUT_LISTENED_WORD_IN_STRING
+    }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/llWordsDisplay"
+        android:layout_width="match_parent"
+        android:minHeight="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_bubble_question_background"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvWordItems"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp"/>
+    </LinearLayout>
+    
+    <ImageButton
+        android:id="@+id/ibQuizListenBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_gravity="top|center"
+        android:background="@drawable/ic_bubble_answer_background"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:padding="10dp"
+        android:src="@drawable/sound_icon"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"/>
+</LinearLayout>

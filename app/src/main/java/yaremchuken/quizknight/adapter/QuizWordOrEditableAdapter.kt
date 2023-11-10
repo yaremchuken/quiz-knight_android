@@ -1,20 +1,24 @@
 package yaremchuken.quizknight.adapter
 
+import android.graphics.Color
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
+import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activity.QuizActivity
-import yaremchuken.quizknight.databinding.ItemAnswerFieldWordOrEditableBinding
+import yaremchuken.quizknight.databinding.ItemQuizWordOrEditableBinding
 import java.util.Locale
 
 class QuizWordOrEditableAdapter(
     private val activity: QuizActivity,
     private val items: List<String>,
-    private val lang: Locale
+    private val lang: Locale,
+    private val textColor: Int? = null
 ): RecyclerView.Adapter<QuizWordOrEditableAdapter.ViewHolder>() {
 
     companion object {
@@ -23,14 +27,14 @@ class QuizWordOrEditableAdapter(
 
     var playerInput: String = ""
 
-    class ViewHolder(binding: ItemAnswerFieldWordOrEditableBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemQuizWordOrEditableBinding): RecyclerView.ViewHolder(binding.root) {
         val word = binding.tvWord
         val input = binding.tvInput
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val holder = ViewHolder(
-            ItemAnswerFieldWordOrEditableBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val holder =
+            ViewHolder(ItemQuizWordOrEditableBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         holder.input.addTextChangedListener {
             playerInput = it.toString()
         }
@@ -45,25 +49,26 @@ class QuizWordOrEditableAdapter(
             holder.word.text = ""
             holder.word.visibility = View.GONE
             holder.input.visibility = View.VISIBLE
+            holder.input.addTextChangedListener {
+                activity.controlCheckBtnStatus(!it.isNullOrBlank())
+            }
+            holder.input.postDelayed(Runnable {
+                holder.input.dispatchTouchEvent(
+                    MotionEvent.obtain(
+                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
+                holder.input.dispatchTouchEvent(
+                    MotionEvent.obtain(
+                        SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
+            }, 200)
         } else {
-            holder.word.text = items[position]
+            holder.word.text = word
             holder.word.visibility = View.VISIBLE
             holder.input.visibility = View.GONE
             holder.word.setOnClickListener {
-                activity.showDictionaryDialog(items[position], lang)
+                activity.showDictionaryDialog(word, lang)
             }
         }
-        holder.input.addTextChangedListener {
-            activity.controlCheckBtnStatus(!it.isNullOrBlank())
-        }
-        holder.input.postDelayed(Runnable {
-            holder.input.dispatchTouchEvent(
-                MotionEvent.obtain(
-                    SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0F, 0F, 0))
-            holder.input.dispatchTouchEvent(
-                MotionEvent.obtain(
-                    SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0F, 0F, 0))
-        }, 200)
+        if (textColor != null) holder.word.setTextColor(textColor)
     }
 
     /**

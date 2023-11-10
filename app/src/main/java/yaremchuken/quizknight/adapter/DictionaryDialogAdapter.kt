@@ -10,7 +10,8 @@ import yaremchuken.quizknight.databinding.ItemDictionaryEntityBinding
 
 class DictionaryDialogAdapter(
     private val quizActivity: QuizActivity,
-    private val items: Array<YaDictionaryEntity>
+    private val items: Array<YaDictionaryEntity>,
+    private val showTranscription: Boolean = true
 ): RecyclerView.Adapter<DictionaryDialogAdapter.ViewHolder>() {
     class ViewHolder(binding: ItemDictionaryEntityBinding): RecyclerView.ViewHolder(binding.root) {
         val tvSource = binding.tvSourceWord
@@ -28,8 +29,10 @@ class DictionaryDialogAdapter(
         val translation = items[position]
 
         holder.tvSource.text = translation.text
-        holder.tvTranscription.text = if (translation.ts == null) null else "[${translation.ts}]"
-        holder.tvPartOfSpeech.text = translation.pos
+        if (showTranscription) {
+            holder.tvTranscription.text = if (translation.ts == null) null else "[${translation.ts}]"
+            holder.tvPartOfSpeech.text = translation.pos
+        }
 
         holder.rvTranslations.layoutManager = LinearLayoutManager(quizActivity, LinearLayoutManager.VERTICAL, false)
         holder.rvTranslations.adapter = DictionaryDialogTranslationAdapter(translation.tr)
