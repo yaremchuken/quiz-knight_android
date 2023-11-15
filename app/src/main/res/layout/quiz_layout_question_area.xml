@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:layout_gravity="top|center"
-        android:background="@drawable/ic_bubble_answer_background"
+        android:background="@drawable/ic_bubble_listened_background"
         android:layout_marginTop="42dp"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"

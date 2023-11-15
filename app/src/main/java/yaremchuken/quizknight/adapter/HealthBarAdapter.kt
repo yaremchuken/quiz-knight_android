@@ -20,7 +20,7 @@ class HealthBarAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.heartImg.setImageResource(
-            if (items[position]) R.drawable.ui_heart_full else R.drawable.ui_heart_empty
+            if (items[position]) R.drawable.ui_heart_full_s else R.drawable.ui_heart_empty_s
         )
     }
 }

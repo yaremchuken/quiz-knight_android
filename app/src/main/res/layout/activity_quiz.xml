@@ -16,7 +16,7 @@
      -->
     <FrameLayout
         android:id="@+id/flQuizTop"
-        android:layout_weight=".5"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_sky_gradient">
@@ -30,6 +30,11 @@
         <include android:id="@+id/incProgressBar" layout="@layout/quiz_layout_level_progress_bar" />
 
         <include android:id="@+id/incQuestionArea" layout="@layout/quiz_layout_question_area"/>
+
+        <RelativeLayout
+            android:id="@+id/rlStatsBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <!--
@@ -37,7 +42,7 @@
         different views used to present different type of quiz
     -->
     <RelativeLayout
-        android:layout_weight=".5"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg_answer_board_gradient"

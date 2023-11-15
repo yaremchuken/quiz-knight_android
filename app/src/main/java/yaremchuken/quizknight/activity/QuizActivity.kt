@@ -40,6 +40,8 @@ import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.ModuleLevel
 import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizType
+import yaremchuken.quizknight.model.QuizType.ASSEMBLE_TRANSLATION_STRING
+import yaremchuken.quizknight.model.QuizType.CHOOSE_CORRECT_OPTION
 import yaremchuken.quizknight.model.QuizType.INPUT_LISTENED_WORD_IN_STRING
 import yaremchuken.quizknight.model.QuizType.WORD_TRANSLATION_INPUT
 import yaremchuken.quizknight.model.QuizType.WRITE_LISTENED_PHRASE
@@ -75,7 +77,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setContentView(binding.root)
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
-        binding.flQuizTop.addView(gameStatsBarBinding.root)
+        binding.rlStatsBar.addView(gameStatsBarBinding.root)
 
         updateHealthBar()
         updateGold()
@@ -162,7 +164,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     @SuppressLint("SetTextI18n")
     private fun fillQuizAnswerBoard() {
         when (quizTask.type) {
-            QuizType.WORD_TRANSLATION_INPUT -> {
+            WORD_TRANSLATION_INPUT -> {
                 binding.incWord.rvQuizAnswerItems.visibility = View.VISIBLE
                 binding.incWord.rvQuizAnswerItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.incWord.rvQuizAnswerItems.adapter =
@@ -172,7 +174,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         GameStats.studied)
             }
 
-            QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+            ASSEMBLE_TRANSLATION_STRING -> {
                 binding.incAssemble.llAssembleString.visibility = View.VISIBLE
                 binding.incAssemble.rvAssembleStringAnswer.layoutManager = FlexboxLayoutManager(this@QuizActivity)
                 binding.incAssemble.rvAssembleStringOptions.layoutManager = FlexboxLayoutManager(this@QuizActivity)
@@ -188,7 +190,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     QuizAnswerAssembleStringAdapter(this@QuizActivity, ArrayList(), "answer")
             }
 
-            QuizType.CHOOSE_CORRECT_OPTION -> {
+            CHOOSE_CORRECT_OPTION -> {
                 binding.incOption.rgOptionsGroup.visibility = View.VISIBLE
                 binding.incOption.rbOptionA.text = "A. ${quizTask.options[0]}"
                 binding.incOption.rbOptionB.text = "B. ${quizTask.options[1]}"
@@ -228,7 +230,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val service = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         service.hideSoftInputFromWindow(binding.incWord.rvQuizAnswerItems.rootView.applicationWindowToken, 0)
 
-        if (quizTask.type == QuizType.CHOOSE_CORRECT_OPTION) {
+        if (quizTask.type == CHOOSE_CORRECT_OPTION) {
             binding.incOption.rbOptionA.isChecked = false
             binding.incOption.rbOptionB.isChecked = false
             binding.incOption.rbOptionC.isChecked = false
@@ -306,7 +308,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         direction: String
     ) {
         when (quizTask.type) {
-            QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+            ASSEMBLE_TRANSLATION_STRING -> {
                 val changed = from.items.removeAt(position)
                 val answerAdapter = (binding.incAssemble.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter)
                 val optionsAdapter = (binding.incAssemble.rvAssembleStringOptions.adapter as QuizAnswerAssembleStringAdapter)
@@ -333,13 +335,13 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         val answer = when (quizTask.type) {
-            QuizType.WORD_TRANSLATION_INPUT -> {
+            WORD_TRANSLATION_INPUT -> {
                 (binding.incWord.rvQuizAnswerItems.adapter as QuizWordOrEditableAdapter).playerInput
             }
-            QuizType.CHOOSE_CORRECT_OPTION -> {
+            CHOOSE_CORRECT_OPTION -> {
                 findViewById<RadioButton>(binding.incOption.rgOptionsGroup.checkedRadioButtonId).text.toString()
             }
-            QuizType.ASSEMBLE_TRANSLATION_STRING -> {
+            ASSEMBLE_TRANSLATION_STRING -> {
                 (binding.incAssemble.rvAssembleStringAnswer.adapter as QuizAnswerAssembleStringAdapter).items.joinToString(" ")
             }
             WRITE_LISTENED_PHRASE -> {
