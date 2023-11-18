@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,89 +9,99 @@
     android:orientation="vertical"
     tools:context=".activity.QuizActivity">
 
-    <!--
-        The top part, that takes upper half of the screen.
-        It is responsible for drawing canvas with game world, hero, opponent etc.
-        Question bubble with current quiz task also goes here.
-     -->
-    <FrameLayout
-        android:id="@+id/flQuizTop"
-        android:layout_weight="1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg_sky_gradient">
+        android:orientation="vertical">
 
-        <yaremchuken.quizknight.draw.DrawView
-            android:id="@+id/gameView"
+        <!--
+            The top part, that takes upper half of the screen.
+            It is responsible for drawing canvas with game world, hero, opponent etc.
+            Question bubble with current quiz task also goes here.
+         -->
+        <FrameLayout
+            android:id="@+id/flQuizTop"
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:background="@drawable/ic_bg_sky_gradient">
 
-        <include android:id="@+id/incProgressBar" layout="@layout/quiz_layout_level_progress_bar" />
+            <yaremchuken.quizknight.draw.DrawView
+                android:id="@+id/gameView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        <include android:id="@+id/incQuestionArea" layout="@layout/quiz_layout_question_area"/>
+            <include android:id="@+id/incProgressBar" layout="@layout/quiz_layout_level_progress_bar" />
 
+            <include android:id="@+id/incQuestionArea" layout="@layout/quiz_layout_question_area"/>
+
+            <RelativeLayout
+                android:id="@+id/rlStatsBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
+
+        <!--
+            Lower part is designed for quiz answers,
+            different views used to present different type of quiz
+        -->
         <RelativeLayout
-            android:id="@+id/rlStatsBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
-
-    <!--
-        Lower part is designed for quiz answers,
-        different views used to present different type of quiz
-    -->
-    <RelativeLayout
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/ic_bg_answer_board_gradient"
-        android:orientation="horizontal">
-
-        <include android:id="@+id/incCompleted" layout="@layout/quiz_layout_level_completed"/>
-
-        <LinearLayout
-            android:id="@+id/llQuizBoard"
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/btnCheck"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/ic_bubble_answer_background"
+            android:background="@drawable/ic_bg_answer_board_gradient"
             android:orientation="horizontal">
 
-            <!-- Layout for ASSEMBLE_TRANSLATION_STRING task -->
-            <include android:id="@+id/incAssemble" layout="@layout/quiz_layout_assemble_translation_string"/>
+            <LinearLayout
+                android:id="@+id/llQuizBoard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/btnCheck"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/ic_bubble_answer_background"
+                android:orientation="horizontal">
 
-            <!-- Layout for WORD_TRANSLATION_INPUT and INPUT_LISTENED_WORD_IN_STRING tasks -->
-            <include android:id="@+id/incWord" layout="@layout/quiz_layout_input_word"/>
+                <!-- Layout for ASSEMBLE_TRANSLATION_STRING task -->
+                <include android:id="@+id/incAssemble" layout="@layout/quiz_layout_assemble_translation_string"/>
 
-            <!-- Layout for CHOOSE_CORRECT_OPTION task -->
-            <include android:id="@+id/incOption" layout="@layout/quiz_layout_choose_correct_option"/>
+                <!-- Layout for WORD_TRANSLATION_INPUT and INPUT_LISTENED_WORD_IN_STRING tasks -->
+                <include android:id="@+id/incWord" layout="@layout/quiz_layout_input_word"/>
 
-            <!-- Layout for WRITE_LISTENED_PHRASE task -->
-            <include android:id="@+id/incPhrase" layout="@layout/quiz_layout_write_listened_phrase"/>
-        </LinearLayout>
+                <!-- Layout for CHOOSE_CORRECT_OPTION task -->
+                <include android:id="@+id/incOption" layout="@layout/quiz_layout_choose_correct_option"/>
 
-        <!-- Button to check player input -->
-        <Button
-            android:id="@+id/btnCheck"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/button_primary"
-            android:backgroundTintMode="add"
-            android:paddingBottom="8dp"
-            android:text="@string/check_btn_title"
-            android:textSize="@dimen/font_size"
-            android:textColor="@color/white"
-            app:cornerRadius="10dp"
-            app:strokeColor="@color/white"
-            app:strokeWidth="1dp"/>
+                <!-- Layout for WRITE_LISTENED_PHRASE task -->
+                <include android:id="@+id/incPhrase" layout="@layout/quiz_layout_write_listened_phrase"/>
+            </LinearLayout>
 
-    </RelativeLayout>
-</LinearLayout>
+            <!-- Button to check player input -->
+            <Button
+                android:id="@+id/btnCheck"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/button_primary"
+                android:backgroundTintMode="add"
+                android:paddingBottom="8dp"
+                android:text="@string/check_btn_title"
+                android:textSize="@dimen/font_size"
+                android:textColor="@color/white"
+                app:cornerRadius="10dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:name="yaremchuken.quizknight.fragment.QuizLevelCompletedFragment"
+        android:id="@+id/fcwQuizCompleted"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

@@ -37,6 +37,7 @@ import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.DialogDictionaryBinding
 import yaremchuken.quizknight.databinding.DialogTranslationBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
+import yaremchuken.quizknight.fragment.QuizLevelCompletedFragment
 import yaremchuken.quizknight.model.ModuleLevel
 import yaremchuken.quizknight.model.QuizTask
 import yaremchuken.quizknight.model.QuizType
@@ -65,6 +66,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var dictionaryClient: YaDictionaryClient
     private lateinit var dialogDictionaryBinding: DialogDictionaryBinding
 
+    private lateinit var quizLevelCompleted: QuizLevelCompletedFragment
+
     private lateinit var level: ModuleLevel
     private lateinit var quizTask: QuizTask
     private var quizIdx = 0
@@ -78,6 +81,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
         binding.rlStatsBar.addView(gameStatsBarBinding.root)
+
+        quizLevelCompleted = supportFragmentManager.findFragmentById(R.id.fcwQuizCompleted) as QuizLevelCompletedFragment
 
         updateHealthBar()
         updateGold()
@@ -288,7 +293,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.incPhrase.root.visibility = View.GONE
 
         binding.btnCheck.visibility = View.INVISIBLE
-        binding.incCompleted.root.visibility = View.GONE
     }
 
     private fun randomize(array: MutableList<String>) {
@@ -469,8 +473,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 GameStats.currentLevel = -1
             }
 
-            binding.incCompleted.tvLevelTribute.text = "+${level.tribute}"
-            binding.incCompleted.root.visibility = View.VISIBLE
+            quizLevelCompleted.setTribute(level.tribute)
+            quizLevelCompleted.requireView().visibility = View.VISIBLE
             binding.btnCheck.text = resources.getString(R.string.complete_btn_title)
             controlCheckBtnStatus(true)
             binding.btnCheck.visibility = View.VISIBLE
