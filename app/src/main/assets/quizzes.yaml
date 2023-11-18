@@ -69,15 +69,6 @@ quizzes:
       - GOBLIN
     tribute: 100
     tasks:
-      - type: WORD_TRANSLATION_INPUT
-        display: Мне очень нравится это утро.
-        options:
-          - I like this morning <answer> .
-        verifications:
-          - so much
-          - very much
-          - a lot
-
       - type: CHOOSE_CORRECT_OPTION
         display: Let's go for a walk ........ .
         options:

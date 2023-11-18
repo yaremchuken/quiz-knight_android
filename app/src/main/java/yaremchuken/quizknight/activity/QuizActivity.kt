@@ -475,6 +475,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
             quizLevelCompleted.setTribute(level.tribute)
             quizLevelCompleted.requireView().visibility = View.VISIBLE
+            quizLevelCompleted.runAnimations()
+
             binding.btnCheck.text = resources.getString(R.string.complete_btn_title)
             controlCheckBtnStatus(true)
             binding.btnCheck.visibility = View.VISIBLE

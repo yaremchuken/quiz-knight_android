@@ -3,5 +3,5 @@
     <dimen name="font_size_s">18sp</dimen>
     <dimen name="font_size">22sp</dimen>
     <dimen name="font_size_xl">36sp</dimen>
-    <dimen name="font_size_xxl">48sp</dimen>
+    <dimen name="font_size_xxl">64sp</dimen>
 </resources>

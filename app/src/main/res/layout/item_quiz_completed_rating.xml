@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llIitemMain"
+    android:id="@+id/ll_history_item_main"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="4dp">
 
     <ImageView
-        android:id="@+id/ivStar"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:id="@+id/ivRating"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:gravity="center"
-        android:src="@drawable/ui_rating_empty"/>
+        android:src="@drawable/ui_rating_full"/>
 </LinearLayout>
