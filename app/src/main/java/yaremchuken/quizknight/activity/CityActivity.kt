@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.R
@@ -90,10 +92,13 @@ class CityActivity : AppCompatActivity() {
     }
 
     fun switchModule(moduleType: ModuleType) {
-        val gameStatsDao = (application as App).db.getGameStatsDao()
-
         lifecycleScope.launch {
-            gameStatsDao.switchModule(GameStats.game, moduleType)
+            withContext(Dispatchers.IO) {
+                (application as App)
+                    .db
+                    .getGameStatsDao()
+                    .switchModule(GameStats.game, moduleType)
+            }
         }.invokeOnCompletion {
             GameStats.switchModule(moduleType)
             gameStatsBarBinding.tvModuleName.text = moduleType.name

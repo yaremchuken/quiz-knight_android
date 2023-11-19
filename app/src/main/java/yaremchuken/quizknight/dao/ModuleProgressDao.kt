@@ -10,14 +10,14 @@ import yaremchuken.quizknight.model.ModuleType
 @Dao
 interface ModuleProgressDao {
     @Insert
-    suspend fun insert(progresses: List<ModuleProgressEntity>)
+    fun insert(progresses: List<ModuleProgressEntity>)
 
     @Query("select * from module_progress where game = :game")
-    suspend fun fetch(game: String): List<ModuleProgressEntity>
+    fun fetch(game: String): List<ModuleProgressEntity>
 
     @Query("select * from module_progress where game = :game and module = :module")
-    suspend fun fetch(game: String, module: ModuleType): List<ModuleProgressEntity>
+    fun fetch(game: String, module: ModuleType): List<ModuleProgressEntity>
 
     @Query("update module_progress set progress = :progress where game = :game and module = :module")
-    suspend fun updateProgress(game: String, module: ModuleType, progress: Long)
+    fun updateProgress(game: String, module: ModuleType, progress: Long)
 }

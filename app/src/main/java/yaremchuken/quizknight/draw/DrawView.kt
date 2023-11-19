@@ -90,9 +90,7 @@ class DrawView(context: Context, attributes: AttributeSet):
         }
     }
 
-    override fun draw(canvas: Canvas?) {
-        if (canvas == null) return
-
+    override fun draw(canvas: Canvas) {
         frameStart = System.currentTimeMillis();
 
         super.draw(canvas)

@@ -9,14 +9,14 @@ import yaremchuken.quizknight.model.ModuleType
 @Dao
 interface GameStatsDao {
     @Insert
-    suspend fun insert(gameStats: GameStatsEntity)
+    fun insert(gameStats: GameStatsEntity)
 
     @Query("select * from game_stats")
-    suspend fun fetchAll(): List<GameStatsEntity>
+    fun fetchAll(): List<GameStatsEntity>
 
     @Query("update game_stats set module = :moduleType where game = :game")
-    suspend fun switchModule(game: String, moduleType: ModuleType)
+    fun switchModule(game: String, moduleType: ModuleType)
 
     @Query("update game_stats set gold = :gold where game = :game")
-    suspend fun updateGold(game: String, gold: Long)
+    fun updateGold(game: String, gold: Long)
 }

@@ -462,15 +462,24 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun completeLevel() {
         GameStateMachine.switchState(StateMachineType.COMPLETED)
 
+        val gold = GameStats.gold + level.tribute
+
         lifecycleScope.launch {
-            val moduleProgress =
+            withContext(Dispatchers.IO) {
                 (application as App)
                     .db
-                    .getModuleProgressDao()
-                    .fetch(GameStats.game, GameStats.module)[0]
+                    .getGameStatsDao()
+                    .updateGold(GameStats.game, gold)
 
-            if (moduleProgress.progress >= GameStats.currentLevel) {
-                GameStats.currentLevel = -1
+                val moduleProgress =
+                    (application as App)
+                        .db
+                        .getModuleProgressDao()
+                        .fetch(GameStats.game, GameStats.module)[0]
+
+                if (moduleProgress.progress >= GameStats.currentLevel) {
+                    GameStats.currentLevel = -1
+                }
             }
 
             quizLevelCompleted.setTribute(level.tribute)
@@ -481,12 +490,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             controlCheckBtnStatus(true)
             binding.btnCheck.visibility = View.VISIBLE
 
-            val gold = GameStats.gold + level.tribute
-
-            (application as App)
-                .db
-                .getGameStatsDao()
-                .updateGold(GameStats.game, gold)
 
             GameStats.gold = gold
             gameStatsBarBinding.tvGold.text = gold.toString()

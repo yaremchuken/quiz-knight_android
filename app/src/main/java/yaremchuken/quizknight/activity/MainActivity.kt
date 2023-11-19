@@ -8,7 +8,9 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.R
@@ -49,7 +51,10 @@ class MainActivity : AppCompatActivity() {
     private fun initializeGameButtons() {
         lifecycleScope.launch {
             binding.buttonsHolder.removeAllViews()
-            val games = (application as App).db.getGameStatsDao().fetchAll()
+            var games: List<GameStatsEntity>
+            withContext(Dispatchers.IO) {
+                games = (application as App).db.getGameStatsDao().fetchAll()
+            }
             games.forEach { game ->
                 val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
                 gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
@@ -115,12 +120,14 @@ class MainActivity : AppCompatActivity() {
     private fun startGame(game: GameStatsEntity) {
         val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         lifecycleScope.launch {
-            (application as App).db
-                .getModuleProgressDao()
-                .fetch(game.game)
-                .forEach { pr ->
-                    progress[pr.module] = pr.progress
-                }
+            withContext(Dispatchers.IO) {
+                (application as App).db
+                    .getModuleProgressDao()
+                    .fetch(game.game)
+                    .forEach { pr ->
+                        progress[pr.module] = pr.progress
+                    }
+            }
         }.invokeOnCompletion {
             switchToGame(game, progress)
         }
