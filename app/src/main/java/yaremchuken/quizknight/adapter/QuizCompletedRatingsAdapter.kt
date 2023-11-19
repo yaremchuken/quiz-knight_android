@@ -1,7 +1,6 @@
 package yaremchuken.quizknight.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.animation.Animation
@@ -36,7 +35,18 @@ class QuizCompletedRatingsAdapter(
             if (items[position]) R.drawable.ui_rating_full else R.drawable.ui_rating_empty
         )
 
+        holder.ratingImg.scaleY = 0F
+        holder.ratingImg.scaleY = 0F
+
         val animScale: Animation = AnimationUtils.loadAnimation(fragment.context, R.anim.anim_scale)
-        holder.ratingImg.startAnimation(animScale)
+
+        fragment.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(position * 300L)
+                holder.ratingImg.scaleY = 1F
+                holder.ratingImg.scaleY = 1F
+                holder.ratingImg.startAnimation(animScale)
+            }
+        }
     }
 }

@@ -44,6 +44,22 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
+    <ImageView
+        android:id="@+id/ivDustLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_dust"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <ImageView
+        android:id="@+id/ivDustRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_dust"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

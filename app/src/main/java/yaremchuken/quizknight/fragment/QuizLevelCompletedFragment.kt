@@ -54,5 +54,27 @@ class QuizLevelCompletedFragment: Fragment() {
 
         ratings.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         ratings.adapter = QuizCompletedRatingsAdapter(this, listOf(true, true, false))
+
+        val moveLeft: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_move_left)
+        val moveRight: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_move_right)
+        val dustL = requireView().findViewById<ImageView>(R.id.ivDustLeft)
+        val dustR = requireView().findViewById<ImageView>(R.id.ivDustRight)
+
+        dustL.scaleY = 0F
+        dustL.scaleX = 0F
+        dustR.scaleY = 0F
+        dustR.scaleX = 0F
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(300)
+                dustL.scaleY = 1F
+                dustL.scaleX = 1F
+                dustR.scaleY = 1F
+                dustR.scaleX = 1F
+                dustL.startAnimation(moveLeft)
+                dustR.startAnimation(moveRight)
+            }
+        }
     }
 }
