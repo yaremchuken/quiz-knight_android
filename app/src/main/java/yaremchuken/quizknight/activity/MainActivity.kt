@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.RadioButton
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -13,9 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.R
-import yaremchuken.quizknight.databinding.ActivityMainBinding
-import yaremchuken.quizknight.databinding.ButtonGameStartBinding
+import yaremchuken.quizknight.compose.GamesManagerView
 import yaremchuken.quizknight.databinding.DialogCreateGameBinding
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
@@ -30,52 +29,35 @@ const val DEFAULT_MODULE_PROGRESS = -1L
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private var gamesCount = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        initGames()
         QuizzesProvider.preload(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        initializeGameButtons()
-    }
-
     @SuppressLint("SetTextI18n")
-    private fun initializeGameButtons() {
+    private fun initGames() {
         lifecycleScope.launch {
-            binding.buttonsHolder.removeAllViews()
             var games: List<GameStatsEntity>
             withContext(Dispatchers.IO) {
                 games = (application as App).db.getGameStatsDao().fetchAll()
             }
-            games.forEach { game ->
-                val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
-                gameBtn.root.text = "${game.game} - ${game.original}/${game.studied}"
-                gameBtn.root.setOnClickListener {
-                    startGame(game)
-                }
-                binding.buttonsHolder.addView(gameBtn.root)
-            }
-            for(i in games.size until MAX_GAMES) {
-                val gameBtn = ButtonGameStartBinding.inflate(layoutInflater)
-                gameBtn.root.text = resources.getString(R.string.new_game_btn_title)
-                gameBtn.root.setOnClickListener {
-                    createGameDialog(i.toLong())
-                }
-                gameBtn.root.setBackgroundColor(resources.getColor(R.color.palette_6b))
-                binding.buttonsHolder.addView(gameBtn.root)
+            gamesCount = games.size.toLong()
+            setContent {
+                GamesManagerView(activity = this@MainActivity, games = games)
             }
         }
     }
 
-    private fun createGameDialog(idx: Long) {
+    fun gameEntityClickListener(game: GameStatsEntity?) {
+        if (game != null) startGame(game) else createGameDialog()
+    }
+
+    private fun createGameDialog() {
         val dialog = Dialog(this)
         val dialogBinding = DialogCreateGameBinding.inflate(layoutInflater)
 
@@ -90,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 val studied = toLocale(dialogBinding.rgStudiedGroup.checkedRadioButtonId)
 
                 val newGame = GameStatsEntity(
-                    dialogBinding.etGameName.text.toString(), idx, original, studied,
+                    dialogBinding.etGameName.text.toString(), gamesCount, original, studied,
                     ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble())
 
                 val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)

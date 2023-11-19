@@ -2,9 +2,7 @@ package yaremchuken.quizknight.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.HapticFeedbackConstants
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -61,12 +59,16 @@ class CityActivity : AppCompatActivity() {
         super.onResume()
         if (GameStats.currentLevel != -1L) {
             lifecycleScope.launch {
-                val dao = (application as App).db.getModuleProgressDao()
-                dao.updateProgress(
-                    GameStats.game,
-                    GameStats.module,
-                    GameStats.currentLevel
-                )
+                withContext(Dispatchers.IO) {
+                    (application as App)
+                        .db
+                        .getModuleProgressDao()
+                        .updateProgress(
+                            GameStats.game,
+                            GameStats.module,
+                            GameStats.currentLevel
+                        )
+                }
                 GameStats.updateProgress()
             }.invokeOnCompletion {
                 GameStats.currentLevel = -1
@@ -123,8 +125,6 @@ class CityActivity : AppCompatActivity() {
 
     private fun switchScene(scene: CitySceneType) {
         currentScene = scene
-        findViewById<RelativeLayout>(R.id.llCityTop).performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-
         when(scene) {
             CitySceneType.CROSSROADS -> {
                 binding.rvCrossroadsLevels.adapter =
