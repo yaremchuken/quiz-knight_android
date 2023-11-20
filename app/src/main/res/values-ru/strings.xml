@@ -3,14 +3,16 @@
     <string name="start_btn_title">НАЧАТЬ</string>
     <string name="complete_btn_title">ГОТОВО</string>
     <string name="done_btn_title">ГОТОВО</string>
-    <string name="new_game_btn_title">новая игра</string>
+    <string name="new_game_btn_title">Новая игра</string>
     <string name="create_new_game">Начинаем новое приключение герой</string>
+    <string name="btn_title_lets_go">ВПЕРЁД</string>
     <string name="ok_btn_title">OK</string>
     <string name="back_btn_title">НАЗАД</string>
     <string name="close_btn_title">ЗАКРЫТЬ</string>
-    <string name="game_name">Имя игры</string>
+    <string name="game_name">Имя вашего героя (уникальное)</string>
+    <string name="such_name_already_exists">такое имя уже существует</string>
     <string name="original_language">Ваш язык</string>
-    <string name="learn_language">Изучаемый</string>
+    <string name="studied_language">Изучаемый</string>
     <string name="translation_not_found">Извините, я умею переводить только существительные :(</string>
     <string name="translation_not_available">Извините, в данный момент перевод не работает!</string>
 

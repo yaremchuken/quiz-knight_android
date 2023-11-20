@@ -7,14 +7,16 @@
     <string name="start_btn_title">START</string>
     <string name="complete_btn_title">COMPLETE</string>
     <string name="done_btn_title">DONE</string>
-    <string name="new_game_btn_title">new game</string>
+    <string name="new_game_btn_title">New game</string>
     <string name="create_new_game">Let`s start a new adventure Hero</string>
+    <string name="btn_title_lets_go">LET`S GO</string>
     <string name="ok_btn_title">OK</string>
     <string name="back_btn_title">BACK</string>
     <string name="close_btn_title">CLOSE</string>
-    <string name="game_name">Name your game</string>
+    <string name="game_name">Name your hero (unique)</string>
+    <string name="such_name_already_exists">such name already exists</string>
     <string name="original_language">Original</string>
-    <string name="learn_language">To learn</string>
+    <string name="studied_language">Studied</string>
     <string name="translation_not_found">Sorry, I don`t know how to translate this</string>
     <string name="translation_not_available">Sorry, right now translation is not available!</string>
 
