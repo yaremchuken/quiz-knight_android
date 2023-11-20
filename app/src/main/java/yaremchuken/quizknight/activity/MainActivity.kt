@@ -16,6 +16,9 @@ import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.provider.QuizzesProvider
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.EnumMap
 import java.util.Locale
 
@@ -36,6 +39,12 @@ class MainActivity : AppCompatActivity() {
 
         initGames()
         QuizzesProvider.preload(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initGames()
+
     }
 
     private fun initGames() {
@@ -61,6 +70,9 @@ class MainActivity : AppCompatActivity() {
                     .forEach { pr ->
                         progress[pr.module] = pr.progress
                     }
+                (application as App).db
+                    .getGameStatsDao()
+                    .markLaunch(game.game, Instant.now().epochSecond)
             }
         }.invokeOnCompletion {
             switchToGame(game, progress)
@@ -74,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
             val newGame = GameStatsEntity(
                 name, gamesCount, original, studied,
-                ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble())
+                ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble(), Instant.now().epochSecond)
 
             val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
             val progressEntities = ArrayList<ModuleProgressEntity>()
@@ -84,8 +96,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             lifecycleScope.launch {
-                gameStatsDao.insert(newGame)
-                moduleProgressDao.insert(progressEntities)
+                withContext(Dispatchers.IO) {
+                    gameStatsDao.insert(newGame)
+                    moduleProgressDao.insert(progressEntities)
+                }
             }.invokeOnCompletion {
                 switchToGame(newGame, progress)
             }

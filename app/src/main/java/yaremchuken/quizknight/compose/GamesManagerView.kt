@@ -41,6 +41,9 @@ import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activity.MAX_GAMES
 import yaremchuken.quizknight.dimensions.FontDimensions
 import yaremchuken.quizknight.entity.GameStatsEntity
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.Date
 import java.util.Locale
 
 @Preview
@@ -59,7 +62,7 @@ fun GamesManagerView(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        games.forEach { GameBtnView({ runGame(it) }, it) }
+        games.sortedByDescending { it.playedAt }.forEach { GameBtnView({ runGame(it) }, it) }
         for(i in games.size until MAX_GAMES) { GameBtnView({ showDialog.value = true }) }
     }
     GameCreationDialog(
@@ -77,23 +80,40 @@ fun GameBtnView(
     game: GameStatsEntity? = null
 ) {
     val color = if (game != null) R.color.button_primary else R.color.dark_gray
-    val text =
+
+    val playedAt = if (game != null) Instant.ofEpochSecond(game.playedAt) else Instant.EPOCH
+    val format = SimpleDateFormat("dd MMM", Locale.getDefault())
+
+    val gameNameText =
         if (game != null) "${game.game} - ${game.original.language.uppercase()}/${game.studied.language.uppercase()}"
-        else stringResource(id = R.string.new_game_btn_title)
+        else stringResource(R.string.new_game_btn_title)
+
+    val gameStatsText = "${format.format(Date.from(playedAt))} - ${game?.gold}g"
+
     Button(
         onClick = { onClick() },
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 5.dp)
-            .height(52.dp),
+            .height(if (game == null) 52.dp else 76.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(color)),
         border = BorderStroke(1.dp, colorResource(R.color.white))
     ) {
-        Text(
-            text = text,
-            fontSize = FontDimensions.LARGE
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = gameNameText,
+                fontSize = FontDimensions.LARGE
+            )
+            if (game != null) {
+                Text(
+                    text = gameStatsText,
+                    fontSize = FontDimensions.LARGE
+                )
+            }
+        }
     }
 }
 
@@ -185,14 +205,15 @@ fun GameCreationDialog(
                 }
                 Button(
                     onClick = { if (existingGames.contains(gameName)) error = nameExistsError
-                                else onApprove(gameName, original, studied) },
+                                else { onApprove(gameName, original, studied); onDismiss() } },
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp, vertical = 12.dp)
                         .height(52.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.button_primary)),
-                    border = BorderStroke(1.dp, colorResource(R.color.white))
+                    border = BorderStroke(1.dp, colorResource(R.color.white)),
+                    enabled = gameName.isNotBlank()
                 ) {
                     Text(
                         text = stringResource(R.string.btn_title_lets_go),

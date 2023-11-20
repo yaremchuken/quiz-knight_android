@@ -19,4 +19,7 @@ interface GameStatsDao {
 
     @Query("update game_stats set gold = :gold where game = :game")
     fun updateGold(game: String, gold: Long)
+
+    @Query("update game_stats set playedAt = :playedAt where game = :game")
+    fun markLaunch(game: String, playedAt: Long)
 }

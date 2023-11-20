@@ -17,4 +17,6 @@ data class GameStatsEntity(
     var module: ModuleType,
     var gold: Long,
     var health: Double,
+
+    var playedAt: Long
 )
