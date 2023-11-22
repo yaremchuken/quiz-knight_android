@@ -5,17 +5,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.activity.CityActivity
-import yaremchuken.quizknight.databinding.ItemCityWorldmapMarkerBinding
+import yaremchuken.quizknight.activity.CampActivity
+import yaremchuken.quizknight.databinding.ItemCampWorldmapMarkerBinding
 import yaremchuken.quizknight.model.ModuleType
 
-class CityWorldmapAdapter(
-    private val activity: CityActivity,
+class CampWorldmapAdapter(
+    private val activity: CampActivity,
     val items: List<ModuleType>,
     val modulesData: Map<ModuleType, Long>
-): RecyclerView.Adapter<CityWorldmapAdapter.ViewHolder>() {
+): RecyclerView.Adapter<CampWorldmapAdapter.ViewHolder>() {
 
-    class ViewHolder(binding: ItemCityWorldmapMarkerBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemCampWorldmapMarkerBinding): RecyclerView.ViewHolder(binding.root) {
         val markerHolder = binding.llWorldmapMarkerHolder
         val mapMarker = binding.tvWorldmapMarker
         val markerDescription = binding.tvWorldmapMarkerDescription
@@ -23,7 +23,7 @@ class CityWorldmapAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemCityWorldmapMarkerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ViewHolder(ItemCampWorldmapMarkerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun getItemCount() = items.size
 

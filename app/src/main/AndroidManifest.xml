@@ -22,9 +22,9 @@
             android:label="@string/title_activity_quiz"
             android:theme="@style/Theme.QuizKnight" />
         <activity
-            android:name=".activity.CityActivity"
+            android:name=".activity.CampActivity"
             android:exported="false"
-            android:label="@string/title_activity_city"
+            android:label="@string/title_activity_camp"
             android:theme="@style/Theme.QuizKnight" />
         <activity
             android:name=".activity.MainActivity"

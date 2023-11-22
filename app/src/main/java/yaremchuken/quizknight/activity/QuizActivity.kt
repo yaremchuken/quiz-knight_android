@@ -154,7 +154,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (QuizType.isAudition(quizTask.type)) {
             binding.incQuestionArea.ibQuizListenBtn.visibility = View.VISIBLE
         } else {
-            Log.i("TAG", "fillQuizQuestionArea: ${quizTask.type}")
             binding.incQuestionArea.llWordsDisplay.visibility = View.VISIBLE
             binding.incQuestionArea.rvWordItems.layoutManager = FlexboxLayoutManager(this@QuizActivity)
             binding.incQuestionArea.rvWordItems.adapter =
@@ -501,7 +500,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onBackPressed() {
-        if (quizIdx != level.tasks.size-1) {
+        if (GameStateMachine.state != StateMachineType.COMPLETED) {
             GameStats.currentLevel = -1
         }
         if (GameStateMachine.state != StateMachineType.EMPTY) {

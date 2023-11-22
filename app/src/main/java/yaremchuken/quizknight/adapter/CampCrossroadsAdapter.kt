@@ -8,32 +8,29 @@ import androidx.recyclerview.widget.RecyclerView
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
-import yaremchuken.quizknight.activity.CityActivity
-import yaremchuken.quizknight.databinding.ItemCityCrossroadsLevelBinding
+import yaremchuken.quizknight.activity.CampActivity
+import yaremchuken.quizknight.databinding.ItemCampCrossroadsLevelBinding
 import yaremchuken.quizknight.model.ModuleLevel
 
-class CityCrossroadsAdapter(
-    private val activity: CityActivity,
+class CampCrossroadsAdapter(
+    private val activity: CampActivity,
     val items: List<ModuleLevel>
-): RecyclerView.Adapter<CityCrossroadsAdapter.ViewHolder>() {
+): RecyclerView.Adapter<CampCrossroadsAdapter.ViewHolder>() {
 
-    class ViewHolder(binding: ItemCityCrossroadsLevelBinding): RecyclerView.ViewHolder(binding.root) {
-        val viewHolder = binding.llCrossroadsLevelHolder
+    class ViewHolder(binding: ItemCampCrossroadsLevelBinding): RecyclerView.ViewHolder(binding.root) {
+        val topView = binding.llTopHolder
         val title = binding.tvCrossroadsLevelTitle
         val completedMark = binding.ivCrossroadsCompleted
         val portrait = binding.ivCrossroadsPortrait
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemCityCrossroadsLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ViewHolder(ItemCampCrossroadsLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun getItemCount() = items.size
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.viewHolder.setOnClickListener {
-            activity.launchLevel(position.toLong())
-        }
         holder.title.text = "${position+1}. ${items[position].title}"
         if (items[position].opponents.isNotEmpty()) {
             holder.portrait.setImageResource(
@@ -46,5 +43,14 @@ class CityCrossroadsAdapter(
         }
         val progress = GameStats.progress[GameStats.module]!! + 1
         holder.completedMark.visibility = if (position < progress) View.VISIBLE else View.INVISIBLE
+        if (progress < position) {
+            holder.topView.alpha = .7F
+            holder.title.setTextColor(activity.getColor(R.color.dark_gray))
+            holder.portrait.visibility = View.INVISIBLE
+        } else {
+            holder.topView.setOnClickListener {
+                activity.launchLevel(position.toLong())
+            }
+        }
     }
 }

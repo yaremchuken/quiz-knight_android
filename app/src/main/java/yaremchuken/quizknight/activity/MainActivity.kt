@@ -82,8 +82,8 @@ class MainActivity : AppCompatActivity() {
             val moduleProgressDao = (application as App).db.getModuleProgressDao()
 
             val newGame = GameStatsEntity(
-                name, gamesCount, original, studied,
-                ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble(), Instant.now().epochSecond)
+                name, original, studied, ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble(),
+                Instant.now().epochSecond, Instant.now().epochSecond)
 
             val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
             val progressEntities = ArrayList<ModuleProgressEntity>()
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun switchToGame(game: GameStatsEntity, progress: MutableMap<ModuleType, Long>) {
         GameStats.init(game, progress)
-        val intent = Intent(this, CityActivity::class.java)
+        val intent = Intent(this, CampActivity::class.java)
         startActivity(intent)
     }
 }

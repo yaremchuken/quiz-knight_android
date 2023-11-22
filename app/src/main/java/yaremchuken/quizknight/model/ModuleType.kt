@@ -11,7 +11,7 @@ enum class ModuleType {
         fun description(type: ModuleType) =
             when (type) {
                 LAZYWOOD -> "Begin your adventure in this small village"
-                CANDYVALE -> "Monsters surrounding this city are ready to give you theirs warmest welcome"
+                CANDYVALE -> "Monsters surrounding this village are ready to give you theirs warmest welcome"
             }
     }
 }

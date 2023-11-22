@@ -10,7 +10,6 @@ data class GameStatsEntity(
     @PrimaryKey
     val game: String,
 
-    val order: Long,
     val original: Locale,
     val studied: Locale,
 
@@ -18,5 +17,6 @@ data class GameStatsEntity(
     var gold: Long,
     var health: Double,
 
+    var createdAt: Long,
     var playedAt: Long
 )

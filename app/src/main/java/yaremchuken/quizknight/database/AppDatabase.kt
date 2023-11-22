@@ -12,7 +12,7 @@ import yaremchuken.quizknight.entity.ModuleProgressEntity
 
 
 @Database(
-    version = 11,
+    version = 12,
     entities = [
         GameStatsEntity::class,
         ModuleProgressEntity::class])

@@ -13,34 +13,34 @@ import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.R
-import yaremchuken.quizknight.adapter.CityCrossroadsAdapter
-import yaremchuken.quizknight.adapter.CityWorldmapAdapter
+import yaremchuken.quizknight.adapter.CampCrossroadsAdapter
+import yaremchuken.quizknight.adapter.CampWorldmapAdapter
 import yaremchuken.quizknight.adapter.HealthBarAdapter
-import yaremchuken.quizknight.databinding.ActivityCityBinding
+import yaremchuken.quizknight.databinding.ActivityCampBinding
 import yaremchuken.quizknight.databinding.FragmentGameStatsBarBinding
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.provider.QuizzesProvider
 import java.util.EnumMap
 
-enum class CitySceneType {
+enum class CampSceneType {
     WORLDMAP,
     CROSSROADS,
     BLACKSMITH,
     ALCHEMY
 }
 
-class CityActivity : AppCompatActivity() {
+class CampActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityCityBinding
+    private lateinit var binding: ActivityCampBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
 
-    private lateinit var currentScene: CitySceneType
+    private lateinit var currentScene: CampSceneType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
-        binding = ActivityCityBinding.inflate(layoutInflater)
+        binding = ActivityCampBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initSceneSwitchers()
@@ -49,10 +49,10 @@ class CityActivity : AppCompatActivity() {
         binding.rvCrossroadsLevels.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         gameStatsBarBinding = FragmentGameStatsBarBinding.inflate(layoutInflater)
-        binding.llCityTop.addView(gameStatsBarBinding.root)
+        binding.llCampTop.addView(gameStatsBarBinding.root)
         gameStatsBarBinding.tvModuleName.text = GameStats.module.name
 
-        switchScene(CitySceneType.CROSSROADS)
+        switchScene(CampSceneType.CROSSROADS)
     }
 
     override fun onResume() {
@@ -72,7 +72,7 @@ class CityActivity : AppCompatActivity() {
                 GameStats.updateProgress()
             }.invokeOnCompletion {
                 GameStats.currentLevel = -1
-                switchScene(CitySceneType.CROSSROADS)
+                switchScene(CampSceneType.CROSSROADS)
             }
         }
 
@@ -104,69 +104,69 @@ class CityActivity : AppCompatActivity() {
         }.invokeOnCompletion {
             GameStats.switchModule(moduleType)
             gameStatsBarBinding.tvModuleName.text = moduleType.name
-            switchScene(CitySceneType.CROSSROADS)
+            switchScene(CampSceneType.CROSSROADS)
         }
     }
 
     private fun initSceneSwitchers() {
-        binding.ibCityWorldmap.setOnClickListener {
-            switchScene(CitySceneType.WORLDMAP)
+        binding.ibCampWorldmap.setOnClickListener {
+            switchScene(CampSceneType.WORLDMAP)
         }
-        binding.ibCityCrossroads.setOnClickListener {
-            switchScene(CitySceneType.CROSSROADS)
+        binding.ibCampCrossroads.setOnClickListener {
+            switchScene(CampSceneType.CROSSROADS)
         }
-        binding.ibCityBlacksmith.setOnClickListener {
-            switchScene(CitySceneType.BLACKSMITH)
+        binding.ibCampBlacksmith.setOnClickListener {
+            switchScene(CampSceneType.BLACKSMITH)
         }
-        binding.ibCityAlchemy.setOnClickListener {
-            switchScene(CitySceneType.ALCHEMY)
+        binding.ibCampAlchemy.setOnClickListener {
+            switchScene(CampSceneType.ALCHEMY)
         }
     }
 
-    private fun switchScene(scene: CitySceneType) {
+    private fun switchScene(scene: CampSceneType) {
         currentScene = scene
         when(scene) {
-            CitySceneType.CROSSROADS -> {
+            CampSceneType.CROSSROADS -> {
                 binding.rvCrossroadsLevels.adapter =
-                    CityCrossroadsAdapter(this@CityActivity, QuizzesProvider.getModuleLevels(GameStats.module))
+                    CampCrossroadsAdapter(this@CampActivity, QuizzesProvider.getModuleLevels(GameStats.module))
             }
-            CitySceneType.WORLDMAP -> {
+            CampSceneType.WORLDMAP -> {
                 lifecycleScope.launch {
                     val modulesLevelsCounter: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
                     QuizzesProvider.getAllLevels().forEach {
                         modulesLevelsCounter[it.module] = (modulesLevelsCounter[it.module] ?: 0) + 1
                     }
                     binding.rvWorldmapMarkers.adapter =
-                        CityWorldmapAdapter(
-                            this@CityActivity, modulesLevelsCounter.keys.toList().sorted(), modulesLevelsCounter)
+                        CampWorldmapAdapter(
+                            this@CampActivity, modulesLevelsCounter.keys.toList().sorted(), modulesLevelsCounter)
                 }
             }
             else -> {}
         }
 
-        binding.rvWorldmapMarkers.visibility = if (scene == CitySceneType.WORLDMAP) View.VISIBLE else View.GONE
-        binding.rvCrossroadsLevels.visibility = if (scene == CitySceneType.CROSSROADS) View.VISIBLE else View.GONE
+        binding.rvWorldmapMarkers.visibility = if (scene == CampSceneType.WORLDMAP) View.VISIBLE else View.GONE
+        binding.rvCrossroadsLevels.visibility = if (scene == CampSceneType.CROSSROADS) View.VISIBLE else View.GONE
 
         adjustBackground()
         adjustSceneSwitchers()
     }
 
     private fun adjustBackground() {
-        binding.ivCityBackground.setImageResource(
+        binding.ivCampBackground.setImageResource(
             when (currentScene) {
-                CitySceneType.WORLDMAP -> R.drawable.city_worldmap
-                CitySceneType.CROSSROADS -> R.drawable.city_crossroads
-                CitySceneType.BLACKSMITH -> R.drawable.city_blacksmith
-                CitySceneType.ALCHEMY -> R.drawable.city_alchemy
+                CampSceneType.WORLDMAP -> R.drawable.camp_worldmap
+                CampSceneType.CROSSROADS -> R.drawable.camp_crossroads
+                CampSceneType.BLACKSMITH -> R.drawable.camp_blacksmith
+                CampSceneType.ALCHEMY -> R.drawable.camp_alchemy
             }
         )
     }
 
     private fun adjustSceneSwitchers() {
-        binding.ibCityWorldmap.alpha = if (currentScene == CitySceneType.WORLDMAP) 1f else .5f
-        binding.ibCityCrossroads.alpha = if (currentScene == CitySceneType.CROSSROADS) 1f else .5f
-        binding.ibCityBlacksmith.alpha = if (currentScene == CitySceneType.BLACKSMITH) 1f else .5f
-        binding.ibCityAlchemy.alpha = if (currentScene == CitySceneType.ALCHEMY) 1f else .5f
+        binding.ibCampWorldmap.alpha = if (currentScene == CampSceneType.WORLDMAP) 1f else .5f
+        binding.ibCampCrossroads.alpha = if (currentScene == CampSceneType.CROSSROADS) 1f else .5f
+        binding.ibCampBlacksmith.alpha = if (currentScene == CampSceneType.BLACKSMITH) 1f else .5f
+        binding.ibCampAlchemy.alpha = if (currentScene == CampSceneType.ALCHEMY) 1f else .5f
     }
 
     fun launchLevel(levelIdx: Long) {
