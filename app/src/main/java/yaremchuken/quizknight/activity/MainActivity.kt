@@ -11,14 +11,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
-import yaremchuken.quizknight.compose.GamesManagerView
+import yaremchuken.quizknight.compose.gamesmanager.GamesManagerView
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.provider.QuizzesProvider
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.EnumMap
 import java.util.Locale
 
@@ -67,12 +65,11 @@ class MainActivity : AppCompatActivity() {
                 (application as App).db
                     .getModuleProgressDao()
                     .fetch(game.game)
-                    .forEach { pr ->
-                        progress[pr.module] = pr.progress
-                    }
+                    .forEach { progress[it.module] = it.progress }
+
                 (application as App).db
                     .getGameStatsDao()
-                    .markLaunch(game.game, Instant.now().epochSecond)
+                    .markLaunched(game.game, Instant.now().epochSecond)
             }
         }.invokeOnCompletion {
             switchToGame(game, progress)

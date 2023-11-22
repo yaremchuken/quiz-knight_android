@@ -21,5 +21,5 @@ interface GameStatsDao {
     fun updateGold(game: String, gold: Long)
 
     @Query("update game_stats set playedAt = :playedAt where game = :game")
-    fun markLaunch(game: String, playedAt: Long)
+    fun markLaunched(game: String, playedAt: Long)
 }
