@@ -457,9 +457,9 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.btnCheck.alpha = if (enabled) 1F else .2F
     }
 
-    @SuppressLint("SetTextI18n")
     private fun completeLevel() {
         GameStateMachine.switchState(StateMachineType.COMPLETED)
+        GameStats.currentLevel = -1
 
         val gold = GameStats.gold + level.tribute
 
@@ -470,15 +470,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     .getGameStatsDao()
                     .updateGold(GameStats.game, gold)
 
-                val moduleProgress =
-                    (application as App)
-                        .db
-                        .getModuleProgressDao()
-                        .fetch(GameStats.game, GameStats.module)[0]
-
-                if (moduleProgress.progress >= GameStats.currentLevel) {
-                    GameStats.currentLevel = -1
-                }
+                updateModuleProgress()
             }
 
             quizLevelCompleted.setTribute(level.tribute)
@@ -499,10 +491,32 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         GameStats.opponent = level.opponents[(Math.random() * level.opponents.size).toInt()]
     }
 
-    override fun onBackPressed() {
-        if (GameStateMachine.state != StateMachineType.COMPLETED) {
-            GameStats.currentLevel = -1
+    /**
+     * Check if we have to update player progress for that module, or he just replayed old one.
+     */
+    private suspend fun updateModuleProgress() {
+        val moduleProgress =
+            (application as App)
+                .db
+                .getModuleProgressDao()
+                .fetch(GameStats.game, GameStats.module)[0]
+
+        if (GameStats.currentLevel > moduleProgress.progress) {
+            withContext(Dispatchers.IO) {
+                (application as App)
+                    .db
+                    .getModuleProgressDao()
+                    .updateProgress(
+                        GameStats.game,
+                        GameStats.module,
+                        GameStats.currentLevel
+                    )
+            }
+            GameStats.updateProgress()
         }
+    }
+
+    override fun onBackPressed() {
         if (GameStateMachine.state != StateMachineType.EMPTY) {
             GameStateMachine.stopMachine()
         }

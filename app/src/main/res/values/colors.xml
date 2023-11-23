@@ -10,10 +10,9 @@
     <color name="gold">#FFD700</color>
     <color name="red">#FF0000</color>
 
-    <color name="palette_cb">#CB997E</color>
-
     <color name="palette_ff">#FFE8D6</color>
     <color name="palette_dd">#DDBEA9</color>
+    <color name="palette_cb">#CB997E</color>
     <color name="palette_b7">#B7B7A4</color>
     <color name="palette_a5">#A5A58D</color>
     <color name="palette_6b">#6B705C</color>

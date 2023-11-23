@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,29 +28,23 @@ const val DEFAULT_MODULE_PROGRESS = -1L
 
 class MainActivity : AppCompatActivity() {
 
-    private var gamesCount = 0L
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
-        initGames()
         QuizzesProvider.preload(this)
     }
 
     override fun onResume() {
         super.onResume()
         initGames()
-
     }
 
     private fun initGames() {
+        var games: List<GameStatsEntity> = listOf()
         lifecycleScope.launch {
-            var games: List<GameStatsEntity>
             withContext(Dispatchers.IO) {
                 games = (application as App).db.getGameStatsDao().fetchAll()
             }
-            gamesCount = games.size.toLong()
+        }.invokeOnCompletion {
             setContent {
                 GamesManagerView(games, this@MainActivity::runGame, this@MainActivity::createGame)
             }

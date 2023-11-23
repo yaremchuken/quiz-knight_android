@@ -6,9 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -26,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activity.MAX_GAMES
 import yaremchuken.quizknight.dimensions.FontDimensions
+import yaremchuken.quizknight.dimensions.UIDefaults
+import yaremchuken.quizknight.dimensions.UIDimensions
 import yaremchuken.quizknight.entity.GameStatsEntity
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -80,9 +81,9 @@ fun GameBtnView(
         onClick = { onClick() },
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 5.dp)
-            .height(if (game == null) 52.dp else 76.dp),
-        shape = RoundedCornerShape(12.dp),
+            .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_SMALL)
+            .requiredHeightIn(min = 52.dp),
+        shape = UIDefaults.ROUNDED_CORNER,
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(color)),
         border = BorderStroke(1.dp, colorResource(R.color.white))
     ) {

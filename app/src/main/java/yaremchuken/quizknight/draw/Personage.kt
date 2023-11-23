@@ -8,7 +8,7 @@ import yaremchuken.quizknight.StateMachineType
 class Personage(personage: PersonageType, sceneDims: Point): Animated() {
 
     private lateinit var personage: PersonageType
-    private var targetPos: Float = 0F
+    private var targetPos = 0F
 
     init {
         this.sceneDims = sceneDims

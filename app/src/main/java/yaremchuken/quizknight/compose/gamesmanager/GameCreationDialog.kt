@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.dimensions.FontDimensions
+import yaremchuken.quizknight.dimensions.UIDefaults
+import yaremchuken.quizknight.dimensions.UIDimensions
 import java.util.Locale
 
 @Preview
@@ -65,9 +67,9 @@ fun GameCreationDialog(
                 Text(
                     text = stringResource(R.string.create_new_game),
                     Modifier
-                        .padding(vertical = 10.dp)
+                        .padding(vertical = UIDimensions.PADDING_DEFAULT)
                         .align(Alignment.CenterHorizontally),
-                    fontSize = FontDimensions.MEDIUM_X,
+                    fontSize = FontDimensions.MEDIUM,
                     fontWeight = FontWeight.Bold
                 )
                 TextField(
@@ -75,16 +77,16 @@ fun GameCreationDialog(
                     onValueChange = { gameName = it },
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = UIDimensions.PADDING_LARGE)
                         .align(Alignment.CenterHorizontally),
                     textStyle = TextStyle.Default.copy(fontSize = FontDimensions.MEDIUM),
                     placeholder = { Text(text = stringResource(R.string.game_name)) },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = UIDefaults.ROUNDED_CORNER
                 )
                 if (error.isNotBlank()) {
                     Text(
                         text = error,
-                        Modifier.padding(start = 16.dp),
+                        Modifier.padding(start = UIDimensions.PADDING_LARGE),
                         color = colorResource(R.color.red),
                         fontSize = FontDimensions.SMALL
                     )
@@ -92,7 +94,11 @@ fun GameCreationDialog(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        .padding(
+                            start = UIDimensions.PADDING_LARGE,
+                            top = UIDimensions.PADDING_LARGE,
+                            end = UIDimensions.PADDING_LARGE
+                        ),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
@@ -131,9 +137,9 @@ fun GameCreationDialog(
                     else { onApprove(gameName, original, studied); onDismiss() } },
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 12.dp)
+                        .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_DEFAULT)
                         .height(52.dp),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = UIDefaults.ROUNDED_CORNER,
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.button_primary)),
                     border = BorderStroke(1.dp, colorResource(R.color.white)),
                     enabled = gameName.isNotBlank()
@@ -167,8 +173,8 @@ fun LanguageSelectBtn(
     Row(
         Modifier
             .padding(bottom = 10.dp)
-            .background(colorResource(colorSrc), shape = RoundedCornerShape(12.dp))
-            .border(if (selected) 1.dp else 0.dp, colorResource(R.color.black), RoundedCornerShape(12.dp))
+            .background(colorResource(colorSrc), shape = UIDefaults.ROUNDED_CORNER)
+            .border(if (selected) 1.dp else 0.dp, colorResource(R.color.black), UIDefaults.ROUNDED_CORNER)
             .selectable(selected, true, onClick = { onClick() })
     ) {
         Text(
@@ -181,10 +187,10 @@ fun LanguageSelectBtn(
         )
         Image(
             bitmap = ImageBitmap.imageResource(flagSrc),
-            contentDescription = locale.language.uppercase(),
+            contentDescription = null,
             Modifier
                 .size(52.dp)
-                .clip(RoundedCornerShape(12.dp)),
+                .clip(UIDefaults.ROUNDED_CORNER),
             contentScale = ContentScale.Crop
         )
     }
