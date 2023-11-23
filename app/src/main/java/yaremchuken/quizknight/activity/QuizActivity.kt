@@ -459,7 +459,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun completeLevel() {
         GameStateMachine.switchState(StateMachineType.COMPLETED)
-        GameStats.currentLevel = -1
 
         val gold = GameStats.gold + level.tribute
 
@@ -481,9 +480,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             controlCheckBtnStatus(true)
             binding.btnCheck.visibility = View.VISIBLE
 
-
             GameStats.gold = gold
             gameStatsBarBinding.tvGold.text = gold.toString()
+
+            GameStats.currentLevel = -1
         }
     }
 
