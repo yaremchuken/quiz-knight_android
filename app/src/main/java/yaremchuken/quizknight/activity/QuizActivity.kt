@@ -50,20 +50,21 @@ import yaremchuken.quizknight.provider.AnimationProvider
 import yaremchuken.quizknight.provider.QuizzesProvider
 import yaremchuken.quizknight.utils.StringUtils
 import java.util.Locale
+import javax.inject.Inject
 
 const val PROGRESS_BAR_ANIMATION_SPEED = 4
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+
+    @Inject lateinit var yaDictionaryClient: YaDictionaryClient
+    @Inject lateinit var yaTranslateClient: YaTranslateClient
 
     private lateinit var binding: ActivityQuizBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
 
     private lateinit var tts: TextToSpeech
 
-    private lateinit var translateClient: YaTranslateClient
     private lateinit var dialogTranslationBinding: DialogTranslationBinding
-
-    private lateinit var dictionaryClient: YaDictionaryClient
     private lateinit var dialogDictionaryBinding: DialogDictionaryBinding
 
     private lateinit var quizLevelCompleted: QuizLevelCompletedFragment
@@ -75,6 +76,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        (application as App).appComponent.inject(this)
 
         binding = ActivityQuizBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -88,8 +91,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         updateGold()
 
         tts = TextToSpeech(this, this)
-        translateClient = YaTranslateClient(resources.getString(R.string.YA_TRANSLATE_API_KEY))
-        dictionaryClient = YaDictionaryClient(resources.getString(R.string.YA_DICTIONARY_API_KEY))
 
         binding.incQuestionArea.ibQuizListenBtn.setOnClickListener {
             speakOut(quizTask.display)
@@ -103,6 +104,8 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.incOption.rgOptionsGroup.setOnCheckedChangeListener { _, _ ->
             controlCheckBtnStatus(true)
         }
+
+        Log.i("TAG", "onCreate: ${yaDictionaryClient}")
 
         hideBoard()
         initLevel()
@@ -397,7 +400,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         lifecycleScope.launch {
             try {
-                val translations = translateClient.translate(texts, GameStats.studied, GameStats.original)
+                val translations = yaTranslateClient.translate(texts, GameStats.studied, GameStats.original)
                 dialogTranslationBinding.llLoader.visibility = View.GONE
                 dialogTranslationBinding.tvErrorMessage.visibility = View.GONE
                 val sorted = translations.toList().sortedBy { it.first.length }
@@ -428,7 +431,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         lifecycleScope.launch {
             try {
                 val translations =
-                    dictionaryClient.lookup(
+                    yaDictionaryClient.lookup(
                         clearedText,
                         sourceLang,
                         if (isOriginal) GameStats.studied else GameStats.original)

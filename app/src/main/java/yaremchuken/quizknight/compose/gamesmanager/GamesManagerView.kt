@@ -83,7 +83,7 @@ fun GameBtnView(
             .fillMaxWidth()
             .padding(
                 horizontal = dimensionResource(R.dimen.padding_default),
-                vertical = dimensionResource(R.dimen.padding_default)
+                vertical = dimensionResource(R.dimen.padding_small)
             )
             .requiredHeightIn(min = 52.dp),
         shape = UIDefaults.ROUNDED_CORNER,
