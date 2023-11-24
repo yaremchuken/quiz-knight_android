@@ -1,7 +1,13 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="font_size_s">18sp</dimen>
     <dimen name="font_size">22sp</dimen>
     <dimen name="font_size_xl">36sp</dimen>
     <dimen name="font_size_xxl">64sp</dimen>
+
+    <dimen name="padding_tiny">3dp</dimen>
+    <dimen name="padding_small">5dp</dimen>
+    <dimen name="padding_default">12dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
 </resources>

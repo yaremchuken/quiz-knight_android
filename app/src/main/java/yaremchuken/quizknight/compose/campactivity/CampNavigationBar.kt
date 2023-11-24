@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activity.CampSceneType
 import yaremchuken.quizknight.dimensions.UIDefaults
-import yaremchuken.quizknight.dimensions.UIDimensions
 
 @Preview
 @Composable
@@ -31,8 +31,8 @@ fun CampNavigationBar(
     Row (
         Modifier
             .fillMaxWidth()
-            .background(colorResource(id = R.color.palette_cb))
-            .border(1.dp, colorResource(id = R.color.black)),
+            .background(colorResource(R.color.palette_cb))
+            .border(1.dp, colorResource(R.color.black)),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         CampSceneType.values().map { type ->
@@ -52,9 +52,9 @@ fun CampNavigationBar(
                 Modifier
                     .clickable { switchScene(type) }
                     .width(72.dp)
-                    .padding(vertical = UIDimensions.PADDING_DEFAULT)
-                    .border(2.dp, colorResource(id = borderClr), UIDefaults.ROUNDED_CORNER)
-                    .background(colorResource(id = R.color.palette_dd), UIDefaults.ROUNDED_CORNER)
+                    .padding(vertical = dimensionResource(R.dimen.padding_default))
+                    .border(2.dp, colorResource(borderClr), UIDefaults.ROUNDED_CORNER)
+                    .background(colorResource(R.color.palette_dd), UIDefaults.ROUNDED_CORNER)
                     .clip(UIDefaults.ROUNDED_CORNER)
             )
         }

@@ -14,13 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.dimensions.FontDimensions
 import yaremchuken.quizknight.dimensions.UIDefaults
-import yaremchuken.quizknight.dimensions.UIDimensions
 
 @Preview
 @Composable
@@ -35,7 +35,10 @@ fun ModuleSelectionButton(
         Modifier
             .clickable { onClick() }
             .fillMaxWidth()
-            .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_SMALL)
+            .padding(
+                horizontal = dimensionResource(R.dimen.padding_default),
+                vertical = dimensionResource(R.dimen.padding_small)
+            )
             .background(colorResource(R.color.palette_a5), UIDefaults.ROUNDED_CORNER)
             .border(1.dp, colorResource(R.color.white), UIDefaults.ROUNDED_CORNER)
     ) {
@@ -43,10 +46,10 @@ fun ModuleSelectionButton(
             Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = UIDimensions.PADDING_DEFAULT,
-                    top = UIDimensions.PADDING_DEFAULT,
-                    end = UIDimensions.PADDING_DEFAULT,
-                    bottom = UIDimensions.PADDING_SMALL
+                    start = dimensionResource(R.dimen.padding_default),
+                    top = dimensionResource(R.dimen.padding_default),
+                    end = dimensionResource(R.dimen.padding_default),
+                    bottom = dimensionResource(R.dimen.padding_small)
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -55,27 +58,30 @@ fun ModuleSelectionButton(
                 text = title,
                 fontSize = FontDimensions.LARGE,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.white)
+                color = colorResource(R.color.white)
             )
             Text(
                 text = "$completed / $total",
                 fontSize = FontDimensions.LARGE,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.yellow)
+                color = colorResource(R.color.yellow)
             )
         }
         Divider(
-            Modifier.padding(horizontal = UIDimensions.PADDING_DEFAULT)
+            Modifier.padding(horizontal = dimensionResource(R.dimen.padding_default))
         )
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_SMALL)
+                .padding(
+                    horizontal = dimensionResource(R.dimen.padding_default),
+                    vertical = dimensionResource(R.dimen.padding_small)
+                )
         ) {
             Text(
                 text = description,
-                fontSize = FontDimensions.SMALL_X,
-                color = colorResource(id = R.color.light_blue)
+                fontSize = FontDimensions.SMALL,
+                color = colorResource(R.color.light_blue)
             )
         }
     }

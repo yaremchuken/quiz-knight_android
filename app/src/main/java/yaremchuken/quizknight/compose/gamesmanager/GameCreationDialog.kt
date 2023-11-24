@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -29,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +39,6 @@ import androidx.compose.ui.window.Dialog
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.dimensions.FontDimensions
 import yaremchuken.quizknight.dimensions.UIDefaults
-import yaremchuken.quizknight.dimensions.UIDimensions
 import java.util.Locale
 
 @Preview
@@ -67,7 +66,7 @@ fun GameCreationDialog(
                 Text(
                     text = stringResource(R.string.create_new_game),
                     Modifier
-                        .padding(vertical = UIDimensions.PADDING_DEFAULT)
+                        .padding(vertical = dimensionResource(R.dimen.padding_default))
                         .align(Alignment.CenterHorizontally),
                     fontSize = FontDimensions.MEDIUM,
                     fontWeight = FontWeight.Bold
@@ -77,7 +76,7 @@ fun GameCreationDialog(
                     onValueChange = { gameName = it },
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = UIDimensions.PADDING_LARGE)
+                        .padding(horizontal = dimensionResource(R.dimen.padding_large))
                         .align(Alignment.CenterHorizontally),
                     textStyle = TextStyle.Default.copy(fontSize = FontDimensions.MEDIUM),
                     placeholder = { Text(text = stringResource(R.string.game_name)) },
@@ -86,18 +85,18 @@ fun GameCreationDialog(
                 if (error.isNotBlank()) {
                     Text(
                         text = error,
-                        Modifier.padding(start = UIDimensions.PADDING_LARGE),
+                        Modifier.padding(start = dimensionResource(R.dimen.padding_large)),
                         color = colorResource(R.color.red),
-                        fontSize = FontDimensions.SMALL
+                        fontSize = FontDimensions.X_SMALL
                     )
                 }
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .padding(
-                            start = UIDimensions.PADDING_LARGE,
-                            top = UIDimensions.PADDING_LARGE,
-                            end = UIDimensions.PADDING_LARGE
+                            start = dimensionResource(R.dimen.padding_large),
+                            top = dimensionResource(R.dimen.padding_large),
+                            end = dimensionResource(R.dimen.padding_large)
                         ),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -137,7 +136,10 @@ fun GameCreationDialog(
                     else { onApprove(gameName, original, studied); onDismiss() } },
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_DEFAULT)
+                        .padding(
+                            horizontal = dimensionResource(R.dimen.padding_default),
+                            vertical = dimensionResource(R.dimen.padding_default)
+                        )
                         .height(52.dp),
                     shape = UIDefaults.ROUNDED_CORNER,
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.button_primary)),

@@ -15,13 +15,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.dimensions.FontDimensions
-import yaremchuken.quizknight.dimensions.UIDimensions
 
 @Preview
 @Composable
@@ -31,7 +31,7 @@ fun GameStatsBar(
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(all = UIDimensions.PADDING_DEFAULT),
+            .padding(all = dimensionResource(R.dimen.padding_default)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -41,18 +41,18 @@ fun GameStatsBar(
                 Image(
                     bitmap = ImageBitmap.imageResource(heartImg),
                     contentDescription = null,
-                    Modifier.height(20.dp).padding(end = UIDimensions.PADDING_TINY)
+                    Modifier.height(20.dp).padding(end = dimensionResource(R.dimen.padding_tiny))
                 )
             }
         }
         Text(
             text = stats.name,
-            color = colorResource(id = R.color.text_primary),
+            color = colorResource(R.color.text_primary),
             fontSize = FontDimensions.LARGE,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyMedium.copy(
                 shadow = Shadow(
-                    color = colorResource(id = R.color.light_blue),
+                    color = colorResource(R.color.light_blue),
                     blurRadius = 3F
                 )
             )
@@ -67,12 +67,12 @@ fun GameStatsBar(
             )
             Text(
                 text = "${stats.gold}",
-                color = colorResource(id = R.color.gold),
+                color = colorResource(R.color.gold),
                 fontSize = FontDimensions.LARGE,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     shadow = Shadow(
-                        color = colorResource(id = R.color.black),
+                        color = colorResource(R.color.black),
                         offset = Offset(2F, 2F),
                         blurRadius = 2F
                     )

@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,6 @@ import yaremchuken.quizknight.R
 import yaremchuken.quizknight.activity.MAX_GAMES
 import yaremchuken.quizknight.dimensions.FontDimensions
 import yaremchuken.quizknight.dimensions.UIDefaults
-import yaremchuken.quizknight.dimensions.UIDimensions
 import yaremchuken.quizknight.entity.GameStatsEntity
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -81,7 +81,10 @@ fun GameBtnView(
         onClick = { onClick() },
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_SMALL)
+            .padding(
+                horizontal = dimensionResource(R.dimen.padding_default),
+                vertical = dimensionResource(R.dimen.padding_default)
+            )
             .requiredHeightIn(min = 52.dp),
         shape = UIDefaults.ROUNDED_CORNER,
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(color)),

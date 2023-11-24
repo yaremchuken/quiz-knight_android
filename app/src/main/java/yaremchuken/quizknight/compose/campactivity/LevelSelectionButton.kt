@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,7 +24,6 @@ import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.dimensions.FontDimensions
 import yaremchuken.quizknight.dimensions.UIDefaults
-import yaremchuken.quizknight.dimensions.UIDimensions
 
 @Preview
 @Composable
@@ -55,7 +55,10 @@ fun LevelSelectionButton(
         Modifier
             .clickable { if (!disabled) onClick() }
             .fillMaxWidth()
-            .padding(horizontal = UIDimensions.PADDING_DEFAULT, vertical = UIDimensions.PADDING_SMALL)
+            .padding(
+                horizontal = dimensionResource(R.dimen.padding_default),
+                vertical = dimensionResource(R.dimen.padding_small)
+            )
             .background(bgClr, UIDefaults.ROUNDED_CORNER)
             .border(1.dp, borderClr, UIDefaults.ROUNDED_CORNER)
             .alpha(if (disabled) .2F else 1F)
@@ -77,15 +80,15 @@ fun LevelSelectionButton(
                 }
                 Text(
                     text = title,
-                    Modifier.padding(start = if (completed) 0.dp else UIDimensions.PADDING_DEFAULT),
+                    Modifier.padding(start = if (completed) 0.dp else dimensionResource(R.dimen.padding_default)),
                     fontSize = FontDimensions.MEDIUM,
-                    color = colorResource(id = R.color.white)
+                    color = colorResource(R.color.white)
                 )
             }
             Image(
                 bitmap = ImageBitmap.imageResource(portrait),
                 contentDescription = null,
-                Modifier.padding(end = UIDimensions.PADDING_SMALL)
+                Modifier.padding(end = dimensionResource(R.dimen.padding_small))
             )
         }
     }
