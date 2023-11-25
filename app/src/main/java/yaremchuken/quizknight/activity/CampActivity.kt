@@ -1,6 +1,7 @@
 package yaremchuken.quizknight.activity
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,9 +16,11 @@ import yaremchuken.quizknight.compose.campactivity.CampBlacksmithView
 import yaremchuken.quizknight.compose.campactivity.CampCrossroadsView
 import yaremchuken.quizknight.compose.campactivity.CampWorldMapView
 import yaremchuken.quizknight.compose.campactivity.ModuleProgression
+import yaremchuken.quizknight.dao.GameStatsDao
 import yaremchuken.quizknight.model.ModuleType
 import yaremchuken.quizknight.provider.QuizzesProvider
 import java.util.EnumMap
+import javax.inject.Inject
 
 enum class CampSceneType {
     WORLDMAP,
@@ -28,7 +31,15 @@ enum class CampSceneType {
 
 class CampActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var gameStatsDao: GameStatsDao
+
     private var currentScene: CampSceneType = CampSceneType.CROSSROADS
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (application as App).appComponent.inject(this)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -38,10 +49,7 @@ class CampActivity : AppCompatActivity() {
     fun switchModule(moduleType: ModuleType) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                (application as App)
-                    .db
-                    .getGameStatsDao()
-                    .switchModule(GameStats.game, moduleType)
+                gameStatsDao.switchModule(GameStats.game, moduleType)
             }
         }.invokeOnCompletion {
             GameStats.switchModule(moduleType)

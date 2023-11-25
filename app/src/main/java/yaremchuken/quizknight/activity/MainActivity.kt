@@ -11,6 +11,8 @@ import kotlinx.coroutines.withContext
 import yaremchuken.quizknight.App
 import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.compose.gamesmanager.GamesManagerView
+import yaremchuken.quizknight.dao.GameStatsDao
+import yaremchuken.quizknight.dao.ModuleProgressDao
 import yaremchuken.quizknight.entity.GameStatsEntity
 import yaremchuken.quizknight.entity.ModuleProgressEntity
 import yaremchuken.quizknight.model.ModuleType
@@ -18,6 +20,7 @@ import yaremchuken.quizknight.provider.QuizzesProvider
 import java.time.Instant
 import java.util.EnumMap
 import java.util.Locale
+import javax.inject.Inject
 
 /**
  * Amount of games Player can create in application
@@ -28,8 +31,14 @@ const val DEFAULT_MODULE_PROGRESS = -1L
 
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var gameStatsDao: GameStatsDao
+    @Inject
+    lateinit var moduleProgressDao: ModuleProgressDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (application as App).appComponent.inject(this)
         QuizzesProvider.preload(this)
     }
 
@@ -42,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         var games: List<GameStatsEntity> = listOf()
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                games = (application as App).db.getGameStatsDao().fetchAll()
+                games = gameStatsDao.fetchAll()
             }
         }.invokeOnCompletion {
             setContent {
@@ -55,14 +64,8 @@ class MainActivity : AppCompatActivity() {
         val progress: MutableMap<ModuleType, Long> = EnumMap(ModuleType::class.java)
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                (application as App).db
-                    .getModuleProgressDao()
-                    .fetch(game.game)
-                    .forEach { progress[it.module] = it.progress }
-
-                (application as App).db
-                    .getGameStatsDao()
-                    .markLaunched(game.game, Instant.now().epochSecond)
+                moduleProgressDao.fetch(game.game).forEach { progress[it.module] = it.progress }
+                gameStatsDao.markLaunched(game.game, Instant.now().epochSecond)
             }
         }.invokeOnCompletion {
             switchToGame(game, progress)
@@ -71,9 +74,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun createGame(name: String, original: Locale, studied: Locale) {
         if (name.isNotBlank()) {
-            val gameStatsDao = (application as App).db.getGameStatsDao()
-            val moduleProgressDao = (application as App).db.getModuleProgressDao()
-
             val newGame = GameStatsEntity(
                 name, original, studied, ModuleType.LAZYWOOD, 0, GameStats.maxHealth.toDouble(),
                 Instant.now().epochSecond, Instant.now().epochSecond)

@@ -33,6 +33,8 @@ import yaremchuken.quizknight.adapter.QuizWordOrEditableAdapter
 import yaremchuken.quizknight.adapter.TranslationDialogAdapter
 import yaremchuken.quizknight.api.yandex.dictionary.YaDictionaryClient
 import yaremchuken.quizknight.api.yandex.translate.YaTranslateClient
+import yaremchuken.quizknight.dao.GameStatsDao
+import yaremchuken.quizknight.dao.ModuleProgressDao
 import yaremchuken.quizknight.databinding.ActivityQuizBinding
 import yaremchuken.quizknight.databinding.DialogDictionaryBinding
 import yaremchuken.quizknight.databinding.DialogTranslationBinding
@@ -56,8 +58,15 @@ const val PROGRESS_BAR_ANIMATION_SPEED = 4
 
 class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
-    @Inject lateinit var yaDictionaryClient: YaDictionaryClient
-    @Inject lateinit var yaTranslateClient: YaTranslateClient
+    @Inject
+    lateinit var gameStatsDao: GameStatsDao
+    @Inject
+    lateinit var moduleProgressDao: ModuleProgressDao
+
+    @Inject
+    lateinit var yaDictionaryClient: YaDictionaryClient
+    @Inject
+    lateinit var yaTranslateClient: YaTranslateClient
 
     private lateinit var binding: ActivityQuizBinding
     private lateinit var gameStatsBarBinding: FragmentGameStatsBarBinding
@@ -467,11 +476,7 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                (application as App)
-                    .db
-                    .getGameStatsDao()
-                    .updateGold(GameStats.game, gold)
-
+                gameStatsDao.updateGold(GameStats.game, gold)
                 updateModuleProgress()
             }
 
@@ -498,17 +503,10 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
      * Check if we have to update player progress for that module, or he just replayed old one.
      */
     private suspend fun updateModuleProgress() {
-        val moduleProgress =
-            (application as App)
-                .db
-                .getModuleProgressDao()
-                .fetch(GameStats.game, GameStats.module)[0]
-
+        val moduleProgress = moduleProgressDao.fetch(GameStats.game, GameStats.module)[0]
         if (GameStats.currentLevel > moduleProgress.progress) {
             withContext(Dispatchers.IO) {
-                (application as App)
-                    .db
-                    .getModuleProgressDao()
+                moduleProgressDao
                     .updateProgress(
                         GameStats.game,
                         GameStats.module,

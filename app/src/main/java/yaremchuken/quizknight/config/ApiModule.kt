@@ -9,9 +9,7 @@ import yaremchuken.quizknight.api.yandex.translate.YaTranslateClient
 import javax.inject.Singleton
 
 @Module
-class AppModule(
-    private val resources: Resources
-) {
+class ApiModule(private val resources: Resources) {
     @Provides
     @Singleton
     fun yaDictionaryClient() = YaDictionaryClient(resources.getString(R.string.YA_DICTIONARY_API_KEY))
