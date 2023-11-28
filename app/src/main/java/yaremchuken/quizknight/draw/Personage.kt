@@ -26,7 +26,7 @@ class Personage(personage: PersonageType, sceneDims: Point): Animated() {
             xPos = 100F
         } else {
             targetPos = sceneDims.x - 50F - dimensions.x
-            xPos = DrawView.WORLD_SPEED * 30 + targetPos
+            xPos = DrawView.WORLD_SPEED * 60 + targetPos
         }
     }
 

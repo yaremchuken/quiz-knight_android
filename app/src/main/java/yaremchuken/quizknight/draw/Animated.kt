@@ -32,6 +32,6 @@ open class Animated {
 
     fun draw(canvas: Canvas, viewHeight: Int) {
         val frame = animations[actionType]!!.getFrame()
-        canvas.drawBitmap(frame, xPos, (viewHeight - frame.height - 50).toFloat(), null)
+        canvas.drawBitmap(frame, xPos, (viewHeight - frame.height - 70).toFloat(), null)
     }
 }

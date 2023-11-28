@@ -114,8 +114,6 @@ class QuizActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             controlCheckBtnStatus(true)
         }
 
-        Log.i("TAG", "onCreate: ${yaDictionaryClient}")
-
         hideBoard()
         initLevel()
     }

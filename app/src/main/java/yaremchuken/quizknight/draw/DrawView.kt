@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Point
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -13,13 +14,18 @@ import yaremchuken.quizknight.GameStats
 import yaremchuken.quizknight.PersonageType
 import yaremchuken.quizknight.R
 import yaremchuken.quizknight.StateMachineType
+import yaremchuken.quizknight.draw.GameWorldLayerType.FARESTGROUND
+import yaremchuken.quizknight.draw.GameWorldLayerType.FARGROUND
+import yaremchuken.quizknight.draw.GameWorldLayerType.MIDDLEGROUND
+import yaremchuken.quizknight.draw.GameWorldLayerType.ROAD
+import yaremchuken.quizknight.draw.GameWorldLayerType.SKYBOX
+import java.util.EnumMap
 
 class DrawView(context: Context, attributes: AttributeSet):
     SurfaceView(context, attributes), SurfaceHolder.Callback
 {
     companion object {
-        const val WORLD_SPEED = 12F
-        const val FAR_WORLD_SPEED = WORLD_SPEED * .5F
+        const val WORLD_SPEED = 7
     }
 
     private lateinit var thread: DrawThread
@@ -30,33 +36,47 @@ class DrawView(context: Context, attributes: AttributeSet):
     private lateinit var hero: Personage
     private var opponent: Personage? = null
 
-    private val skyBG: Bitmap
-    private val farBG: Bitmap
-    private val road: Bitmap
+    /**
+     * Map stores bitmaps for layers of game world
+     */
+    private val bitmaps: MutableMap<GameWorldLayerType, Bitmap> = EnumMap(GameWorldLayerType::class.java)
 
-    private var roadOffset: Float = 0F
-    private var roadOffset2: Float = 0F
+    /**
+     * Every layer has two frames, one follows another to make the world move
+     * When frame leaves scene, it jumps at the end of the next frame
+     */
+    private val frames: MutableMap<GameWorldLayerType, Pair<Rect, Rect>> = EnumMap(GameWorldLayerType::class.java)
 
-    private var farOffset: Float = 0F
-    private var farOffset2: Float = 0F
+    private val speeds = mapOf(
+        Pair(SKYBOX, WORLD_SPEED - 6),
+        Pair(FARESTGROUND, WORLD_SPEED - 5),
+        Pair(FARGROUND, WORLD_SPEED - 4),
+        Pair(MIDDLEGROUND, WORLD_SPEED - 2),
+        Pair(ROAD, WORLD_SPEED)
+    )
 
     init {
+        GameStateMachine.drawer = this
         holder.addCallback(this)
 
-        skyBG = BitmapFactory.decodeResource(context.resources, R.drawable.gw_bg_sky)
-        farBG = BitmapFactory.decodeResource(context.resources, R.drawable.gw_far_mountains)
-        road = BitmapFactory.decodeResource(context.resources, R.drawable.gw_road)
-
-        farOffset2 = farBG.width.toFloat()
-        roadOffset2 = road.width.toFloat()
-
-        GameStateMachine.drawer = this
+        bitmaps[SKYBOX] = BitmapFactory.decodeResource(context.resources, R.drawable.gw_skybox)
+        bitmaps[FARESTGROUND] = BitmapFactory.decodeResource(context.resources, R.drawable.gw_farestground)
+        bitmaps[FARGROUND] = BitmapFactory.decodeResource(context.resources, R.drawable.gw_farground)
+        bitmaps[MIDDLEGROUND] = BitmapFactory.decodeResource(context.resources, R.drawable.gw_middleground)
+        bitmaps[ROAD] = BitmapFactory.decodeResource(context.resources, R.drawable.gw_road)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         thread = DrawThread(holder, this)
         thread.running = true
         thread.start()
+
+        bitmaps.forEach { (type, bitmap) ->
+            val ratio = bitmap.height.toFloat() / height.toFloat()
+            val rectA = Rect(0, 0, (width * ratio).toInt(), height)
+            val rectB = Rect(rectA.width(), 0,  rectA.width() + (width * ratio).toInt(), height)
+            frames[type] = Pair(rectA, rectB)
+        }
 
         GameStateMachine.canvasReady = true
         GameStateMachine.startMachine()
@@ -95,47 +115,63 @@ class DrawView(context: Context, attributes: AttributeSet):
 
         super.draw(canvas)
 
-        canvas.drawBitmap(skyBG, 0F, 0F, null)
-
         updatePositions()
 
-        canvas.drawBitmap(farBG, farOffset, (height - farBG.height).toFloat(), null)
-        canvas.drawBitmap(farBG, farOffset2, (height - farBG.height).toFloat(), null)
+        bitmaps.forEach { (type, bitmap) ->
+            canvas.drawBitmap(bitmap, null, frames[type]!!.first, null)
+            canvas.drawBitmap(bitmap, null, frames[type]!!.second, null)
+        }
 
         if (GameStateMachine.state == StateMachineType.EMPTY) return
 
         opponent?.draw(canvas, height)
         hero.draw(canvas, height)
 
-        canvas.drawBitmap(road, roadOffset, (height - 100).toFloat(), null)
-        canvas.drawBitmap(road, roadOffset2, (height - 100).toFloat(), null)
-
         drawMs = System.currentTimeMillis() - frameStart;
     }
 
     private fun updatePositions() {
         if (GameStateMachine.state == StateMachineType.MOVING) {
-            roadOffset -= WORLD_SPEED
-            roadOffset2 -= WORLD_SPEED
+            bitmaps.forEach { (type, _) ->
+                val frameA = frames[type]!!.first
+                val frameB = frames[type]!!.second
 
-            if (roadOffset <= -road.width - 20) {
-                roadOffset = roadOffset2 + road.width
-            }
-            if (roadOffset2 <= -road.width - 20) {
-                roadOffset2 = roadOffset + road.width
-            }
+                // First, move frames to the left
+                frameA.left -= speeds[type]!!
+                frameA.right -= speeds[type]!!
 
-            farOffset -= FAR_WORLD_SPEED
-            farOffset2 -= FAR_WORLD_SPEED
+                frameB.left -= speeds[type]!!
+                frameB.right -= speeds[type]!!
 
-            if (farOffset <= -farBG.width - 20) {
-                farOffset = farOffset2 + farBG.width
-            }
-            if (farOffset2 <= -farBG.width - 20) {
-                farOffset2 = farOffset + farBG.width
+                // Secondary - check for scene bounds
+                if (frameA.left <= -frameA.width() - 20) {
+                    frameA.left = frameB.left + frameB.width()
+                    frameA.right = frameA.left + frameB.width()
+                }
+
+                if (frameB.left <= -frameB.width() - 20) {
+                    frameB.left = frameA.left + frameA.width()
+                    frameB.right = frameB.left + frameA.width()
+                }
             }
 
             opponent?.updatePos()
+        }
+    }
+
+    /**
+     * Scene height changes on soft keyboard appearance, so we need to rise frames for personages to stay on the ground
+     */
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (oldh == 0) return
+
+        val diff = h - oldh
+        frames.forEach {
+            listOf(it.value.first, it.value.second).forEach { frame ->
+                frame.top += diff
+                frame.bottom += diff
+            }
         }
     }
 }
