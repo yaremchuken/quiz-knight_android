@@ -45,6 +45,7 @@ object GameStateMachine {
 
     fun stopMachine() {
         state = StateMachineType.EMPTY
+        drawer?.stopDraw()
         started = false
         levelReady = false
         canvasReady = false

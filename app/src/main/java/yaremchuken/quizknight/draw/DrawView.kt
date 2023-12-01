@@ -73,8 +73,8 @@ class DrawView(context: Context, attributes: AttributeSet):
 
         bitmaps.forEach { (type, bitmap) ->
             val ratio = bitmap.height.toFloat() / height.toFloat()
-            val rectA = Rect(0, 0, (width * ratio).toInt(), height)
-            val rectB = Rect(rectA.width(), 0,  rectA.width() + (width * ratio).toInt(), height)
+            val rectA = Rect(0, 0, (bitmap.width / ratio).toInt(), height)
+            val rectB = Rect(rectA.width(), 0,  rectA.width() + (bitmap.width / ratio).toInt(), height)
             frames[type] = Pair(rectA, rectB)
         }
 
@@ -85,8 +85,12 @@ class DrawView(context: Context, attributes: AttributeSet):
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        thread.running = false
+        stopDraw()
         thread.join()
+    }
+
+    fun stopDraw() {
+        thread.running = false
     }
 
     fun propagateStateChanged() {

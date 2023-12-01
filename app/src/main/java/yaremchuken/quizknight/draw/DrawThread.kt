@@ -3,7 +3,6 @@ package yaremchuken.quizknight.draw
 import android.graphics.Canvas
 import android.util.Log
 import android.view.SurfaceHolder
-import java.lang.Exception
 import kotlin.math.roundToLong
 
 
@@ -18,7 +17,7 @@ class DrawThread(private val surface: SurfaceHolder, private val drawView: DrawV
 
     override fun run() {
         var canvas: Canvas
-        while (running) {
+        while (running && !interrupted()) {
             try {
                 canvas = surface.lockCanvas()
                 synchronized(surface) {
