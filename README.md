@@ -1,11 +1,10 @@
 ### Fitness Terra
 
 <div align="center">
-  <img src="preview/language_selection.png" height="400" />
-  <img src="preview/level_selection.png" height="400" />
-  <img src="preview/module_selection.png" height="400" />
-  <img src="preview/quiz_1.png" height="400" />
-  <img src="preview/quiz_2.png" height="400" />
+  <img src="preview/level_selection.png" height="300" />
+  <img src="preview/module_selection.png" height="300" />
+  <img src="preview/quiz_1.png" height="300" />
+  <img src="preview/quiz_2.png" height="300" />
 </div>
 
 ## About The Project
