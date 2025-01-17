@@ -1,4 +1,4 @@
-### Fitness Terra
+### Quiz Knight
 
 <div align="center">
   <img src="preview/level_selection.png" height="300" />
